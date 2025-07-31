@@ -63,7 +63,7 @@ export default function LoanDetails({
             placeholder="Enter mortgage registration fee..."
           />
           <p className="text-xs text-gray-600 mt-1">
-            Fee for registering the lender's security interest
+            Fee for registering the lender&apos;s security interest
           </p>
         </div>
       )}

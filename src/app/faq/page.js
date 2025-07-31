@@ -119,7 +119,7 @@ export default function FAQPage() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-12">
           <h3 className="text-lg font-semibold text-blue-900 mb-2">Still have questions?</h3>
           <p className="text-blue-700 mb-4">
-            If you couldn't find the answer you're looking for, feel free to contact us.
+            If you couldn&apos;t find the answer you&apos;re looking for, feel free to contact us.
           </p>
           <Link 
             href="/contact" 

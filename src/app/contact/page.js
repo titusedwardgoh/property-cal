@@ -51,7 +51,7 @@ export default function ContactPage() {
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Have questions, feedback, or suggestions? We'd love to hear from you.
+            Have questions, feedback, or suggestions? We&apos;d love to hear from you.
           </p>
         </div>
 
@@ -65,7 +65,7 @@ export default function ContactPage() {
                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Message Sent!</h3>
                 <p className="text-gray-600 mb-4">
-                  Thank you for your message. We'll get back to you as soon as possible.
+                  Thank you for your message. We&apos;ll get back to you as soon as possible.
                 </p>
                 <button
                   onClick={() => setIsSubmitted(false)}

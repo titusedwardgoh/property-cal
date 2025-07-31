@@ -119,7 +119,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     });
 
     setLoanDetails(prev => ({ ...prev, loanAmount: finalLoanAmount, lmiAmount }));
-  }, [propertyData, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, setLoanDetails, hasMortgage, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, totalPropertyCost]);
+  }, [propertyData, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, setLoanDetails, hasMortgage, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, totalPropertyCost, price]);
 
   return {
     ...results,
