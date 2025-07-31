@@ -14,8 +14,8 @@ const unbounded = Unbounded({
 
 
 export const metadata = {
-  title: "Next Boiler",
-  description: "Change description",
+  title: "Property Calculator",
+  description: "Calculate your property costs",
   icons: {
     icon: "/favicon.png",
   }
