@@ -1,0 +1,62 @@
+export const STAMP_DUTY_RATES = {
+  NSW: [
+    { min: 0, max: 14000, rate: 0.0125 },
+    { min: 14000, max: 32000, rate: 0.015 },
+    { min: 32000, max: 85000, rate: 0.0175 },
+    { min: 85000, max: 319000, rate: 0.035 },
+    { min: 319000, max: 1064000, rate: 0.045 },
+    { min: 1064000, max: Infinity, rate: 0.055 }
+  ],
+  VIC: [
+    { min: 0, max: 25000, rate: 0.014 },
+    { min: 25000, max: 130000, rate: 0.024 },
+    { min: 130000, max: 440000, rate: 0.05 },
+    { min: 440000, max: Infinity, rate: 0.06 }
+  ],
+  QLD: [
+    { min: 0, max: 5000, rate: 0 },
+    { min: 5000, max: 75000, rate: 0.015 },
+    { min: 75000, max: 540000, rate: 0.035 },
+    { min: 540000, max: 1000000, rate: 0.045 },
+    { min: 1000000, max: Infinity, rate: 0.0575 }
+  ]
+};
+
+export const FOREIGN_BUYER_RATES = {
+  NSW: 0.08,
+  VIC: 0.08,
+  QLD: 0.07,
+  SA: 0.07,
+  WA: 0.07,
+  TAS: 0.03,
+  NT: 0,
+  ACT: 0.075
+};
+
+export const STATE_OPTIONS = [
+  { value: 'NSW', label: 'New South Wales' },
+  { value: 'VIC', label: 'Victoria' },
+  { value: 'QLD', label: 'Queensland' },
+  { value: 'SA', label: 'South Australia' },
+  { value: 'WA', label: 'Western Australia' },
+  { value: 'TAS', label: 'Tasmania' },
+  { value: 'NT', label: 'Northern Territory' },
+  { value: 'ACT', label: 'Australian Capital Territory' }
+];
+
+export const LOAN_TERM_OPTIONS = [
+  { value: 25, label: '25 years' },
+  { value: 30, label: '30 years' },
+  { value: 35, label: '35 years' }
+];
+
+export const STATE_AVERAGES = {
+  NSW: 1200000,
+  VIC: 900000,
+  QLD: 650000,
+  SA: 550000,
+  WA: 600000,
+  TAS: 450000,
+  NT: 500000,
+  ACT: 800000
+}; 
