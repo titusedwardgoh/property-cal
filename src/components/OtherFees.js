@@ -8,12 +8,6 @@ export default function OtherFees({
   includeInspectionFees,
   setIncludeInspectionFees,
   price,
-  deposit,
-  stampDuty,
-  foreignBuyerDuty,
-  landTransferFee,
-  legalFees,
-  inspectionFees
 }) {
   // Only show fees when property price has been entered
   if (!price || price <= 0) {

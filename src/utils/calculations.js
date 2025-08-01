@@ -1,4 +1,4 @@
-import { STAMP_DUTY_RATES, FOREIGN_BUYER_RATES, STATE_AVERAGES } from '../data/constants.js';
+import { STAMP_DUTY_RATES, FOREIGN_BUYER_RATES, STATE_AVERAGES, FIRST_HOME_OWNERS_GRANT } from '../data/constants.js';
 
 export const calculateStampDuty = (price, state, isFirstHomeBuyer = false) => {
   const rates = STAMP_DUTY_RATES[state] || STAMP_DUTY_RATES.NSW;
@@ -24,42 +24,53 @@ export const calculateStampDuty = (price, state, isFirstHomeBuyer = false) => {
 const applyFirstHomeBuyerConcession = (duty, price, state) => {
   switch (state) {
     case 'NSW':
-      if (price <= 650000) return 0; // Full exemption
-      if (price <= 800000) return duty * (1 - (800000 - price) / 150000); // Partial exemption
+      // NSW: Exempt from transfer duty on new and existing homes up to $800,000
+      // Concessions apply between $800,000 and $1,000,000
+      if (price <= 800000) return 0; // Full exemption
+      if (price <= 1000000) return duty * (1 - (1000000 - price) / 200000); // Partial exemption
       break;
       
     case 'VIC':
+      // VIC: Exempt from stamp duty on properties up to $600,000
+      // Concession available between $600,001 and $750,000
       if (price <= 600000) return 0; // Full exemption
       if (price <= 750000) return duty * (1 - (750000 - price) / 150000); // Partial exemption
       break;
       
     case 'QLD':
+      // QLD: Full transfer duty concession for new homes
+      // No specific price cap mentioned in current info, using previous logic
       if (price <= 500000) return 0; // Full exemption
       if (price <= 550000) return duty * (1 - (550000 - price) / 50000); // Partial exemption
       break;
       
     case 'SA':
+      // SA: Stamp duty relief for first home buyers on eligible new homes
+      // No specific price cap mentioned in current info, using previous logic
       if (price <= 650000) return 0; // Full exemption
       if (price <= 700000) return duty * (1 - (700000 - price) / 50000); // Partial exemption
       break;
       
     case 'WA':
-      if (price <= 430000) return 0; // Full exemption
-      if (price <= 530000) return duty * (1 - (530000 - price) / 100000); // Partial exemption
+      // WA: Stamp duty concessions up to $700,000 (Perth Metro/Peel) or $750,000 (outside)
+      // Using $700,000 as default for calculations
+      if (price <= 700000) return 0; // Full exemption
+      if (price <= 750000) return duty * (1 - (750000 - price) / 50000); // Partial exemption
       break;
       
     case 'TAS':
-      if (price <= 600000) return 0; // Full exemption
-      if (price <= 750000) return duty * (1 - (750000 - price) / 150000); // Partial exemption
+      // TAS: 100% discount on property transfer duty for established homes up to $750,000
+      if (price <= 750000) return 0; // Full exemption
       break;
       
     case 'ACT':
+      // ACT: Full stamp duty concession for eligible applicants
       if (price <= 1000000) return 0; // Full exemption for all properties under $1M
       break;
       
     case 'NT':
-      // NT has different rules - simplified for now
-      if (price <= 500000) return duty * 0.5; // 50% reduction
+      // NT: Simplified concession for established homes
+      if (price < 600000) return duty * 0.5; // 50% reduction
       break;
       
     default:
@@ -201,6 +212,52 @@ export const calculateForeignBuyerDuty = (price, state, isForeignBuyer) => {
 export const calculateCouncilRates = (price) => {
   // Estimated council rates (varies by location, simplified calculation)
   return price * 0.001; // Roughly 0.1% of property value annually
+};
+
+export const calculateFirstHomeOwnersGrant = (price, state) => {
+  const grantAmount = FIRST_HOME_OWNERS_GRANT[state] || 0;
+  
+  if (grantAmount === 0) return 0; // No grant available (e.g., ACT)
+  
+  // Check eligibility based on state-specific rules
+  switch (state) {
+    case 'NSW':
+      // $10,000 for new homes up to $600,000 or $750,000 if building
+      return price <= 750000 ? grantAmount : 0;
+      
+    case 'VIC':
+      // $10,000 for new homes up to $750,000
+      return price <= 750000 ? grantAmount : 0;
+      
+    case 'QLD':
+      // $30,000 for contracts signed between 20 Nov 2023 and 30 Jun 2026
+      // For new homes up to $750,000
+      return price <= 750000 ? grantAmount : 0;
+      
+    case 'SA':
+      // Up to $15,000 for new homes (no property value cap as of 6 Jun 2024)
+      return grantAmount;
+      
+    case 'WA':
+      // $10,000 for new homes up to $750,000 (south) or $1M (north)
+      // Using $750,000 as default threshold
+      return price <= 750000 ? grantAmount : 0;
+      
+    case 'TAS':
+      // $10,000 for new homes or off-the-plan properties
+      return grantAmount;
+      
+    case 'NT':
+      // $50,000 for new homes (HomeGrown Territory Grant)
+      return grantAmount;
+      
+    case 'ACT':
+      // No FHOG, replaced by Home Buyer Concession Scheme
+      return 0;
+      
+    default:
+      return 0;
+  }
 };
 
 export const formatCurrency = (amount) => {

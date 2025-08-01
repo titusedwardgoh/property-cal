@@ -44,12 +44,6 @@ export const STATE_OPTIONS = [
   { value: 'ACT', label: 'Australian Capital Territory' }
 ];
 
-export const LOAN_TERM_OPTIONS = [
-  { value: 25, label: '25 years' },
-  { value: 30, label: '30 years' },
-  { value: 35, label: '35 years' }
-];
-
 export const STATE_AVERAGES = {
   NSW: 1200000,
   VIC: 900000,
@@ -59,4 +53,16 @@ export const STATE_AVERAGES = {
   TAS: 450000,
   NT: 500000,
   ACT: 800000
+};
+
+// First Home Owners Grant amounts by state (as of 2025)
+export const FIRST_HOME_OWNERS_GRANT = {
+  NSW: 10000, // $10,000 for new homes up to $600,000 or $750,000 if building
+  VIC: 10000, // $10,000 for new homes up to $750,000
+  QLD: 30000, // $30,000 for contracts signed between 20 Nov 2023 and 30 Jun 2026
+  SA: 15000,  // Up to $15,000 for new homes (no property value cap as of 6 Jun 2024)
+  WA: 10000,  // $10,000 for new homes up to $750,000 (south) or $1M (north)
+  TAS: 10000, // $10,000 for new homes or off-the-plan properties
+  NT: 50000,  // $50,000 for new homes (HomeGrown Territory Grant)
+  ACT: 0      // No FHOG, replaced by Home Buyer Concession Scheme (full stamp duty concession)
 }; 

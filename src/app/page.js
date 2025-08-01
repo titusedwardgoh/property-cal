@@ -3,10 +3,10 @@
 import React from 'react';
 import Header from '../components/Header.js';
 import PropertyDetails from '../components/PropertyDetails.js';
+import BuyerDetails from '../components/BuyerDetails.js';
 import LoanDetails from '../components/LoanDetails.js';
 import OtherFees from '../components/OtherFees.js';
 import ResultsSection from '../components/ResultsSection.js';
-import Footer from '../components/Footer.js';
 import { usePropertyData } from '../hooks/usePropertyData.js';
 import { useLoanDetails } from '../hooks/useLoanDetails.js';
 import { useCalculations } from '../hooks/useCalculations.js';
@@ -21,8 +21,12 @@ export default function App() {
     setIsForeignBuyer,
     isFirstHomeBuyer,
     setIsFirstHomeBuyer,
+    needsLoan,
+    setNeedsLoan,
     isSearching,
     searchError,
+    includeOtherFees,
+    setIncludeOtherFees,
     includeLandTransferFee,
     setIncludeLandTransferFee,
     includeLegalFees,
@@ -46,7 +50,8 @@ export default function App() {
     useEstimatedPrice,
     includeLandTransferFee,
     includeLegalFees,
-    includeInspectionFees
+    includeInspectionFees,
+    needsLoan
   );
 
   return (
@@ -62,45 +67,56 @@ export default function App() {
               setPropertyData={setPropertyData}
               loanDetails={loanDetails}
               setLoanDetails={setLoanDetails}
-              isForeignBuyer={isForeignBuyer}
-              setIsForeignBuyer={setIsForeignBuyer}
-              isFirstHomeBuyer={isFirstHomeBuyer}
-              setIsFirstHomeBuyer={setIsFirstHomeBuyer}
               useEstimatedPrice={useEstimatedPrice}
               setUseEstimatedPrice={setUseEstimatedPrice}
               isSearching={isSearching}
               searchError={searchError}
               onAddressSearch={handleAddressSearch}
-              depositWarning={results.depositWarning}
-              depositPercentage={results.depositPercentage}
             />
 
-            <LoanDetails
-              loanDetails={loanDetails}
-              setLoanDetails={setLoanDetails}
-              shouldShowLMI={results.shouldShowLMI}
-              shouldDefaultLMI={results.shouldDefaultLMI}
-              depositWarning={results.depositWarning}
-              depositPercentage={results.depositPercentage}
-              price={useEstimatedPrice ? propertyData.estimatedPrice || 0 : propertyData.price}
-              hasMortgage={results.hasMortgage}
+            <BuyerDetails
+              needsLoan={needsLoan}
+              setNeedsLoan={setNeedsLoan}
+              includeOtherFees={includeOtherFees}
+              setIncludeOtherFees={setIncludeOtherFees}
+              isForeignBuyer={isForeignBuyer}
+              setIsForeignBuyer={setIsForeignBuyer}
+              isFirstHomeBuyer={isFirstHomeBuyer}
+              setIsFirstHomeBuyer={setIsFirstHomeBuyer}
+              isSearching={isSearching}
+              propertyPrice={propertyData.price}
             />
 
-            <OtherFees
-              includeLandTransferFee={includeLandTransferFee}
-              setIncludeLandTransferFee={setIncludeLandTransferFee}
-              includeLegalFees={includeLegalFees}
-              setIncludeLegalFees={setIncludeLegalFees}
-              includeInspectionFees={includeInspectionFees}
-              setIncludeInspectionFees={setIncludeInspectionFees}
-              price={useEstimatedPrice ? propertyData.estimatedPrice || 0 : propertyData.price}
-              deposit={loanDetails.deposit}
-              stampDuty={results.stampDuty}
-              foreignBuyerDuty={results.foreignBuyerDuty}
-              landTransferFee={results.landTransferFee}
-              legalFees={results.legalFees}
-              inspectionFees={results.inspectionFees}
-            />
+            {needsLoan && (
+              <LoanDetails
+                loanDetails={loanDetails}
+                setLoanDetails={setLoanDetails}
+                shouldShowLMI={results.shouldShowLMI}
+                shouldDefaultLMI={results.shouldDefaultLMI}
+                depositWarning={results.depositWarning}
+                depositPercentage={results.depositPercentage}
+                price={useEstimatedPrice ? propertyData.estimatedPrice || 0 : propertyData.price}
+                hasMortgage={results.hasMortgage}
+              />
+            )}
+
+            {includeOtherFees && (
+              <OtherFees
+                includeLandTransferFee={includeLandTransferFee}
+                setIncludeLandTransferFee={setIncludeLandTransferFee}
+                includeLegalFees={includeLegalFees}
+                setIncludeLegalFees={setIncludeLegalFees}
+                includeInspectionFees={includeInspectionFees}
+                setIncludeInspectionFees={setIncludeInspectionFees}
+                price={useEstimatedPrice ? propertyData.estimatedPrice || 0 : propertyData.price}
+                deposit={loanDetails.deposit}
+                stampDuty={results.stampDuty}
+                foreignBuyerDuty={results.foreignBuyerDuty}
+                landTransferFee={results.landTransferFee}
+                legalFees={results.legalFees}
+                inspectionFees={results.inspectionFees}
+              />
+            )}
           </div>
 
           {/* Results Section */}

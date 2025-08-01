@@ -65,11 +65,11 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer })
               </span>
             </div>
           )}
-          {results.lmiAmount > 0 && (
+          {results.firstHomeOwnersGrant > 0 && (
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Lenders Mortgage Insurance</span>
-              <span className="font-semibold">
-                {formatCurrency(results.lmiAmount)}
+              <span className="text-gray-600">First Home Owners Grant</span>
+              <span className="font-semibold text-green-600">
+                -{formatCurrency(results.firstHomeOwnersGrant)}
               </span>
             </div>
           )}
@@ -91,12 +91,14 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer })
         </div>
         
         <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Loan Repayment</span>
-            <span className="font-semibold text-lg">
-              {formatCurrency(results.monthlyRepayment)}
-            </span>
-          </div>
+          {results.hasLoan && (
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Loan Repayment</span>
+              <span className="font-semibold text-lg">
+                {formatCurrency(results.monthlyRepayment)}
+              </span>
+            </div>
+          )}
           <div className="flex justify-between items-center">
             <span className="text-gray-600">Council Rates</span>
             <span className="font-semibold">
@@ -121,12 +123,14 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer })
         </div>
         
         <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Loan Repayments</span>
-            <span className="font-semibold">
-              {formatCurrency(results.monthlyRepayment * 12)}
-            </span>
-          </div>
+          {results.hasLoan && (
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Loan Repayments</span>
+              <span className="font-semibold">
+                {formatCurrency(results.monthlyRepayment * 12)}
+              </span>
+            </div>
+          )}
           <div className="flex justify-between items-center">
             <span className="text-gray-600">Council Rates</span>
             <span className="font-semibold">

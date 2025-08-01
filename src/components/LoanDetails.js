@@ -6,10 +6,9 @@ export default function LoanDetails({
   loanDetails, 
   setLoanDetails, 
   shouldShowLMI, 
-  shouldDefaultLMI, 
-  depositWarning, 
-  depositPercentage,
-  hasMortgage
+  hasMortgage,
+  depositWarning,
+  depositPercentage
 }) {
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
@@ -20,18 +19,45 @@ export default function LoanDetails({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Deposit Amount
+            </label>
+            {depositPercentage > 0 && (
+              <span className="text-sm text-gray-600">
+                {depositPercentage.toFixed(1)}% of property price
+              </span>
+            )}
+          </div>
+          <input
+            type="number"
+            value={loanDetails.deposit || 0}
+            onChange={(e) => setLoanDetails(prev => ({ ...prev, deposit: Number(e.target.value) || 0 }))}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            placeholder="Enter deposit amount..."
+          />
+          {depositWarning && (
+            <p className="mt-2 text-sm text-red-600 font-medium">
+              ⚠️ {depositWarning}
+            </p>
+          )}
+        </div>
+
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Interest Rate (%)
           </label>
           <input
             type="number"
             step="0.1"
-            value={loanDetails.interestRate}
-            onChange={(e) => setLoanDetails(prev => ({ ...prev, interestRate: Number(e.target.value) }))}
+            value={loanDetails.interestRate || 0}
+            onChange={(e) => setLoanDetails(prev => ({ ...prev, interestRate: Number(e.target.value) || 0 }))}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           />
         </div>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Loan Term (years)
@@ -40,8 +66,8 @@ export default function LoanDetails({
             type="number"
             min="1"
             max="50"
-            value={loanDetails.loanTerm}
-            onChange={(e) => setLoanDetails(prev => ({ ...prev, loanTerm: Number(e.target.value) }))}
+            value={loanDetails.loanTerm || 0}
+            onChange={(e) => setLoanDetails(prev => ({ ...prev, loanTerm: Number(e.target.value) || 0 }))}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             placeholder="Enter loan term..."
           />
@@ -57,8 +83,8 @@ export default function LoanDetails({
             type="number"
             min="0"
             step="0.01"
-            value={loanDetails.mortgageRegistrationFee}
-            onChange={(e) => setLoanDetails(prev => ({ ...prev, mortgageRegistrationFee: Number(e.target.value) }))}
+            value={loanDetails.mortgageRegistrationFee || 0}
+            onChange={(e) => setLoanDetails(prev => ({ ...prev, mortgageRegistrationFee: Number(e.target.value) || 0 }))}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             placeholder="Enter mortgage registration fee..."
           />
@@ -95,9 +121,9 @@ export default function LoanDetails({
 
       <div className="mt-4 p-4 bg-blue-50 rounded-lg">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-blue-800">Loan Amount:</span>
+          <span className="text-sm text-blue-800">Base Loan Amount:</span>
           <span className="font-semibold text-blue-900">
-            {formatCurrency(loanDetails.loanAmount)}
+            {formatCurrency(loanDetails.loanAmount - (loanDetails.lmiAmount || 0))}
           </span>
         </div>
         {loanDetails.includeLMI && loanDetails.lmiAmount > 0 && (
@@ -108,6 +134,13 @@ export default function LoanDetails({
             </span>
           </div>
         )}
+        <hr className="my-2 border-blue-200" />
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-blue-800">Total Loan Amount:</span>
+          <span className="font-bold text-blue-900">
+            {formatCurrency(loanDetails.loanAmount)}
+          </span>
+        </div>
       </div>
     </div>
   );

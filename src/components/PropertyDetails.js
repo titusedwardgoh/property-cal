@@ -7,17 +7,11 @@ export default function PropertyDetails({
   setPropertyData, 
   loanDetails, 
   setLoanDetails,
-  isForeignBuyer,
-  setIsForeignBuyer,
-  isFirstHomeBuyer,
-  setIsFirstHomeBuyer,
   useEstimatedPrice,
   setUseEstimatedPrice,
   isSearching,
   searchError,
-  onAddressSearch,
-  depositWarning,
-  depositPercentage
+  onAddressSearch
 }) {
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
@@ -110,68 +104,13 @@ export default function PropertyDetails({
           ) : (
             <input
               type="number"
-              value={propertyData.price || ''}
-              onChange={(e) => setPropertyData(prev => ({ ...prev, price: Number(e.target.value) }))}
+              value={propertyData.price || 0}
+              onChange={(e) => setPropertyData(prev => ({ ...prev, price: Number(e.target.value) || 0 }))}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="Enter property price..."
               disabled={isSearching}
             />
           )}
-        </div>
-
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Deposit Amount
-            </label>
-            {depositPercentage > 0 && (
-              <span className="text-sm text-gray-600">
-                {depositPercentage.toFixed(1)}% of property price
-              </span>
-            )}
-          </div>
-          <input
-            type="number"
-            value={loanDetails.deposit || ''}
-            onChange={(e) => setLoanDetails(prev => ({ ...prev, deposit: Number(e.target.value) }))}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="Enter deposit amount..."
-            disabled={isSearching}
-          />
-          {depositWarning && (
-            <p className="mt-2 text-sm text-red-600 font-medium">
-              ⚠️ {depositWarning}
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="foreignBuyer"
-            checked={isForeignBuyer}
-            onChange={(e) => setIsForeignBuyer(e.target.checked)}
-            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            disabled={isSearching}
-          />
-          <label htmlFor="foreignBuyer" className="text-sm text-gray-700">
-            Foreign buyer
-          </label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="firstHomeBuyer"
-            checked={isFirstHomeBuyer}
-            onChange={(e) => setIsFirstHomeBuyer(e.target.checked)}
-            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            disabled={isSearching}
-          />
-          <label htmlFor="firstHomeBuyer" className="text-sm text-gray-700">
-            First home buyer
-          </label>
         </div>
       </div>
     </div>

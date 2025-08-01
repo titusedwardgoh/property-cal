@@ -12,16 +12,28 @@ export function usePropertyData() {
   const [useEstimatedPrice, setUseEstimatedPrice] = useState(false);
   const [isForeignBuyer, setIsForeignBuyer] = useState(false);
   const [isFirstHomeBuyer, setIsFirstHomeBuyer] = useState(false);
+  const [needsLoan, setNeedsLoan] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [includeOtherFees, setIncludeOtherFees] = useState(false);
   
   // Optional fees checkboxes
-  const [includeLandTransferFee, setIncludeLandTransferFee] = useState(true);
-  const [includeLegalFees, setIncludeLegalFees] = useState(true);
-  const [includeInspectionFees, setIncludeInspectionFees] = useState(true);
+  const [includeLandTransferFee, setIncludeLandTransferFee] = useState(false);
+  const [includeLegalFees, setIncludeLegalFees] = useState(false);
+  const [includeInspectionFees, setIncludeInspectionFees] = useState(false);
 
-  const handleAddressSearch = () => {
+  const handleAddressSearch = async () => {
     if (propertyData.address) {
-      const estimatedPrice = estimatePropertyPrice(propertyData.address, propertyData.state);
-      setPropertyData(prev => ({ ...prev, estimatedPrice }));
+      setIsSearching(true);
+      setSearchError(null);
+      try {
+        const estimatedPrice = estimatePropertyPrice(propertyData.address, propertyData.state);
+        setPropertyData(prev => ({ ...prev, estimatedPrice }));
+      } catch (error) {
+        setSearchError('Failed to estimate property price. Please try again.');
+      } finally {
+        setIsSearching(false);
+      }
     }
   };
 
@@ -38,6 +50,12 @@ export function usePropertyData() {
     setIsForeignBuyer,
     isFirstHomeBuyer,
     setIsFirstHomeBuyer,
+    needsLoan,
+    setNeedsLoan,
+    isSearching,
+    searchError,
+    includeOtherFees,
+    setIncludeOtherFees,
     includeLandTransferFee,
     setIncludeLandTransferFee,
     includeLegalFees,
