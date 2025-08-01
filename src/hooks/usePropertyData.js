@@ -22,6 +22,11 @@ export function usePropertyData() {
   const [includeLandTransferFee, setIncludeLandTransferFee] = useState(false);
   const [includeLegalFees, setIncludeLegalFees] = useState(false);
   const [includeInspectionFees, setIncludeInspectionFees] = useState(false);
+  
+  // Store the saved states of individual fee checkboxes
+  const [savedLandTransferFee, setSavedLandTransferFee] = useState(false);
+  const [savedLegalFees, setSavedLegalFees] = useState(false);
+  const [savedInspectionFees, setSavedInspectionFees] = useState(false);
 
   const handleAddressSearch = async () => {
     if (propertyData.address) {
@@ -42,6 +47,45 @@ export function usePropertyData() {
     return useEstimatedPrice ? propertyData.estimatedPrice || 0 : propertyData.price;
   };
 
+  // Handle individual fee checkbox changes and save their states
+  const handleLandTransferFeeChange = (checked) => {
+    setIncludeLandTransferFee(checked);
+    if (checked) {
+      setSavedLandTransferFee(true);
+    }
+  };
+
+  const handleLegalFeesChange = (checked) => {
+    setIncludeLegalFees(checked);
+    if (checked) {
+      setSavedLegalFees(true);
+    }
+  };
+
+  const handleInspectionFeesChange = (checked) => {
+    setIncludeInspectionFees(checked);
+    if (checked) {
+      setSavedInspectionFees(true);
+    }
+  };
+
+  // Handle "Other fees" checkbox toggle
+  const handleOtherFeesToggle = (checked) => {
+    setIncludeOtherFees(checked);
+    
+    if (checked) {
+      // Restore saved states when "Other fees" is checked
+      setIncludeLandTransferFee(savedLandTransferFee);
+      setIncludeLegalFees(savedLegalFees);
+      setIncludeInspectionFees(savedInspectionFees);
+    } else {
+      // Reset to false when "Other fees" is unchecked
+      setIncludeLandTransferFee(false);
+      setIncludeLegalFees(false);
+      setIncludeInspectionFees(false);
+    }
+  };
+
   return {
     propertyData,
     setPropertyData,
@@ -56,15 +100,15 @@ export function usePropertyData() {
     isSearching,
     searchError,
     includeOtherFees,
-    setIncludeOtherFees,
+    setIncludeOtherFees: handleOtherFeesToggle,
     isInvestor,
     setIsInvestor,
     includeLandTransferFee,
-    setIncludeLandTransferFee,
+    setIncludeLandTransferFee: handleLandTransferFeeChange,
     includeLegalFees,
-    setIncludeLegalFees,
+    setIncludeLegalFees: handleLegalFeesChange,
     includeInspectionFees,
-    setIncludeInspectionFees,
+    setIncludeInspectionFees: handleInspectionFeesChange,
     handleAddressSearch,
     getEffectivePrice
   };
