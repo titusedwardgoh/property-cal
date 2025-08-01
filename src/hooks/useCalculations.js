@@ -110,7 +110,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     const initialLoanAmount = needsLoan && loanDetails.deposit > 0 ? Math.max(0, price - loanDetails.deposit) : 0;
     
     // Calculate LMI if checkbox is checked and loan is needed
-    const lmiAmount = needsLoan && loanDetails.includeLMI ? calculateLMI(initialLoanAmount, totalPropertyCost, 0) : 0;
+    const lmiAmount = needsLoan && loanDetails.includeLMI ? calculateLMI(initialLoanAmount, price, 0) : 0;
     
     // Add LMI to the loan amount (LMI gets financed)
     const finalLoanAmount = initialLoanAmount + lmiAmount;

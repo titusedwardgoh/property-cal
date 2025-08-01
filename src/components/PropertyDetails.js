@@ -103,9 +103,14 @@ export default function PropertyDetails({
             </div>
           ) : (
             <input
-              type="number"
-              value={propertyData.price || 0}
-              onChange={(e) => setPropertyData(prev => ({ ...prev, price: Number(e.target.value) || 0 }))}
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={propertyData.price || ''}
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9]/g, '');
+                setPropertyData(prev => ({ ...prev, price: value ? Number(value) : 0 }));
+              }}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="Enter property price..."
               disabled={isSearching}
