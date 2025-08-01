@@ -27,6 +27,8 @@ export default function App() {
     searchError,
     includeOtherFees,
     setIncludeOtherFees,
+    isInvestor,
+    setIsInvestor,
     includeLandTransferFee,
     setIncludeLandTransferFee,
     includeLegalFees,
@@ -43,14 +45,15 @@ export default function App() {
 
   const results = useCalculations(
     propertyData, 
-    loanDetails,
-    setLoanDetails,
+    loanDetails, 
+    setLoanDetails, 
     isForeignBuyer, 
     isFirstHomeBuyer, 
-    useEstimatedPrice,
-    includeLandTransferFee,
-    includeLegalFees,
-    includeInspectionFees,
+    isInvestor,
+    useEstimatedPrice, 
+    includeLandTransferFee, 
+    includeLegalFees, 
+    includeInspectionFees, 
     needsLoan
   );
 
@@ -83,6 +86,8 @@ export default function App() {
               setIsForeignBuyer={setIsForeignBuyer}
               isFirstHomeBuyer={isFirstHomeBuyer}
               setIsFirstHomeBuyer={setIsFirstHomeBuyer}
+              isInvestor={isInvestor}
+              setIsInvestor={setIsInvestor}
               isSearching={isSearching}
               propertyPrice={propertyData.price}
             />

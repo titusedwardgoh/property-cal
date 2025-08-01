@@ -1,4 +1,4 @@
-import { DollarSign, FileText, Globe } from 'lucide-react';
+import { DollarSign, FileText, Globe, Calendar } from 'lucide-react';
 import { formatCurrency } from '../utils/calculations.js';
 import LoanSummaryCard from './LoanSummaryCard.js';
 
@@ -105,10 +105,18 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer })
               {formatCurrency(results.councilRates / 12)}
             </span>
           </div>
+          {results.landTax > 0 && (
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Land Tax</span>
+              <span className="font-semibold">
+                {formatCurrency(results.landTax / 12)}
+              </span>
+            </div>
+          )}
           <hr />
           <div className="flex justify-between items-center">
             <span className="font-semibold text-gray-900">Total Monthly</span>
-            <span className="font-bold text-xl text-green-600">
+            <span className="font-bold text-xl text-blue-600">
               {formatCurrency(results.totalMonthlyCosts)}
             </span>
           </div>
@@ -117,16 +125,15 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer })
 
       {/* Annual Costs */}
       <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-        <div className="flex items-center space-x-3 mb-4">
-          <Globe className="w-5 h-5 text-purple-600" />
+        <div className="flex items-center space-x-3 mb-6">
+          <Calendar className="w-5 h-5 text-green-600" />
           <h3 className="text-lg font-semibold text-gray-900">Annual Costs</h3>
         </div>
-        
         <div className="space-y-3">
           {results.hasLoan && (
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Loan Repayments</span>
-              <span className="font-semibold">
+              <span className="text-gray-600">Loan Repayment</span>
+              <span className="font-semibold text-lg">
                 {formatCurrency(results.monthlyRepayment * 12)}
               </span>
             </div>
@@ -137,6 +144,14 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer })
               {formatCurrency(results.councilRates)}
             </span>
           </div>
+          {results.landTax > 0 && (
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Land Tax</span>
+              <span className="font-semibold">
+                {formatCurrency(results.landTax)}
+              </span>
+            </div>
+          )}
           <hr />
           <div className="flex justify-between items-center">
             <span className="font-semibold text-gray-900">Total Annual</span>

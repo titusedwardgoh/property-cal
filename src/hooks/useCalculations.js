@@ -10,15 +10,17 @@ import {
   calculateMonthlyRepayment, 
   calculateCouncilRates,
   calculateFirstHomeOwnersGrant,
+  calculateLandTax,
   formatCurrency 
 } from '../utils/calculations.js';
 
-export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan) {
+export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan) {
   const [results, setResults] = useState({
     monthlyRepayment: 0,
     stampDuty: 0,
     foreignBuyerDuty: 0,
     councilRates: 0,
+    landTax: 0,
     landTransferFee: 0,
     mortgageRegistrationFee: 0,
     legalFees: 0,
@@ -125,7 +127,8 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     ) : 0;
     
     const councilRates = calculateCouncilRates(price);
-    const totalMonthlyCosts = monthlyRepayment + (councilRates / 12);
+    const landTax = isInvestor ? calculateLandTax(price, propertyData.state) : 0;
+    const totalMonthlyCosts = monthlyRepayment + (councilRates / 12) + (landTax / 12);
 
     // Calculate LVR (Loan to Value Ratio)
     const lvr = finalLoanAmount > 0 && totalPropertyCost > 0 ? (finalLoanAmount / totalPropertyCost) * 100 : 0;
@@ -142,6 +145,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       stampDuty,
       foreignBuyerDuty,
       councilRates,
+      landTax,
       landTransferFee,
       mortgageRegistrationFee,
       legalFees,
@@ -157,7 +161,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     });
 
     setLoanDetails(prev => ({ ...prev, loanAmount: finalLoanAmount, lmiAmount }));
-  }, [propertyData, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, setLoanDetails, hasMortgage, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, totalPropertyCost, price, needsLoan]);
+  }, [propertyData, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, setLoanDetails, hasMortgage, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, totalPropertyCost, price, needsLoan, isInvestor]);
 
   return {
     ...results,

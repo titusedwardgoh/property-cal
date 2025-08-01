@@ -260,6 +260,15 @@ export const calculateFirstHomeOwnersGrant = (price, state) => {
   }
 };
 
+// Land Tax calculation for investor properties
+export const calculateLandTax = (price, state) => {
+  // Placeholder land tax calculation - simplified for now
+  // In reality, land tax varies significantly by state and has different thresholds
+  if (price <= 500000) return 0;
+  if (price <= 1000000) return price * 0.001; // 0.1% for properties $500k-$1M
+  return price * 0.002; // 0.2% for properties over $1M
+};
+
 export const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-AU', {
     style: 'currency',
