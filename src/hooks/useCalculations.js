@@ -3,18 +3,18 @@ import {
   calculateStampDuty, 
   calculateForeignBuyerDuty, 
   calculateLandTransferFee, 
-  calculateMortgageRegistrationFee, 
   calculateLegalFees, 
   calculateInspectionFees, 
   calculateLMI, 
   calculateMonthlyRepayment, 
   calculateCouncilRates,
+  calculateWaterRates,
+  calculateBodyCorporate,
   calculateFirstHomeOwnersGrant,
-  calculateLandTax,
-  formatCurrency 
+  calculateLandTax
 } from '../utils/calculations.js';
 
-export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan) {
+export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan, customLandTransferFee, customLegalFees, customInspectionFees, includeCouncilRates, includeWaterRates, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate) {
   const [results, setResults] = useState({
     monthlyRepayment: 0,
     stampDuty: 0,
@@ -29,7 +29,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     totalUpfrontCosts: 0,
     totalMonthlyCosts: 0
   });
-
+  
   // Store the last manually entered deposit amount
   const lastManualDeposit = useRef(0);
   const isUpdatingDeposit = useRef(false);
@@ -46,9 +46,20 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
   // Calculate if mortgage is needed for mortgage registration fee
   const stampDuty = calculateStampDuty(price, propertyData.state, isFirstHomeBuyer);
   const foreignBuyerDuty = calculateForeignBuyerDuty(price, propertyData.state, isForeignBuyer);
-  const landTransferFee = (price > 0 && includeLandTransferFee) ? calculateLandTransferFee(price) : 0;
-  const legalFees = (price > 0 && includeLegalFees) ? calculateLegalFees(price) : 0;
-  const inspectionFees = (price > 0 && includeInspectionFees) ? calculateInspectionFees(price) : 0;
+  const calculatedLandTransferFee = (price > 0 && includeLandTransferFee) ? calculateLandTransferFee(price, propertyData.state) : 0;
+  const calculatedLegalFees = (price > 0 && includeLegalFees) ? calculateLegalFees(price, propertyData.propertyType) : 0;
+  const calculatedInspectionFees = (price > 0 && includeInspectionFees) ? calculateInspectionFees(price) : 0;
+  const calculatedCouncilRates = (price > 0 && includeCouncilRates) ? calculateCouncilRates(price, propertyData.state) : 0;
+  const calculatedWaterRates = (price > 0 && includeWaterRates) ? calculateWaterRates(price, propertyData.state) : 0;
+  const calculatedBodyCorporate = (price > 0 && includeBodyCorporate) ? calculateBodyCorporate(price, propertyData.propertyCategory) : 0;
+  
+  // Use custom values if they exist and are greater than 0, otherwise use calculated values
+  const landTransferFee = (includeLandTransferFee && customLandTransferFee && customLandTransferFee > 0) ? customLandTransferFee : calculatedLandTransferFee;
+  const legalFees = (includeLegalFees && customLegalFees && customLegalFees > 0) ? customLegalFees : calculatedLegalFees;
+  const inspectionFees = (includeInspectionFees && customInspectionFees && customInspectionFees > 0) ? customInspectionFees : calculatedInspectionFees;
+  const councilRates = (includeCouncilRates && customCouncilRates && customCouncilRates > 0) ? customCouncilRates : calculatedCouncilRates;
+  const waterRates = (includeWaterRates && customWaterRates && customWaterRates > 0) ? customWaterRates : calculatedWaterRates;
+  const bodyCorporate = (includeBodyCorporate && customBodyCorporate && customBodyCorporate > 0) ? customBodyCorporate : calculatedBodyCorporate;
   const upfrontCostsExcludingMortgageReg = stampDuty + foreignBuyerDuty + landTransferFee + legalFees + inspectionFees;
   const hasMortgage = needsLoan && price > 0 && loanDetails.deposit > 0 && loanDetails.deposit < (price + upfrontCostsExcludingMortgageReg);
   
@@ -77,8 +88,13 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     if (!isUpdatingDeposit.current) {
       isUpdatingDeposit.current = true;
       
+      // If price is 0 or negative, reset deposit to 0
+      if (price <= 0) {
+        setLoanDetails(prev => ({ ...prev, deposit: 0 }));
+        lastManualDeposit.current = 0;
+      }
       // If no loan is needed, set deposit to property price
-      if (!needsLoan && price > 0) {
+      else if (!needsLoan && price > 0) {
         setLoanDetails(prev => ({ ...prev, deposit: price }));
       }
       // If loan is needed and we have a stored manual deposit, use it
@@ -126,9 +142,8 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       loanDetails.loanTerm
     ) : 0;
     
-    const councilRates = calculateCouncilRates(price);
     const landTax = isInvestor ? calculateLandTax(price, propertyData.state) : 0;
-    const totalMonthlyCosts = monthlyRepayment + (councilRates / 12) + (landTax / 12);
+    const totalMonthlyCosts = monthlyRepayment + (councilRates / 12) + (waterRates / 12) + (bodyCorporate / 12) + (landTax / 12);
 
     // Calculate LVR (Loan to Value Ratio)
     const lvr = finalLoanAmount > 0 && totalPropertyCost > 0 ? (finalLoanAmount / totalPropertyCost) * 100 : 0;
@@ -145,6 +160,8 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       stampDuty,
       foreignBuyerDuty,
       councilRates,
+      waterRates,
+      bodyCorporate,
       landTax,
       landTransferFee,
       mortgageRegistrationFee,
@@ -161,7 +178,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     });
 
     setLoanDetails(prev => ({ ...prev, loanAmount: finalLoanAmount, lmiAmount }));
-  }, [propertyData, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, setLoanDetails, hasMortgage, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, totalPropertyCost, price, needsLoan, isInvestor]);
+  }, [propertyData, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, setLoanDetails, needsLoan, isInvestor]);
 
   return {
     ...results,

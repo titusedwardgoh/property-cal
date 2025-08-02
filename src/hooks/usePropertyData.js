@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { estimatePropertyPrice } from '../utils/calculations.js';
 
 export function usePropertyData() {
@@ -6,7 +6,14 @@ export function usePropertyData() {
     address: '',
     price: 0,
     state: 'NSW',
-    estimatedPrice: 0
+    estimatedPrice: 0,
+    propertyType: 'existing', // Default to existing property
+    propertyCategory: '',
+    completionYear: null,
+    developerName: '',
+    constructionStarted: false,
+    developmentCompletion: null,
+    dutiableValue: null
   });
 
   const [useEstimatedPrice, setUseEstimatedPrice] = useState(false);
@@ -22,6 +29,31 @@ export function usePropertyData() {
   const [includeLandTransferFee, setIncludeLandTransferFee] = useState(false);
   const [includeLegalFees, setIncludeLegalFees] = useState(false);
   const [includeInspectionFees, setIncludeInspectionFees] = useState(false);
+  
+  // Custom fee amounts
+  const [customLandTransferFee, setCustomLandTransferFee] = useState(0);
+  const [customLegalFees, setCustomLegalFees] = useState(0);
+  const [customInspectionFees, setCustomInspectionFees] = useState(0);
+  
+  // Council and Water Rates - Always included since they're always payable
+  const [includeCouncilRates, setIncludeCouncilRates] = useState(true);
+  const [includeWaterRates, setIncludeWaterRates] = useState(true);
+  const [customCouncilRates, setCustomCouncilRates] = useState(0);
+  const [customWaterRates, setCustomWaterRates] = useState(0);
+  
+  // Body Corporate/Strata - Default checked for apartments
+  const [includeBodyCorporate, setIncludeBodyCorporate] = useState(false);
+  const [customBodyCorporate, setCustomBodyCorporate] = useState(0);
+  
+  // Auto-check body corporate for apartments
+  useEffect(() => {
+    if (propertyData.propertyCategory === 'apartment') {
+      setIncludeBodyCorporate(true);
+      if (customBodyCorporate === 0) {
+        setCustomBodyCorporate(4000); // Default $4,000 for apartments
+      }
+    }
+  }, [propertyData.propertyCategory, customBodyCorporate]);
   
   // Store the saved states of individual fee checkboxes
   const [savedLandTransferFee, setSavedLandTransferFee] = useState(false);
@@ -109,6 +141,24 @@ export function usePropertyData() {
     setIncludeLegalFees: handleLegalFeesChange,
     includeInspectionFees,
     setIncludeInspectionFees: handleInspectionFeesChange,
+    customLandTransferFee,
+    setCustomLandTransferFee,
+    customLegalFees,
+    setCustomLegalFees,
+    customInspectionFees,
+    setCustomInspectionFees,
+    includeCouncilRates,
+    setIncludeCouncilRates,
+    includeWaterRates,
+    setIncludeWaterRates,
+    customCouncilRates,
+    setCustomCouncilRates,
+    customWaterRates,
+    setCustomWaterRates,
+    includeBodyCorporate,
+    setIncludeBodyCorporate,
+    customBodyCorporate,
+    setCustomBodyCorporate,
     handleAddressSearch,
     getEffectivePrice
   };

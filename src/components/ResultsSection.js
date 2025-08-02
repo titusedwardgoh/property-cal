@@ -105,6 +105,20 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer })
               {formatCurrency(results.councilRates / 12)}
             </span>
           </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">Water Rates</span>
+            <span className="font-semibold">
+              {formatCurrency(results.waterRates / 12)}
+            </span>
+          </div>
+          {results.bodyCorporate > 0 && (
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Body Corporate/Strata</span>
+              <span className="font-semibold">
+                {formatCurrency(results.bodyCorporate / 12)}
+              </span>
+            </div>
+          )}
           {results.landTax > 0 && (
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Land Tax</span>
@@ -144,6 +158,20 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer })
               {formatCurrency(results.councilRates)}
             </span>
           </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">Water Rates</span>
+            <span className="font-semibold">
+              {formatCurrency(results.waterRates)}
+            </span>
+          </div>
+          {results.bodyCorporate > 0 && (
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Body Corporate/Strata</span>
+              <span className="font-semibold">
+                {formatCurrency(results.bodyCorporate)}
+              </span>
+            </div>
+          )}
           {results.landTax > 0 && (
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Land Tax</span>

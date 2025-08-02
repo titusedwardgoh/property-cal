@@ -21,20 +21,38 @@ export default function App() {
     setIsForeignBuyer,
     isFirstHomeBuyer,
     setIsFirstHomeBuyer,
+    isInvestor,
+    setIsInvestor,
     needsLoan,
     setNeedsLoan,
     isSearching,
     searchError,
     includeOtherFees,
     setIncludeOtherFees,
-    isInvestor,
-    setIsInvestor,
     includeLandTransferFee,
     setIncludeLandTransferFee,
     includeLegalFees,
     setIncludeLegalFees,
     includeInspectionFees,
     setIncludeInspectionFees,
+    customLandTransferFee,
+    setCustomLandTransferFee,
+    customLegalFees,
+    setCustomLegalFees,
+    customInspectionFees,
+    setCustomInspectionFees,
+    includeCouncilRates,
+    setIncludeCouncilRates,
+    includeWaterRates,
+    setIncludeWaterRates,
+    customCouncilRates,
+    setCustomCouncilRates,
+    customWaterRates,
+    setCustomWaterRates,
+    includeBodyCorporate,
+    setIncludeBodyCorporate,
+    customBodyCorporate,
+    setCustomBodyCorporate,
     handleAddressSearch
   } = usePropertyData();
 
@@ -45,16 +63,25 @@ export default function App() {
 
   const results = useCalculations(
     propertyData, 
-    loanDetails, 
-    setLoanDetails, 
+    loanDetails,
+    setLoanDetails,
     isForeignBuyer, 
     isFirstHomeBuyer, 
     isInvestor,
-    useEstimatedPrice, 
-    includeLandTransferFee, 
-    includeLegalFees, 
-    includeInspectionFees, 
-    needsLoan
+    useEstimatedPrice,
+    includeLandTransferFee,
+    includeLegalFees,
+    includeInspectionFees,
+    needsLoan,
+    customLandTransferFee,
+    customLegalFees,
+    customInspectionFees,
+    includeCouncilRates,
+    includeWaterRates,
+    customCouncilRates,
+    customWaterRates,
+    includeBodyCorporate,
+    customBodyCorporate
   );
 
   return (
@@ -80,8 +107,6 @@ export default function App() {
             <BuyerDetails
               needsLoan={needsLoan}
               setNeedsLoan={setNeedsLoan}
-              includeOtherFees={includeOtherFees}
-              setIncludeOtherFees={setIncludeOtherFees}
               isForeignBuyer={isForeignBuyer}
               setIsForeignBuyer={setIsForeignBuyer}
               isFirstHomeBuyer={isFirstHomeBuyer}
@@ -105,23 +130,35 @@ export default function App() {
               />
             )}
 
-            {includeOtherFees && (
-              <OtherFees
-                includeLandTransferFee={includeLandTransferFee}
-                setIncludeLandTransferFee={setIncludeLandTransferFee}
-                includeLegalFees={includeLegalFees}
-                setIncludeLegalFees={setIncludeLegalFees}
-                includeInspectionFees={includeInspectionFees}
-                setIncludeInspectionFees={setIncludeInspectionFees}
-                price={useEstimatedPrice ? propertyData.estimatedPrice || 0 : propertyData.price}
-                deposit={loanDetails.deposit}
-                stampDuty={results.stampDuty}
-                foreignBuyerDuty={results.foreignBuyerDuty}
-                landTransferFee={results.landTransferFee}
-                legalFees={results.legalFees}
-                inspectionFees={results.inspectionFees}
-              />
-            )}
+            <OtherFees
+              includeLandTransferFee={includeLandTransferFee}
+              setIncludeLandTransferFee={setIncludeLandTransferFee}
+              includeLegalFees={includeLegalFees}
+              setIncludeLegalFees={setIncludeLegalFees}
+              includeInspectionFees={includeInspectionFees}
+              setIncludeInspectionFees={setIncludeInspectionFees}
+              price={useEstimatedPrice ? propertyData.estimatedPrice || 0 : propertyData.price}
+              landTransferFee={customLandTransferFee > 0 ? customLandTransferFee : results.landTransferFee}
+              legalFees={customLegalFees > 0 ? customLegalFees : results.legalFees}
+              inspectionFees={customInspectionFees > 0 ? customInspectionFees : results.inspectionFees}
+              setLandTransferFee={setCustomLandTransferFee}
+              setLegalFees={setCustomLegalFees}
+              setInspectionFees={setCustomInspectionFees}
+              propertyData={propertyData}
+              setPropertyData={setPropertyData}
+              includeCouncilRates={includeCouncilRates}
+              setIncludeCouncilRates={setIncludeCouncilRates}
+              includeWaterRates={includeWaterRates}
+              setIncludeWaterRates={setIncludeWaterRates}
+              councilRates={customCouncilRates > 0 ? customCouncilRates : results.councilRates}
+              waterRates={customWaterRates > 0 ? customWaterRates : results.waterRates}
+              setCouncilRates={setCustomCouncilRates}
+              setWaterRates={setCustomWaterRates}
+              includeBodyCorporate={includeBodyCorporate}
+              setIncludeBodyCorporate={setIncludeBodyCorporate}
+              bodyCorporate={customBodyCorporate > 0 ? customBodyCorporate : results.bodyCorporate}
+              setBodyCorporate={setCustomBodyCorporate}
+            />
           </div>
 
           {/* Results Section */}

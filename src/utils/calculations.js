@@ -82,9 +82,70 @@ const applyFirstHomeBuyerConcession = (duty, price, state) => {
 };
 
 // Land Transfer Fee (Land Use Victoria formula)
-export const calculateLandTransferFee = (price) => {
-  // Formula: $89.50 + $2.34 per $1,000 of purchase price
-  return 89.50 + (price / 1000) * 2.34;
+export const calculateLandTransferFee = (price, state) => {
+  // Official government land transfer (title registration) fees - FY 2025/26
+  switch (state) {
+    case 'NSW':
+      // NSW: Standard transfer fee ~$155 incl. GST
+      return 155;
+      
+    case 'VIC':
+      // VIC: Based on fee units ($16.81 per unit)
+      // Standard transfer typically uses 6-8 fee units
+      const feeUnits = 7; // Average for standard transfer
+      return feeUnits * 16.81;
+      
+    case 'QLD':
+      // QLD: Tiered by property value
+      if (price <= 50000) return 200;
+      if (price <= 100000) return 300;
+      if (price <= 200000) return 400;
+      if (price <= 350000) return 500;
+      if (price <= 500000) return 600;
+      if (price <= 750000) return 800;
+      if (price <= 1000000) return 1000;
+      if (price <= 1500000) return 1500;
+      return 2000; // For properties over $1.5M
+      
+    case 'WA':
+      // WA: $180–$400+ depending on property value
+      if (price <= 80000) return 180;
+      if (price <= 100000) return 200;
+      if (price <= 250000) return 250;
+      if (price <= 500000) return 300;
+      if (price <= 1000000) return 350;
+      return 400;
+      
+    case 'SA':
+      // SA: Fixed per dealing (transfer)
+      return 172; // Standard transfer fee
+      
+    case 'TAS':
+      // TAS: ~$147–$300+ based on price tiers
+      if (price <= 25000) return 147;
+      if (price <= 50000) return 180;
+      if (price <= 100000) return 220;
+      if (price <= 200000) return 250;
+      if (price <= 500000) return 280;
+      return 300;
+      
+    case 'ACT':
+      // ACT: Flat registration fee ~$409
+      return 409;
+      
+    case 'NT':
+      // NT: ~$145–$750+ based on value
+      if (price <= 50000) return 145;
+      if (price <= 100000) return 200;
+      if (price <= 200000) return 300;
+      if (price <= 500000) return 450;
+      if (price <= 1000000) return 600;
+      return 750;
+      
+    default:
+      // Fallback to NSW calculation
+      return 155;
+  }
 };
 
 // Mortgage Registration Fee
@@ -92,11 +153,49 @@ export const calculateMortgageRegistrationFee = (hasMortgage = true) => {
   return hasMortgage ? 120 : 0;
 };
 
-// Legal/Conveyancing Fees (estimated based on property price)
-export const calculateLegalFees = (price) => {
-  if (price < 500000) return 800;
-  if (price < 1000000) return 1500;
-  return 2200; // For properties over $1M
+// Legal/Conveyancing Fees (estimated based on property price and type)
+export const calculateLegalFees = (price, propertyType = 'existing') => {
+  // Base fees by property type and service type
+  const baseFees = {
+    'existing': {
+      conveyancer: {
+        low: 800,
+        medium: 1000,
+        high: 1500
+      },
+      solicitor: {
+        low: 1500,
+        medium: 2000,
+        high: 2500
+      }
+    },
+    'off-the-plan': {
+      conveyancer: {
+        low: 1200,
+        medium: 1500,
+        high: 2000
+      },
+      solicitor: {
+        low: 2000,
+        medium: 2500,
+        high: 3000
+      }
+    }
+  };
+  
+  const fees = baseFees[propertyType] || baseFees.existing;
+  
+  // Determine fee tier based on property price
+  let feeTier;
+  if (price < 500000) feeTier = 'low';
+  else if (price < 1000000) feeTier = 'medium';
+  else feeTier = 'high';
+  
+  // Return average of conveyancer and solicitor fees
+  const conveyancerFee = fees.conveyancer[feeTier];
+  const solicitorFee = fees.solicitor[feeTier];
+  
+  return Math.round((conveyancerFee + solicitorFee) / 2);
 };
 
 // Building and Pest Inspection (estimated based on property price)
@@ -209,9 +308,36 @@ export const calculateForeignBuyerDuty = (price, state, isForeignBuyer) => {
   return price * (FOREIGN_BUYER_RATES[state] || 0);
 };
 
-export const calculateCouncilRates = (price) => {
-  // Estimated council rates (varies by location, simplified calculation)
-  return price * 0.001; // Roughly 0.1% of property value annually
+export const calculateCouncilRates = (price, state) => {
+  // Council rates are typically 0.3% to 0.6% of property value annually
+  // Varies by state and council area
+  const rate = 0.004; // 0.4% average
+  return Math.round(price * rate);
+};
+
+export const calculateWaterRates = (price, state) => {
+  // Water rates are typically $800-$1500 annually
+  // Based on property value and usage
+  if (price < 500000) return 900;
+  if (price < 1000000) return 1100;
+  return 1300;
+};
+
+export const calculateBodyCorporate = (price, propertyCategory) => {
+  // Body corporate fees vary significantly by property type and location
+  // Default estimate based on property category
+  switch (propertyCategory) {
+    case 'apartment':
+      return 4000; // Typical apartment strata fees
+    case 'townhouse':
+      return 2500; // Lower for townhouses
+    case 'house':
+      return 0; // Houses typically don't have body corporate
+    case 'land':
+      return 0; // Land doesn't have body corporate
+    default:
+      return 0;
+  }
 };
 
 export const calculateFirstHomeOwnersGrant = (price, state) => {
