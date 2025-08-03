@@ -59,7 +59,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
   const inspectionFees = (includeInspectionFees && customInspectionFees && customInspectionFees > 0) ? customInspectionFees : calculatedInspectionFees;
   const councilRates = (includeCouncilRates && customCouncilRates && customCouncilRates > 0) ? customCouncilRates : calculatedCouncilRates;
   const waterRates = (includeWaterRates && customWaterRates && customWaterRates > 0) ? customWaterRates : calculatedWaterRates;
-  const bodyCorporate = (includeBodyCorporate && customBodyCorporate && customBodyCorporate > 0) ? customBodyCorporate : calculatedBodyCorporate;
+  const bodyCorporate = includeBodyCorporate ? customBodyCorporate : calculatedBodyCorporate;
   const upfrontCostsExcludingMortgageReg = stampDuty + foreignBuyerDuty + landTransferFee + legalFees + inspectionFees;
   const hasMortgage = needsLoan && price > 0 && loanDetails.deposit > 0 && loanDetails.deposit < (price + upfrontCostsExcludingMortgageReg);
   

@@ -92,18 +92,6 @@ export default function App() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Input Section */}
           <div className="lg:col-span-2 space-y-6">
-            <PropertyDetails
-              propertyData={propertyData}
-              setPropertyData={setPropertyData}
-              loanDetails={loanDetails}
-              setLoanDetails={setLoanDetails}
-              useEstimatedPrice={useEstimatedPrice}
-              setUseEstimatedPrice={setUseEstimatedPrice}
-              isSearching={isSearching}
-              searchError={searchError}
-              onAddressSearch={handleAddressSearch}
-            />
-
             <BuyerDetails
               needsLoan={needsLoan}
               setNeedsLoan={setNeedsLoan}
@@ -117,6 +105,22 @@ export default function App() {
               propertyPrice={propertyData.price}
             />
 
+            <PropertyDetails
+              propertyData={propertyData}
+              setPropertyData={setPropertyData}
+              loanDetails={loanDetails}
+              setLoanDetails={setLoanDetails}
+              useEstimatedPrice={useEstimatedPrice}
+              setUseEstimatedPrice={setUseEstimatedPrice}
+              isSearching={isSearching}
+              searchError={searchError}
+              onAddressSearch={handleAddressSearch}
+              isInvestor={isInvestor}
+              isForeignBuyer={isForeignBuyer}
+              isFirstHomeBuyer={isFirstHomeBuyer}
+              needsLoan={needsLoan}
+            />
+
             {needsLoan && (
               <LoanDetails
                 loanDetails={loanDetails}
@@ -127,6 +131,8 @@ export default function App() {
                 depositPercentage={results.depositPercentage}
                 price={useEstimatedPrice ? propertyData.estimatedPrice || 0 : propertyData.price}
                 hasMortgage={results.hasMortgage}
+                propertyData={propertyData}
+                useEstimatedPrice={useEstimatedPrice}
               />
             )}
 
@@ -156,7 +162,7 @@ export default function App() {
               setWaterRates={setCustomWaterRates}
               includeBodyCorporate={includeBodyCorporate}
               setIncludeBodyCorporate={setIncludeBodyCorporate}
-              bodyCorporate={customBodyCorporate > 0 ? customBodyCorporate : results.bodyCorporate}
+              bodyCorporate={customBodyCorporate}
               setBodyCorporate={setCustomBodyCorporate}
             />
           </div>

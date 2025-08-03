@@ -2,7 +2,7 @@ import { DollarSign, FileText, Globe, Calendar } from 'lucide-react';
 import { formatCurrency } from '../utils/calculations.js';
 import LoanSummaryCard from './LoanSummaryCard.js';
 
-export default function ResultsSection({ results, loanDetails, isForeignBuyer }) {
+export default function ResultsSection({ results, loanDetails, isForeignBuyer, includeBodyCorporate }) {
   return (
     <div className="space-y-6">
       {/* Upfront Costs */}
@@ -111,7 +111,7 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer })
               {formatCurrency(results.waterRates / 12)}
             </span>
           </div>
-          {results.bodyCorporate > 0 && (
+          {includeBodyCorporate && (
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Body Corporate/Strata</span>
               <span className="font-semibold">
@@ -164,7 +164,7 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer })
               {formatCurrency(results.waterRates)}
             </span>
           </div>
-          {results.bodyCorporate > 0 && (
+          {includeBodyCorporate && (
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Body Corporate/Strata</span>
               <span className="font-semibold">

@@ -8,15 +8,28 @@ export default function LoanDetails({
   shouldShowLMI, 
   hasMortgage,
   depositWarning,
-  depositPercentage
+  depositPercentage,
+  propertyData,
+  useEstimatedPrice
 }) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [hasBeenCollapsed, setHasBeenCollapsed] = useState(false);
 
-  // Auto-expand when component first appears (when loan details become relevant)
+  // Check if property details are filled in
+  const isOffThePlan = propertyData.propertyType === 'off-the-plan';
+  const isExistingProperty = propertyData.propertyType === 'existing';
+  
+  const propertyDetailsFilled = 
+    propertyData.propertyType && // Property type is selected
+    propertyData.state && // State is selected
+    (useEstimatedPrice ? propertyData.estimatedPrice > 0 : propertyData.price > 0) && // Price is provided
+    propertyData.propertyCategory && // Property category is selected
+    (isExistingProperty ? propertyData.address.trim() : true); // Address required for existing properties
+
+  // Keep collapsed when component first appears (when loan details become relevant)
   useEffect(() => {
     if (!hasBeenCollapsed) {
-      setIsExpanded(true);
+      setIsExpanded(false);
     }
   }, [hasBeenCollapsed]);
 
@@ -31,10 +44,20 @@ export default function LoanDetails({
         <div className="flex items-center space-x-3">
           <Calculator className="w-5 h-5 text-blue-600" />
           <h2 className="text-xl font-semibold text-gray-900">Loan Details</h2>
+          {!propertyDetailsFilled && (
+            <span className="text-sm text-gray-500 font-normal">
+              (Complete property details first)
+            </span>
+          )}
         </div>
         <button
           onClick={handleToggle}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className={`p-2 rounded-lg transition-colors ${
+            propertyDetailsFilled 
+              ? 'hover:bg-gray-100' 
+              : 'opacity-50 cursor-not-allowed'
+          }`}
+          disabled={!propertyDetailsFilled}
         >
           {isExpanded ? (
             <ChevronUp className="w-5 h-5 text-gray-600" />

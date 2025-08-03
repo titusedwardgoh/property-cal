@@ -5,7 +5,7 @@ export function usePropertyData() {
   const [propertyData, setPropertyData] = useState({
     address: '',
     price: 0,
-    state: 'NSW',
+    state: '',
     estimatedPrice: 0,
     propertyType: 'existing', // Default to existing property
     propertyCategory: '',
@@ -17,13 +17,13 @@ export function usePropertyData() {
   });
 
   const [useEstimatedPrice, setUseEstimatedPrice] = useState(false);
-  const [isForeignBuyer, setIsForeignBuyer] = useState(false);
-  const [isFirstHomeBuyer, setIsFirstHomeBuyer] = useState(false);
-  const [needsLoan, setNeedsLoan] = useState(false);
+  const [isForeignBuyer, setIsForeignBuyer] = useState(null);
+  const [isFirstHomeBuyer, setIsFirstHomeBuyer] = useState(null);
+  const [needsLoan, setNeedsLoan] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [includeOtherFees, setIncludeOtherFees] = useState(false);
-  const [isInvestor, setIsInvestor] = useState(false);
+  const [isInvestor, setIsInvestor] = useState(null);
   
   // Optional fees checkboxes
   const [includeLandTransferFee, setIncludeLandTransferFee] = useState(false);
@@ -44,16 +44,18 @@ export function usePropertyData() {
   // Body Corporate/Strata - Default checked for apartments
   const [includeBodyCorporate, setIncludeBodyCorporate] = useState(false);
   const [customBodyCorporate, setCustomBodyCorporate] = useState(0);
+  const [hasUserSetBodyCorporate, setHasUserSetBodyCorporate] = useState(false);
   
   // Auto-check body corporate for apartments
   useEffect(() => {
     if (propertyData.propertyCategory === 'apartment') {
       setIncludeBodyCorporate(true);
-      if (customBodyCorporate === 0) {
+      // Only set default if user hasn't manually set a value and current value is 0
+      if (!hasUserSetBodyCorporate && customBodyCorporate === 0) {
         setCustomBodyCorporate(4000); // Default $4,000 for apartments
       }
     }
-  }, [propertyData.propertyCategory, customBodyCorporate]);
+  }, [propertyData.propertyCategory]);
   
   // Store the saved states of individual fee checkboxes
   const [savedLandTransferFee, setSavedLandTransferFee] = useState(false);
@@ -118,6 +120,12 @@ export function usePropertyData() {
     }
   };
 
+  // Custom setter for body corporate that tracks user input
+  const setCustomBodyCorporateWithFlag = (value) => {
+    setCustomBodyCorporate(value);
+    setHasUserSetBodyCorporate(true);
+  };
+
   return {
     propertyData,
     setPropertyData,
@@ -158,7 +166,7 @@ export function usePropertyData() {
     includeBodyCorporate,
     setIncludeBodyCorporate,
     customBodyCorporate,
-    setCustomBodyCorporate,
+    setCustomBodyCorporate: setCustomBodyCorporateWithFlag,
     handleAddressSearch,
     getEffectivePrice
   };
