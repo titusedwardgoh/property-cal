@@ -59,29 +59,20 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
   const inspectionFees = (includeInspectionFees && customInspectionFees && customInspectionFees > 0) ? customInspectionFees : calculatedInspectionFees;
   const councilRates = (includeCouncilRates && customCouncilRates && customCouncilRates > 0) ? customCouncilRates : calculatedCouncilRates;
   const waterRates = (includeWaterRates && customWaterRates && customWaterRates > 0) ? customWaterRates : calculatedWaterRates;
-  const bodyCorporate = includeBodyCorporate ? customBodyCorporate : calculatedBodyCorporate;
+  const bodyCorporate = includeBodyCorporate ? (customBodyCorporate > 0 ? customBodyCorporate : 4000) : 0;
   const upfrontCostsExcludingMortgageReg = stampDuty + foreignBuyerDuty + landTransferFee + legalFees + inspectionFees;
   const hasMortgage = needsLoan && price > 0 && loanDetails.deposit > 0 && loanDetails.deposit < (price + upfrontCostsExcludingMortgageReg);
   
-  // Determine LMI requirements based on deposit percentage of total cost
-  let shouldShowLMI = false;
-  let shouldDefaultLMI = false;
+  // Simple LMI display logic
+  let shouldShowLMI = true; // Always show LMI checkbox when loan is needed
+  let shouldDefaultLMI = false; // Don't auto-check
   let depositWarning = null;
   
-  // Only show warnings and LMI logic when both price and deposit have values
-  if (price > 0 && loanDetails.deposit > 0) {
-    if (depositPercentageOfTotal < 5) {
-      shouldShowLMI = true;
-      shouldDefaultLMI = true;
-      depositWarning = "You need at least 5% to get a loan from most banks";
-    } else if (depositPercentageOfTotal < 20) {
-      shouldShowLMI = true;
-      shouldDefaultLMI = true; // Auto-check initially
-    } else {
-      shouldShowLMI = false;
-      shouldDefaultLMI = false;
-    }
-  }
+  // Check if deposit is too low (LVR > 95%)
+  const lvr = price > 0 && loanDetails.deposit > 0 ? ((price - loanDetails.deposit) / price) * 100 : 0;
+  const isDepositTooLow = lvr > 95;
+  
+
 
   useEffect(() => {
     // Handle deposit logic
@@ -106,29 +97,40 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
         setLoanDetails(prev => ({ ...prev, deposit: 0 }));
       }
       
-      // Store manual deposit changes (but not when we're programmatically setting it)
-      if (needsLoan && loanDetails.deposit > 0 && loanDetails.deposit !== price && loanDetails.deposit !== lastManualDeposit.current) {
-        lastManualDeposit.current = loanDetails.deposit;
-      }
-      
       isUpdatingDeposit.current = false;
     }
+  }, [price, needsLoan, setLoanDetails]);
+
+  // Separate effect to track manual deposit changes
+  useEffect(() => {
+    // Store manual deposit changes (but not when we're programmatically setting it)
+    if (needsLoan && loanDetails.deposit > 0 && loanDetails.deposit !== price && loanDetails.deposit !== lastManualDeposit.current && !isUpdatingDeposit.current) {
+      lastManualDeposit.current = loanDetails.deposit;
+    }
+  }, [loanDetails.deposit, needsLoan, price]);
+
+
     
-    // Calculate mortgage registration fee using the editable amount
-    const mortgageRegistrationFee = hasMortgage ? loanDetails.mortgageRegistrationFee : 0;
+  // Main calculation effect
+  useEffect(() => {
+    // Calculate mortgage registration fee - show when loan is needed
+    const mortgageRegistrationFee = needsLoan ? loanDetails.mortgageRegistrationFee : 0;
+    
+    // Calculate loan establishment fee - show when loan is needed
+    const loanEstablishmentFee = needsLoan ? loanDetails.loanEstablishmentFee : 0;
     
     // Calculate First Home Owners Grant
     const firstHomeOwnersGrant = isFirstHomeBuyer ? calculateFirstHomeOwnersGrant(price, propertyData.state) : 0;
     
     // Calculate upfront costs excluding LMI and grant
     const upfrontCostsExcludingLMI = stampDuty + foreignBuyerDuty + loanDetails.deposit + 
-                                    landTransferFee + mortgageRegistrationFee + legalFees + inspectionFees;
+                                    landTransferFee + mortgageRegistrationFee + loanEstablishmentFee + legalFees + inspectionFees;
     
     // Calculate initial loan amount based on property price only (upfront fees can't be financed)
     const initialLoanAmount = needsLoan && loanDetails.deposit > 0 ? Math.max(0, price - loanDetails.deposit) : 0;
     
     // Calculate LMI if checkbox is checked and loan is needed
-    const lmiAmount = needsLoan && loanDetails.includeLMI ? calculateLMI(initialLoanAmount, price, 0) : 0;
+    const lmiAmount = needsLoan && loanDetails.includeLMI && initialLoanAmount > 0 ? calculateLMI(initialLoanAmount, price, 0) : 0;
     
     // Add LMI to the loan amount (LMI gets financed)
     const finalLoanAmount = initialLoanAmount + lmiAmount;
@@ -165,6 +167,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       landTax,
       landTransferFee,
       mortgageRegistrationFee,
+      loanEstablishmentFee,
       legalFees,
       inspectionFees,
       lmiAmount,
@@ -177,15 +180,20 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       hasLoan
     });
 
-    setLoanDetails(prev => ({ ...prev, loanAmount: finalLoanAmount, lmiAmount }));
-  }, [propertyData, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, setLoanDetails, needsLoan, isInvestor]);
+    setLoanDetails(prev => ({ 
+      ...prev, 
+      loanAmount: finalLoanAmount, 
+      lmiAmount: lmiAmount 
+    }));
+  }, [propertyData, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, setLoanDetails, needsLoan, isInvestor, price, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, councilRates, waterRates, bodyCorporate, totalPropertyCost]);
 
   return {
     ...results,
     shouldShowLMI,
     shouldDefaultLMI,
-    depositWarning,
+    depositWarning: isDepositTooLow ? "⚠️ You need at least 5% deposit to get a loan" : depositWarning,
     depositPercentage,
-    hasMortgage
+    hasMortgage,
+    isDepositTooLow
   };
 } 

@@ -25,6 +25,8 @@ export default function App() {
     setIsInvestor,
     needsLoan,
     setNeedsLoan,
+    savingsAmount,
+    setSavingsAmount,
     isSearching,
     searchError,
     includeOtherFees,
@@ -103,6 +105,8 @@ export default function App() {
               setIsInvestor={setIsInvestor}
               isSearching={isSearching}
               propertyPrice={propertyData.price}
+              savingsAmount={savingsAmount}
+              setSavingsAmount={setSavingsAmount}
             />
 
             <PropertyDetails
@@ -119,22 +123,8 @@ export default function App() {
               isForeignBuyer={isForeignBuyer}
               isFirstHomeBuyer={isFirstHomeBuyer}
               needsLoan={needsLoan}
+              savingsAmount={savingsAmount}
             />
-
-            {needsLoan && (
-              <LoanDetails
-                loanDetails={loanDetails}
-                setLoanDetails={setLoanDetails}
-                shouldShowLMI={results.shouldShowLMI}
-                shouldDefaultLMI={results.shouldDefaultLMI}
-                depositWarning={results.depositWarning}
-                depositPercentage={results.depositPercentage}
-                price={useEstimatedPrice ? propertyData.estimatedPrice || 0 : propertyData.price}
-                hasMortgage={results.hasMortgage}
-                propertyData={propertyData}
-                useEstimatedPrice={useEstimatedPrice}
-              />
-            )}
 
             <OtherFees
               includeLandTransferFee={includeLandTransferFee}
@@ -164,15 +154,27 @@ export default function App() {
               setIncludeBodyCorporate={setIncludeBodyCorporate}
               bodyCorporate={customBodyCorporate}
               setBodyCorporate={setCustomBodyCorporate}
+              loanDetails={loanDetails}
+              setLoanDetails={setLoanDetails}
+              shouldShowLMI={results.shouldShowLMI}
+              shouldDefaultLMI={results.shouldDefaultLMI}
+              depositWarning={results.depositWarning}
+              depositPercentage={results.depositPercentage}
+              hasMortgage={results.hasMortgage}
+              useEstimatedPrice={useEstimatedPrice}
+              needsLoan={needsLoan}
             />
           </div>
 
-          {/* Results Section */}
-          <ResultsSection
-            results={results}
-            loanDetails={loanDetails}
-            isForeignBuyer={isForeignBuyer}
-          />
+          {/* Results Section - Sticky on large screens */}
+          <div className="lg:sticky lg:top-8 lg:self-start">
+            <ResultsSection
+              results={results}
+              loanDetails={loanDetails}
+              isForeignBuyer={isForeignBuyer}
+              includeBodyCorporate={includeBodyCorporate}
+            />
+          </div>
         </div>
       </div>
     </div>

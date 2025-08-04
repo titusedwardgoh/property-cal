@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Receipt, ChevronDown, ChevronUp } from 'lucide-react';
 import { formatCurrency } from '../utils/calculations.js';
 import SellerQuestions from './SellerQuestions.js';
+import LoanDetails from './LoanDetails.js';
 
 export default function OtherFees({
   includeLandTransferFee,
@@ -30,7 +31,16 @@ export default function OtherFees({
   includeBodyCorporate,
   setIncludeBodyCorporate,
   bodyCorporate,
-  setBodyCorporate
+  setBodyCorporate,
+  loanDetails,
+  setLoanDetails,
+  shouldShowLMI,
+  shouldDefaultLMI,
+  depositWarning,
+  depositPercentage,
+  hasMortgage,
+  useEstimatedPrice,
+  needsLoan
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -52,6 +62,21 @@ export default function OtherFees({
           setWaterRates={setWaterRates}
         />
 
+        {needsLoan && (
+          <LoanDetails
+            loanDetails={loanDetails}
+            setLoanDetails={setLoanDetails}
+            shouldShowLMI={shouldShowLMI}
+            shouldDefaultLMI={shouldDefaultLMI}
+            depositWarning={depositWarning}
+            depositPercentage={depositPercentage}
+            price={price}
+            hasMortgage={hasMortgage}
+            propertyData={propertyData}
+            useEstimatedPrice={useEstimatedPrice}
+          />
+        )}
+
         {/* Other Hidden Fees Card - Disabled */}
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
           <div className="flex items-center justify-between mb-6">
@@ -61,7 +86,7 @@ export default function OtherFees({
             </div>
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-lg opacity-50 cursor-not-allowed transition-colors"
               disabled={true}
             >
               <ChevronDown className="w-5 h-5 text-gray-400" />
@@ -90,6 +115,21 @@ export default function OtherFees({
         waterRates={waterRates}
         setWaterRates={setWaterRates}
       />
+
+      {needsLoan && (
+        <LoanDetails
+          loanDetails={loanDetails}
+          setLoanDetails={setLoanDetails}
+          shouldShowLMI={shouldShowLMI}
+          shouldDefaultLMI={shouldDefaultLMI}
+          depositWarning={depositWarning}
+          depositPercentage={depositPercentage}
+          price={price}
+          hasMortgage={hasMortgage}
+          propertyData={propertyData}
+          useEstimatedPrice={useEstimatedPrice}
+        />
+      )}
 
       {/* Other Hidden Fees Card */}
       <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">

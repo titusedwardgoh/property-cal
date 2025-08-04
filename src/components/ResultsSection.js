@@ -43,9 +43,17 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
           )}
           {results.mortgageRegistrationFee > 0 && (
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Mortgage Registration</span>
+              <span className="text-gray-600">Bank Settlement Fee</span>
               <span className="font-semibold">
                 {formatCurrency(results.mortgageRegistrationFee)}
+              </span>
+            </div>
+          )}
+          {results.loanEstablishmentFee > 0 && (
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Loan Establishment Fee</span>
+              <span className="font-semibold">
+                {formatCurrency(results.loanEstablishmentFee)}
               </span>
             </div>
           )}

@@ -11,7 +11,9 @@ export default function BuyerDetails({
   isInvestor,
   setIsInvestor,
   isSearching,
-  propertyPrice
+  propertyPrice,
+  savingsAmount,
+  setSavingsAmount
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -188,6 +190,28 @@ export default function BuyerDetails({
               </div>
             </div>
           </div>
+
+          {/* Savings Amount - Only show if loan is needed */}
+          {needsLoan && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                How much savings do you have? <span className="text-red-500">*</span>
+              </label>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">$</span>
+                <input
+                  type="number"
+                  value={savingsAmount || ''}
+                  onChange={(e) => setSavingsAmount(Number(e.target.value) || 0)}
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="Enter your savings amount..."
+                  required
+                  min="0"
+                  disabled={isSearching}
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -214,15 +214,25 @@ export const calculateLMI = (loanAmount, propertyPrice, upfrontCosts) => {
   // If LVR is 80% or below, no LMI required
   if (lvr <= 80) return 0;
   
-  // Determine LVR band
+  // If LVR is above 95% (deposit less than 5%), use the highest LMI rate
   let lvrBand;
-  if (lvr <= 81) lvrBand = '80.01-81%';
-  else if (lvr <= 85) lvrBand = '84.01-85%';
-  else if (lvr <= 89) lvrBand = '88.01-89%';
-  else if (lvr <= 90) lvrBand = '89.01-90%';
-  else if (lvr <= 91) lvrBand = '90.01-91%';
-  else if (lvr <= 95) lvrBand = '94.01-95%';
-  else return 0; // LVR too high, no standard LMI available
+  if (lvr > 95) {
+    lvrBand = '94.01-95%'; // Use highest available rate
+  } else if (lvr > 80 && lvr <= 81) {
+    lvrBand = '80.01-81%';
+  } else if (lvr > 81 && lvr <= 85) {
+    lvrBand = '84.01-85%';
+  } else if (lvr > 85 && lvr <= 89) {
+    lvrBand = '88.01-89%';
+  } else if (lvr > 89 && lvr <= 90) {
+    lvrBand = '89.01-90%';
+  } else if (lvr > 90 && lvr <= 91) {
+    lvrBand = '90.01-91%';
+  } else if (lvr > 91 && lvr <= 95) {
+    lvrBand = '94.01-95%';
+  } else {
+    return 0; // Should not reach here
+  }
   
   // Determine loan amount band
   let loanBand;

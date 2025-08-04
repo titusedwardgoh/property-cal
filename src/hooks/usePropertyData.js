@@ -20,6 +20,7 @@ export function usePropertyData() {
   const [isForeignBuyer, setIsForeignBuyer] = useState(null);
   const [isFirstHomeBuyer, setIsFirstHomeBuyer] = useState(null);
   const [needsLoan, setNeedsLoan] = useState(null);
+  const [savingsAmount, setSavingsAmount] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [includeOtherFees, setIncludeOtherFees] = useState(false);
@@ -41,21 +42,9 @@ export function usePropertyData() {
   const [customCouncilRates, setCustomCouncilRates] = useState(0);
   const [customWaterRates, setCustomWaterRates] = useState(0);
   
-  // Body Corporate/Strata - Default checked for apartments
+  // Body Corporate/Strata - User controlled
   const [includeBodyCorporate, setIncludeBodyCorporate] = useState(false);
   const [customBodyCorporate, setCustomBodyCorporate] = useState(0);
-  const [hasUserSetBodyCorporate, setHasUserSetBodyCorporate] = useState(false);
-  
-  // Auto-check body corporate for apartments
-  useEffect(() => {
-    if (propertyData.propertyCategory === 'apartment') {
-      setIncludeBodyCorporate(true);
-      // Only set default if user hasn't manually set a value and current value is 0
-      if (!hasUserSetBodyCorporate && customBodyCorporate === 0) {
-        setCustomBodyCorporate(4000); // Default $4,000 for apartments
-      }
-    }
-  }, [propertyData.propertyCategory]);
   
   // Store the saved states of individual fee checkboxes
   const [savedLandTransferFee, setSavedLandTransferFee] = useState(false);
@@ -120,11 +109,7 @@ export function usePropertyData() {
     }
   };
 
-  // Custom setter for body corporate that tracks user input
-  const setCustomBodyCorporateWithFlag = (value) => {
-    setCustomBodyCorporate(value);
-    setHasUserSetBodyCorporate(true);
-  };
+
 
   return {
     propertyData,
@@ -137,6 +122,8 @@ export function usePropertyData() {
     setIsFirstHomeBuyer,
     needsLoan,
     setNeedsLoan,
+    savingsAmount,
+    setSavingsAmount,
     isSearching,
     searchError,
     includeOtherFees,
@@ -166,7 +153,7 @@ export function usePropertyData() {
     includeBodyCorporate,
     setIncludeBodyCorporate,
     customBodyCorporate,
-    setCustomBodyCorporate: setCustomBodyCorporateWithFlag,
+    setCustomBodyCorporate,
     handleAddressSearch,
     getEffectivePrice
   };

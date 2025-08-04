@@ -16,7 +16,8 @@ export default function PropertyDetails({
   isInvestor,
   isForeignBuyer,
   isFirstHomeBuyer,
-  needsLoan
+  needsLoan,
+  savingsAmount
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isOffThePlan = propertyData.propertyType === 'off-the-plan';
@@ -26,7 +27,8 @@ export default function PropertyDetails({
   const allBuyerDetailsAnswered = isInvestor !== null && 
                                  isForeignBuyer !== null && 
                                  isFirstHomeBuyer !== null && 
-                                 needsLoan !== null;
+                                 needsLoan !== null &&
+                                 (needsLoan === false || (needsLoan === true && savingsAmount > 0));
 
   // Reset useEstimatedPrice when switching to off-the-plan
   const handlePropertyTypeChange = (newType) => {
@@ -42,11 +44,6 @@ export default function PropertyDetails({
         <div className="flex items-center space-x-3">
           <MapPin className="w-5 h-5 text-blue-600" />
           <h2 className="text-xl font-semibold text-gray-900">Property Details</h2>
-          {!allBuyerDetailsAnswered && (
-            <span className="text-sm text-gray-500 font-normal">
-              (Complete buyer details first)
-            </span>
-          )}
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -64,6 +61,7 @@ export default function PropertyDetails({
           )}
         </button>
       </div>
+
 
       {isExpanded && (
         <div className="space-y-6">
@@ -255,6 +253,12 @@ export default function PropertyDetails({
               </div>
             </div>
           )}
+        </div>
+      )}
+      
+      {!allBuyerDetailsAnswered && (
+        <div className="text-sm text-gray-600 mt-4">
+          Complete buyer details first
         </div>
       )}
     </div>

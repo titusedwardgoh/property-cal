@@ -8,7 +8,8 @@ export function useLoanDetails() {
     loanAmount: 0,
     includeLMI: false,
     lmiAmount: 0,
-    mortgageRegistrationFee: 150
+    mortgageRegistrationFee: 200,
+    loanEstablishmentFee: 600
   });
 
   const calculateLoanAmount = (propertyPrice) => {
