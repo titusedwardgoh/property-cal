@@ -9,7 +9,8 @@ export function useLoanDetails() {
     includeLMI: false,
     lmiAmount: 0,
     mortgageRegistrationFee: 200,
-    loanEstablishmentFee: 600
+    loanEstablishmentFee: 600,
+    repaymentType: 'principal-interest'
   });
 
   const calculateLoanAmount = (propertyPrice) => {

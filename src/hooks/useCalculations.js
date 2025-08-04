@@ -7,6 +7,7 @@ import {
   calculateInspectionFees, 
   calculateLMI, 
   calculateMonthlyRepayment, 
+  calculateTotalRepayments,
   calculateCouncilRates,
   calculateWaterRates,
   calculateBodyCorporate,
@@ -141,7 +142,8 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     const monthlyRepayment = needsLoan && finalLoanAmount > 0 ? calculateMonthlyRepayment(
       finalLoanAmount,
       loanDetails.interestRate,
-      loanDetails.loanTerm
+      loanDetails.loanTerm,
+      loanDetails.repaymentType
     ) : 0;
     
     const landTax = isInvestor ? calculateLandTax(price, propertyData.state) : 0;
@@ -151,7 +153,12 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     const lvr = finalLoanAmount > 0 && totalPropertyCost > 0 ? (finalLoanAmount / totalPropertyCost) * 100 : 0;
 
     // Calculate total loan repayments and total interest charged
-    const totalRepayments = monthlyRepayment * loanDetails.loanTerm * 12;
+    const totalRepayments = needsLoan && finalLoanAmount > 0 ? calculateTotalRepayments(
+      finalLoanAmount,
+      loanDetails.interestRate,
+      loanDetails.loanTerm,
+      loanDetails.repaymentType
+    ) : 0;
     const totalInterest = totalRepayments - finalLoanAmount;
 
     // Determine if a loan is needed
@@ -185,7 +192,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       loanAmount: finalLoanAmount, 
       lmiAmount: lmiAmount 
     }));
-  }, [propertyData, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, setLoanDetails, needsLoan, isInvestor, price, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, councilRates, waterRates, bodyCorporate, totalPropertyCost]);
+  }, [propertyData, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.repaymentType, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, setLoanDetails, needsLoan, isInvestor, price, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, councilRates, waterRates, bodyCorporate, totalPropertyCost]);
 
   return {
     ...results,

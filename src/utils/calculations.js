@@ -295,12 +295,57 @@ export const calculateLMI = (loanAmount, propertyPrice, upfrontCosts) => {
   return loanAmount * rate;
 };
 
-export const calculateMonthlyRepayment = (principal, rate, years) => {
+export const calculateTotalRepayments = (principal, rate, years, repaymentType = 'principal-interest') => {
+  const monthlyPayment = calculateMonthlyRepayment(principal, rate, years, repaymentType);
+  
+  if (repaymentType.startsWith('interest-only-')) {
+    const interestOnlyYears = parseInt(repaymentType.split('-')[2]);
+    const remainingYears = years - interestOnlyYears;
+    
+    if (remainingYears <= 0) {
+      // If interest-only period is longer than or equal to loan term
+      return monthlyPayment * years * 12;
+    } else {
+      // Calculate total for interest-only period + remaining principal and interest period
+      const interestOnlyPayments = monthlyPayment * interestOnlyYears * 12;
+      
+      // For the remaining period, calculate principal and interest payments
+      const remainingMonthlyRate = rate / 100 / 12;
+      const remainingPayments = remainingYears * 12;
+      const remainingMonthlyPayment = (principal * remainingMonthlyRate * Math.pow(1 + remainingMonthlyRate, remainingPayments)) / 
+                                     (Math.pow(1 + remainingMonthlyRate, remainingPayments) - 1);
+      const remainingTotal = remainingMonthlyPayment * remainingPayments;
+      
+      return interestOnlyPayments + remainingTotal;
+    }
+  }
+  
+  // Principal and interest calculation (default)
+  return monthlyPayment * years * 12;
+};
+
+export const calculateMonthlyRepayment = (principal, rate, years, repaymentType = 'principal-interest') => {
   const monthlyRate = rate / 100 / 12;
+  
+  if (monthlyRate === 0) return principal / (years * 12);
+  
+  // Interest only calculations
+  if (repaymentType.startsWith('interest-only-')) {
+    const interestOnlyYears = parseInt(repaymentType.split('-')[2]);
+    const remainingYears = years - interestOnlyYears;
+    
+    if (remainingYears <= 0) {
+      // If interest-only period is longer than or equal to loan term, calculate interest only
+      return principal * monthlyRate;
+    } else {
+      // During interest-only period, pay only interest
+      // The monthly payment is just the interest payment
+      return principal * monthlyRate;
+    }
+  }
+  
+  // Principal and interest calculation (default)
   const numPayments = years * 12;
-  
-  if (monthlyRate === 0) return principal / numPayments;
-  
   return (principal * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
          (Math.pow(1 + monthlyRate, numPayments) - 1);
 };

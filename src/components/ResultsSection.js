@@ -93,10 +93,15 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
 
       {/* Monthly Repayments */}
       <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-        <div className="flex items-center space-x-3 mb-4">
+        <div className="flex items-center space-x-3 mb-2">
           <DollarSign className="w-5 h-5 text-green-600" />
           <h3 className="text-lg font-semibold text-gray-900">Monthly Costs</h3>
         </div>
+        {loanDetails.repaymentType && loanDetails.repaymentType.startsWith('interest-only-') && (
+          <p className="text-sm text-gray-600 mb-4">
+            (for the first {loanDetails.repaymentType.split('-')[2]} {loanDetails.repaymentType.split('-')[2] === '1' ? 'year' : 'years'})
+          </p>
+        )}
         
         <div className="space-y-3">
           {results.hasLoan && (
@@ -147,10 +152,15 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
 
       {/* Annual Costs */}
       <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-        <div className="flex items-center space-x-3 mb-6">
+        <div className="flex items-center space-x-3 mb-2">
           <Calendar className="w-5 h-5 text-green-600" />
           <h3 className="text-lg font-semibold text-gray-900">Annual Costs</h3>
         </div>
+        {loanDetails.repaymentType && loanDetails.repaymentType.startsWith('interest-only-') && (
+          <p className="text-sm text-gray-600 mb-4">
+            (for the first {loanDetails.repaymentType.split('-')[2]} {loanDetails.repaymentType.split('-')[2] === '1' ? 'year' : 'years'})
+          </p>
+        )}
         <div className="space-y-3">
           {results.hasLoan && (
             <div className="flex justify-between items-center">

@@ -136,6 +136,23 @@ export default function LoanDetails({
                 placeholder="Enter loan term..."
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Repayment Type
+              </label>
+              <select
+                value={loanDetails.repaymentType || 'principal-interest'}
+                onChange={(e) => setLoanDetails(prev => ({ ...prev, repaymentType: e.target.value }))}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              >
+                <option value="principal-interest">Principal and Interest</option>
+                <option value="interest-only-1">Interest Only (1 year)</option>
+                <option value="interest-only-2">Interest Only (2 years)</option>
+                <option value="interest-only-3">Interest Only (3 years)</option>
+                <option value="interest-only-4">Interest Only (4 years)</option>
+                <option value="interest-only-5">Interest Only (5 years)</option>
+              </select>
+            </div>
           </div>
 
 
