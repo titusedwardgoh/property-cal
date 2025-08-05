@@ -2,7 +2,30 @@ import { DollarSign, FileText, Globe, Calendar } from 'lucide-react';
 import { formatCurrency } from '../utils/calculations.js';
 import LoanSummaryCard from './LoanSummaryCard.js';
 
-export default function ResultsSection({ results, loanDetails, isForeignBuyer, includeBodyCorporate }) {
+export default function ResultsSection({ results, loanDetails, isForeignBuyer, includeBodyCorporate, hasCalculated, fieldsChanged, onCalculate, propertyData, isFirstHomeBuyer }) {
+  // Check if all required fields for FHOG calculation are filled
+  const isCalculationValid = () => {
+    if (!isFirstHomeBuyer) return false;
+    if (!propertyData.price || propertyData.price <= 0) return false;
+    if (!propertyData.state) return false;
+    if (!propertyData.propertyType) return false;
+    if (!propertyData.propertyCategory) return false;
+    
+    // For land properties, require estimated build cost (can be 0 if user wants)
+    if (propertyData.propertyCategory === 'land') {
+      if (propertyData.estimatedBuildCost === undefined || propertyData.estimatedBuildCost === null) return false;
+    }
+    
+    // For Western Australia, require region selection
+    if (propertyData.state === 'WA') {
+      if (!propertyData.waRegion) return false;
+    }
+    
+    return true;
+  };
+
+  const canCalculate = isCalculationValid();
+  
   return (
     <div className="space-y-6">
       {/* Upfront Costs */}
@@ -73,7 +96,7 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
               </span>
             </div>
           )}
-          {results.firstHomeOwnersGrant > 0 && (
+          {hasCalculated && results.firstHomeOwnersGrant > 0 && (
             <div className="flex justify-between items-center">
               <span className="text-gray-600">First Home Owners Grant</span>
               <span className="font-semibold text-green-600">
@@ -213,6 +236,25 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
         totalRepayments={results.totalRepayments}
         totalInterest={results.totalInterest}
       />
+      
+      {/* Calculate Button */}
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+        <button
+          onClick={onCalculate}
+          disabled={!canCalculate || (hasCalculated && !fieldsChanged)}
+          className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-colors focus:ring-4 focus:outline-none ${
+            !canCalculate
+              ? 'bg-gray-400 text-gray-600 cursor-not-allowed focus:ring-gray-200'
+              : hasCalculated && !fieldsChanged
+                ? 'bg-green-600 text-white cursor-not-allowed focus:ring-green-200' 
+                : fieldsChanged 
+                  ? 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-200' 
+                  : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-200'
+          }`}
+        >
+          {!canCalculate ? 'Complete Required Fields' : hasCalculated && !fieldsChanged ? 'Calculations Complete' : fieldsChanged ? 'Recalculate' : 'Calculate'}
+        </button>
+      </div>
     </div>
   );
 } 

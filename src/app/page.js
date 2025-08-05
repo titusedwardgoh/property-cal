@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header.js';
 import PropertyDetails from '../components/PropertyDetails.js';
 import BuyerDetails from '../components/BuyerDetails.js';
@@ -63,6 +63,12 @@ export default function App() {
     setLoanDetails
   } = useLoanDetails();
 
+  // State to track calculate button presses
+  const [calculateCount, setCalculateCount] = useState(0);
+  
+  // State to track if fields have changed since last calculation
+  const [fieldsChanged, setFieldsChanged] = useState(false);
+
   const results = useCalculations(
     propertyData, 
     loanDetails,
@@ -83,8 +89,25 @@ export default function App() {
     customCouncilRates,
     customWaterRates,
     includeBodyCorporate,
-    customBodyCorporate
+    customBodyCorporate,
+    calculateCount
   );
+
+  // Monitor changes in fields that affect FHOG calculation
+  React.useEffect(() => {
+    if (calculateCount > 0) {
+      // If we've calculated before, check if relevant fields have changed
+      setFieldsChanged(true);
+    }
+  }, [
+    propertyData.price,
+    propertyData.state,
+    propertyData.propertyType,
+    propertyData.propertyCategory,
+    propertyData.estimatedBuildCost,
+    propertyData.waRegion,
+    isFirstHomeBuyer
+  ]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -126,6 +149,20 @@ export default function App() {
               savingsAmount={savingsAmount}
             />
 
+            {needsLoan && (
+              <LoanDetails
+                loanDetails={loanDetails}
+                setLoanDetails={setLoanDetails}
+                shouldShowLMI={results.shouldShowLMI}
+                shouldDefaultLMI={results.shouldDefaultLMI}
+                depositWarning={results.depositWarning}
+                depositPercentage={results.depositPercentage}
+                hasMortgage={results.hasMortgage}
+                propertyData={propertyData}
+                useEstimatedPrice={useEstimatedPrice}
+              />
+            )}
+
             <OtherFees
               includeLandTransferFee={includeLandTransferFee}
               setIncludeLandTransferFee={setIncludeLandTransferFee}
@@ -154,15 +191,6 @@ export default function App() {
               setIncludeBodyCorporate={setIncludeBodyCorporate}
               bodyCorporate={customBodyCorporate}
               setBodyCorporate={setCustomBodyCorporate}
-              loanDetails={loanDetails}
-              setLoanDetails={setLoanDetails}
-              shouldShowLMI={results.shouldShowLMI}
-              shouldDefaultLMI={results.shouldDefaultLMI}
-              depositWarning={results.depositWarning}
-              depositPercentage={results.depositPercentage}
-              hasMortgage={results.hasMortgage}
-              useEstimatedPrice={useEstimatedPrice}
-              needsLoan={needsLoan}
             />
           </div>
 
@@ -173,6 +201,14 @@ export default function App() {
               loanDetails={loanDetails}
               isForeignBuyer={isForeignBuyer}
               includeBodyCorporate={includeBodyCorporate}
+              hasCalculated={calculateCount > 0}
+              fieldsChanged={fieldsChanged}
+              propertyData={propertyData}
+              isFirstHomeBuyer={isFirstHomeBuyer}
+              onCalculate={() => {
+                setCalculateCount(prev => prev + 1);
+                setFieldsChanged(false);
+              }}
             />
           </div>
         </div>

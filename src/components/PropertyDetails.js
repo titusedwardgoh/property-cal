@@ -98,7 +98,7 @@ export default function PropertyDetails({
                   disabled={isSearching}
                 />
                 <label htmlFor="off-the-plan" className="ml-2 text-sm text-gray-700">
-                  Off-the-Plan
+                  New Home / Off-the-Plan
                 </label>
               </div>
             </div>
@@ -161,12 +161,32 @@ export default function PropertyDetails({
               </select>
             </div>
           </div>
+              {/* Property Category Dropdown */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Property Category <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={propertyData.propertyCategory || ''}
+                  onChange={(e) => setPropertyData(prev => ({ ...prev, propertyCategory: e.target.value }))}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white border-gray-300
+                  `}
+                  disabled={isSearching}
+                  required
+                >
+                  <option value="">Select property category...</option>
+                  <option value="house">House</option>
+                  <option value="townhouse">Townhouse</option>
+                  <option value="apartment">Apartment/Unit</option>
+                  <option value="land">Land</option>
+                </select>
+              </div>
 
           {/* Property Price */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700">
-                Property Price
+                {propertyData.propertyCategory === 'land' ? 'Land Price' : 'Property Price'}
                 <span className="text-red-500 ml-1">*</span>
               </label>
               {isExistingProperty && (
@@ -213,26 +233,72 @@ export default function PropertyDetails({
             )}
           </div>
 
-          {/* Property Category Dropdown */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Property Category <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={propertyData.propertyCategory || ''}
-              onChange={(e) => setPropertyData(prev => ({ ...prev, propertyCategory: e.target.value }))}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white border-gray-300
-              `}
-              disabled={isSearching}
-              required
-            >
-              <option value="">Select property category...</option>
-              <option value="house">House</option>
-              <option value="townhouse">Townhouse</option>
-              <option value="apartment">Apartment/Unit</option>
-              <option value="land">Land</option>
-            </select>
-          </div>
+
+          {/* Estimated Build Cost - Only show for land */}
+          {propertyData.propertyCategory === 'land' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Estimated Build Cost
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={propertyData.estimatedBuildCost !== undefined && propertyData.estimatedBuildCost !== null ? propertyData.estimatedBuildCost : ''}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  setPropertyData(prev => ({ ...prev, estimatedBuildCost: value ? Number(value) : null }));
+                }}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="Enter estimated build cost..."
+                disabled={isSearching}
+              />
+            </div>
+          )}
+
+          {/* Western Australia Region - Only show for WA */}
+          {propertyData.state === 'WA' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Western Australia Region <span className="text-red-500">*</span>
+              </label>
+              <div className="flex space-x-6">
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="wa-north"
+                    name="waRegion"
+                    value="north"
+                    checked={propertyData.waRegion === 'north'}
+                    onChange={(e) => setPropertyData(prev => ({ ...prev, waRegion: e.target.value }))}
+                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    disabled={isSearching}
+                    required
+                  />
+                  <label htmlFor="wa-north" className="ml-2 text-sm text-gray-700">
+                    North
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="wa-south"
+                    name="waRegion"
+                    value="south"
+                    checked={propertyData.waRegion === 'south'}
+                    onChange={(e) => setPropertyData(prev => ({ ...prev, waRegion: e.target.value }))}
+                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    disabled={isSearching}
+                    required
+                  />
+                  <label htmlFor="wa-south" className="ml-2 text-sm text-gray-700">
+                    South
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Off-the-Plan Specific Fields */}
           {isOffThePlan && (

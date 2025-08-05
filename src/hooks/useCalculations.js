@@ -15,7 +15,7 @@ import {
   calculateLandTax
 } from '../utils/calculations.js';
 
-export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan, customLandTransferFee, customLegalFees, customInspectionFees, includeCouncilRates, includeWaterRates, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate) {
+export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan, customLandTransferFee, customLegalFees, customInspectionFees, includeCouncilRates, includeWaterRates, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, calculateCount = 0) {
   const [results, setResults] = useState({
     monthlyRepayment: 0,
     stampDuty: 0,
@@ -27,6 +27,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     legalFees: 0,
     inspectionFees: 0,
     lmiAmount: 0,
+    firstHomeOwnersGrant: 0,
     totalUpfrontCosts: 0,
     totalMonthlyCosts: 0
   });
@@ -120,12 +121,12 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     // Calculate loan establishment fee - show when loan is needed
     const loanEstablishmentFee = needsLoan ? loanDetails.loanEstablishmentFee : 0;
     
-    // Calculate First Home Owners Grant
-    const firstHomeOwnersGrant = isFirstHomeBuyer ? calculateFirstHomeOwnersGrant(price, propertyData.state) : 0;
-    
     // Calculate upfront costs excluding LMI and grant
     const upfrontCostsExcludingLMI = stampDuty + foreignBuyerDuty + loanDetails.deposit + 
                                     landTransferFee + mortgageRegistrationFee + loanEstablishmentFee + legalFees + inspectionFees;
+    
+    // Calculate First Home Owners Grant - always start with 0
+    const firstHomeOwnersGrant = results.firstHomeOwnersGrant || 0;
     
     // Calculate initial loan amount based on property price only (upfront fees can't be financed)
     const initialLoanAmount = needsLoan && loanDetails.deposit > 0 ? Math.max(0, price - loanDetails.deposit) : 0;
@@ -192,7 +193,33 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       loanAmount: finalLoanAmount, 
       lmiAmount: lmiAmount 
     }));
-  }, [propertyData, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.repaymentType, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, setLoanDetails, needsLoan, isInvestor, price, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, councilRates, waterRates, bodyCorporate, totalPropertyCost]);
+  }, [propertyData, propertyData.estimatedBuildCost, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.repaymentType, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, setLoanDetails, needsLoan, isInvestor, price, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, councilRates, waterRates, bodyCorporate, totalPropertyCost]);
+
+  // Manual FHOG calculation - only when calculate button is pressed
+  useEffect(() => {
+    if (calculateCount > 0) {
+      let firstHomeOwnersGrant = 0;
+      
+      if (isFirstHomeBuyer && price > 0) {
+        // For land, require both price and estimated build cost
+        if (propertyData.propertyCategory === 'land') {
+          if (propertyData.estimatedBuildCost !== undefined && propertyData.estimatedBuildCost !== null) {
+            firstHomeOwnersGrant = calculateFirstHomeOwnersGrant(price, propertyData.state, propertyData.propertyType, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.waRegion);
+          }
+        } else {
+          // For other property types, only require price
+          firstHomeOwnersGrant = calculateFirstHomeOwnersGrant(price, propertyData.state, propertyData.propertyType, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.waRegion);
+        }
+      }
+
+      // Update results with the calculated FHOG
+      setResults(prev => ({
+        ...prev,
+        firstHomeOwnersGrant,
+        totalUpfrontCosts: prev.totalUpfrontCosts + firstHomeOwnersGrant - (prev.firstHomeOwnersGrant || 0)
+      }));
+    }
+  }, [calculateCount]); // Only depends on calculateCount - nothing else
 
   return {
     ...results,

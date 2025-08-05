@@ -104,12 +104,15 @@ export default function BuyerDetails({
                   name="citizenshipStatus"
                   value="foreign"
                   checked={isForeignBuyer === true}
-                  onChange={() => setIsForeignBuyer(true)}
+                  onChange={() => {
+                    setIsForeignBuyer(true);
+                    setIsFirstHomeBuyer(false); // Foreign buyers can't be first home buyers
+                  }}
                   className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                   disabled={isSearching}
                 />
                 <label htmlFor="foreignBuyer" className="text-sm text-gray-700">
-                  No, I am a foreign buyer
+                  No, I reside overseas
                 </label>
               </div>
             </div>
@@ -117,7 +120,14 @@ export default function BuyerDetails({
 
           {/* First Home Buyer Status */}
           <div>
+            <div className="flex items-center gap-2">
             <h3 className="text-sm font-medium text-gray-700 mb-3">Are you a first home buyer?</h3>
+            {isForeignBuyer && (
+              <p className="text-sm mb-3">
+                (Foreign buyers are not eligible for the first home owners grant)
+              </p>
+            )}
+            </div>
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <input
@@ -128,9 +138,9 @@ export default function BuyerDetails({
                   checked={isFirstHomeBuyer === true}
                   onChange={() => setIsFirstHomeBuyer(true)}
                   className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching}
+                  disabled={isSearching || isForeignBuyer}
                 />
-                <label htmlFor="firstHomeBuyerYes" className="text-sm text-gray-700">
+                <label htmlFor="firstHomeBuyerYes" className={`text-sm ${isForeignBuyer ? 'text-gray-400' : 'text-gray-700'}`}>
                   Yes
                 </label>
               </div>
@@ -144,9 +154,9 @@ export default function BuyerDetails({
                   checked={isFirstHomeBuyer === false}
                   onChange={() => setIsFirstHomeBuyer(false)}
                   className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching}
+                  disabled={isSearching || isForeignBuyer}
                 />
-                <label htmlFor="firstHomeBuyerNo" className="text-sm text-gray-700">
+                <label htmlFor="firstHomeBuyerNo" className={`text-sm ${isForeignBuyer ? 'text-gray-400' : 'text-gray-700'}`}>
                   No
                 </label>
               </div>

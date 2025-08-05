@@ -395,24 +395,52 @@ export const calculateBodyCorporate = (price, propertyCategory) => {
   }
 };
 
-export const calculateFirstHomeOwnersGrant = (price, state) => {
+export const calculateFirstHomeOwnersGrant = (price, state, propertyType, propertyCategory, estimatedBuildCost = 0, waRegion = null) => {
   const grantAmount = FIRST_HOME_OWNERS_GRANT[state] || 0;
   
   if (grantAmount === 0) return 0; // No grant available (e.g., ACT)
   
+  // First Home Owners Grant is only available for off-the-plan properties
+  if (propertyType !== 'off-the-plan') {
+    return 0;
+  }
+  
   // Check eligibility based on state-specific rules
   switch (state) {
     case 'NSW':
-      // $10,000 for new homes up to $600,000 or $750,000 if building
-      return price <= 750000 ? grantAmount : 0;
+      // For land: total cost must be less than $750k
+      if (propertyCategory === 'land') {
+        if (estimatedBuildCost !== undefined && estimatedBuildCost !== null) {
+          const totalCost = price + estimatedBuildCost;
+          return totalCost <= 750000 ? grantAmount : 0;
+        }
+        return 0; // No grant if no build cost provided
+      }
+      // For other property types: $600k cap
+      return price <= 600000 ? grantAmount : 0;
       
     case 'VIC':
-      // $10,000 for new homes up to $750,000
+      // For land: total cost must be less than $750k
+      if (propertyCategory === 'land') {
+        if (estimatedBuildCost !== undefined && estimatedBuildCost !== null) {
+          const totalCost = price + estimatedBuildCost;
+          return totalCost <= 750000 ? grantAmount : 0;
+        }
+        return 0; // No grant if no build cost provided
+      }
+      // For other property types: $750k cap
       return price <= 750000 ? grantAmount : 0;
       
     case 'QLD':
-      // $30,000 for contracts signed between 20 Nov 2023 and 30 Jun 2026
-      // For new homes up to $750,000
+      // For land: total cost must be less than or equal to $750k
+      if (propertyCategory === 'land') {
+        if (estimatedBuildCost !== undefined && estimatedBuildCost !== null) {
+          const totalCost = price + estimatedBuildCost;
+          return totalCost <= 750000 ? grantAmount : 0;
+        }
+        return 0; // No grant if no build cost provided
+      }
+      // For other property types: $750k cap
       return price <= 750000 ? grantAmount : 0;
       
     case 'SA':
@@ -420,16 +448,27 @@ export const calculateFirstHomeOwnersGrant = (price, state) => {
       return grantAmount;
       
     case 'WA':
-      // $10,000 for new homes up to $750,000 (south) or $1M (north)
-      // Using $750,000 as default threshold
-      return price <= 750000 ? grantAmount : 0;
+      // For land: total cost must be under cap based on region
+      if (propertyCategory === 'land') {
+        if (estimatedBuildCost !== undefined && estimatedBuildCost !== null) {
+          const totalCost = price + estimatedBuildCost;
+          const priceCap = waRegion === 'north' ? 1000000 : 750000; // $1M for north, $750k for south
+          return totalCost <= priceCap ? grantAmount : 0;
+        }
+        return 0; // No grant if no build cost provided
+      }
+      // For other property types: cap based on region
+      const priceCap = waRegion === 'north' ? 1000000 : 750000; // $1M for north, $750k for south
+      return price <= priceCap ? grantAmount : 0;
       
     case 'TAS':
-      // $10,000 for new homes or off-the-plan properties
+      // Same logic as SA but with $10,000 grant amount
+      // Up to $10,000 for new homes (no property value cap)
       return grantAmount;
       
     case 'NT':
-      // $50,000 for new homes (HomeGrown Territory Grant)
+      // Same logic as SA and TAS but with $50,000 grant amount
+      // Up to $50,000 for new homes (no property value cap)
       return grantAmount;
       
     case 'ACT':

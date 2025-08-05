@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Receipt, ChevronDown, ChevronUp } from 'lucide-react';
 import { formatCurrency } from '../utils/calculations.js';
 import SellerQuestions from './SellerQuestions.js';
-import LoanDetails from './LoanDetails.js';
 
 export default function OtherFees({
   includeLandTransferFee,
@@ -31,16 +30,7 @@ export default function OtherFees({
   includeBodyCorporate,
   setIncludeBodyCorporate,
   bodyCorporate,
-  setBodyCorporate,
-  loanDetails,
-  setLoanDetails,
-  shouldShowLMI,
-  shouldDefaultLMI,
-  depositWarning,
-  depositPercentage,
-  hasMortgage,
-  useEstimatedPrice,
-  needsLoan
+  setBodyCorporate
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -62,20 +52,7 @@ export default function OtherFees({
           setWaterRates={setWaterRates}
         />
 
-        {needsLoan && (
-          <LoanDetails
-            loanDetails={loanDetails}
-            setLoanDetails={setLoanDetails}
-            shouldShowLMI={shouldShowLMI}
-            shouldDefaultLMI={shouldDefaultLMI}
-            depositWarning={depositWarning}
-            depositPercentage={depositPercentage}
-            price={price}
-            hasMortgage={hasMortgage}
-            propertyData={propertyData}
-            useEstimatedPrice={useEstimatedPrice}
-          />
-        )}
+
 
         {/* Other Hidden Fees Card - Disabled */}
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
@@ -116,20 +93,7 @@ export default function OtherFees({
         setWaterRates={setWaterRates}
       />
 
-      {needsLoan && (
-        <LoanDetails
-          loanDetails={loanDetails}
-          setLoanDetails={setLoanDetails}
-          shouldShowLMI={shouldShowLMI}
-          shouldDefaultLMI={shouldDefaultLMI}
-          depositWarning={depositWarning}
-          depositPercentage={depositPercentage}
-          price={price}
-          hasMortgage={hasMortgage}
-          propertyData={propertyData}
-          useEstimatedPrice={useEstimatedPrice}
-        />
-      )}
+
 
       {/* Other Hidden Fees Card */}
       <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
