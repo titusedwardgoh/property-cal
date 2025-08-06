@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { calculateLandTax } from '../utils/calculations.js';
 
 export default function SellerQuestions({
   price,
@@ -12,9 +13,20 @@ export default function SellerQuestions({
   councilRates,
   setCouncilRates,
   waterRates,
-  setWaterRates
+  setWaterRates,
+  customLandTax,
+  setCustomLandTax,
+  isInvestor
 }) {
   const [isSellerQuestionsExpanded, setIsSellerQuestionsExpanded] = useState(false);
+
+  // Set default land tax when user becomes an investor
+  useEffect(() => {
+    if (isInvestor && price > 0 && customLandTax === 0) {
+      const defaultLandTax = calculateLandTax(price, propertyData.state);
+      setCustomLandTax(defaultLandTax);
+    }
+  }, [isInvestor, price, propertyData.state, customLandTax, setCustomLandTax]);
 
   // Only show when property price has been entered
   if (!price || price <= 0) {
@@ -120,6 +132,38 @@ export default function SellerQuestions({
                  />
             </div>
           </div>
+
+          {/* Land Tax - Only show for investor properties */}
+          {isInvestor && (
+            <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <div className="w-4 h-4 rounded-full bg-purple-100 flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-full bg-purple-600"></div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-900">
+                    Land Tax
+                  </label>
+                  <p className="text-xs text-gray-600">
+                    Annual land tax for investment properties
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">$</span>
+                <input
+                  type="number"
+                  value={customLandTax || ''}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setCustomLandTax(value === '' ? 0 : Number(value));
+                  }}
+                  className="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Construction Questions - Only show if property type is off-the-plan */}
           {propertyData.propertyType === 'off-the-plan' && (

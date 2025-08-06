@@ -46,6 +46,9 @@ export function usePropertyData() {
   const [includeBodyCorporate, setIncludeBodyCorporate] = useState(false);
   const [customBodyCorporate, setCustomBodyCorporate] = useState(0);
   
+  // Land Tax - User controlled (only for investors)
+  const [customLandTax, setCustomLandTax] = useState(0);
+  
   // Store the saved states of individual fee checkboxes
   const [savedLandTransferFee, setSavedLandTransferFee] = useState(false);
   const [savedLegalFees, setSavedLegalFees] = useState(false);
@@ -154,6 +157,8 @@ export function usePropertyData() {
     setIncludeBodyCorporate,
     customBodyCorporate,
     setCustomBodyCorporate,
+    customLandTax,
+    setCustomLandTax,
     handleAddressSearch,
     getEffectivePrice
   };

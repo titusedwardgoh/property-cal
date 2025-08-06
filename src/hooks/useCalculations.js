@@ -15,7 +15,7 @@ import {
   calculateLandTax
 } from '../utils/calculations.js';
 
-export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan, customLandTransferFee, customLegalFees, customInspectionFees, includeCouncilRates, includeWaterRates, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, calculateCount = 0) {
+export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan, customLandTransferFee, customLegalFees, customInspectionFees, includeCouncilRates, includeWaterRates, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, calculateCount = 0) {
   const [results, setResults] = useState({
     monthlyRepayment: 0,
     stampDuty: 0,
@@ -41,12 +41,12 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
   const depositPercentage = price > 0 ? (loanDetails.deposit / price) * 100 : 0;
   
   // Calculate stamp duty for LMI determination
-  const stampDutyForLMI = price > 0 ? calculateStampDuty(price, propertyData.state, isFirstHomeBuyer) : 0;
+  const stampDutyForLMI = price > 0 ? calculateStampDuty(price, propertyData.state, isFirstHomeBuyer, isInvestor) : 0;
   const totalPropertyCost = price + stampDutyForLMI;
   const depositPercentageOfTotal = totalPropertyCost > 0 ? (loanDetails.deposit / totalPropertyCost) * 100 : 0;
   
   // Calculate if mortgage is needed for mortgage registration fee
-  const stampDuty = calculateStampDuty(price, propertyData.state, isFirstHomeBuyer);
+  const stampDuty = calculateStampDuty(price, propertyData.state, isFirstHomeBuyer, isInvestor);
   const foreignBuyerDuty = calculateForeignBuyerDuty(price, propertyData.state, isForeignBuyer);
   const calculatedLandTransferFee = (price > 0 && includeLandTransferFee) ? calculateLandTransferFee(price, propertyData.state) : 0;
   const calculatedLegalFees = (price > 0 && includeLegalFees) ? calculateLegalFees(price, propertyData.propertyType) : 0;
@@ -147,7 +147,8 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       loanDetails.repaymentType
     ) : 0;
     
-    const landTax = isInvestor ? calculateLandTax(price, propertyData.state) : 0;
+    const calculatedLandTax = isInvestor ? calculateLandTax(price, propertyData.state) : 0;
+    const landTax = isInvestor && customLandTax > 0 ? customLandTax : calculatedLandTax;
     const totalMonthlyCosts = monthlyRepayment + (councilRates / 12) + (waterRates / 12) + (bodyCorporate / 12) + (landTax / 12);
 
     // Calculate LVR (Loan to Value Ratio)
@@ -193,7 +194,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       loanAmount: finalLoanAmount, 
       lmiAmount: lmiAmount 
     }));
-  }, [propertyData, propertyData.estimatedBuildCost, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.repaymentType, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, setLoanDetails, needsLoan, isInvestor, price, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, councilRates, waterRates, bodyCorporate, totalPropertyCost]);
+  }, [propertyData, propertyData.estimatedBuildCost, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.repaymentType, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, setLoanDetails, needsLoan, isInvestor, price, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, councilRates, waterRates, bodyCorporate, totalPropertyCost]);
 
   // Manual FHOG calculation - only when calculate button is pressed
   useEffect(() => {

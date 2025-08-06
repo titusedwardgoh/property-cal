@@ -30,7 +30,10 @@ export default function OtherFees({
   includeBodyCorporate,
   setIncludeBodyCorporate,
   bodyCorporate,
-  setBodyCorporate
+  setBodyCorporate,
+  customLandTax,
+  setCustomLandTax,
+  isInvestor
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -50,6 +53,9 @@ export default function OtherFees({
           setCouncilRates={setCouncilRates}
           waterRates={waterRates}
           setWaterRates={setWaterRates}
+          customLandTax={customLandTax}
+          setCustomLandTax={setCustomLandTax}
+          isInvestor={isInvestor}
         />
 
 
@@ -91,6 +97,9 @@ export default function OtherFees({
         setCouncilRates={setCouncilRates}
         waterRates={waterRates}
         setWaterRates={setWaterRates}
+        customLandTax={customLandTax}
+        setCustomLandTax={setCustomLandTax}
+        isInvestor={isInvestor}
       />
 
 

@@ -1,16 +1,52 @@
-import { STAMP_DUTY_RATES, FOREIGN_BUYER_RATES, STATE_AVERAGES, FIRST_HOME_OWNERS_GRANT } from '../data/constants.js';
+import { STAMP_DUTY_RATES, ACT_OWNER_OCCUPIER_RATES, ACT_INVESTOR_RATES, FOREIGN_BUYER_RATES, STATE_AVERAGES, FIRST_HOME_OWNERS_GRANT } from '../data/constants.js';
 
-export const calculateStampDuty = (price, state, isFirstHomeBuyer = false) => {
-  const rates = STAMP_DUTY_RATES[state] || STAMP_DUTY_RATES.NSW;
+export const calculateStampDuty = (price, state, isFirstHomeBuyer = false, isInvestor = false) => {
   let duty = 0;
-  let remaining = price;
 
-  for (const bracket of rates) {
-    if (remaining <= 0) break;
+  // Special handling for Northern Territory properties under $525,000
+  if (state === 'NT' && price <= 525000) {
+    // NT has a special formula for properties under $525,000
+    // Duty = (0.06571441 × V²) + 15 × V, where V = dutiable value ÷ 1,000
+    const V = price / 1000;
+    duty = (0.06571441 * V * V) + (15 * V);
+  } else if (state === 'ACT') {
+    // ACT has different rates for owner occupiers vs investors
+    const rates = isInvestor ? ACT_INVESTOR_RATES : ACT_OWNER_OCCUPIER_RATES;
     
-    const taxableAmount = Math.min(remaining, bracket.max - bracket.min);
-    duty += taxableAmount * bracket.rate;
-    remaining -= taxableAmount;
+    // Find the appropriate bracket and calculate duty
+    for (const bracket of rates) {
+      if (price <= bracket.max) {
+        // Calculate: Fixed Fee + (Rate × Amount over the bracket minimum)
+        const amountOverMin = price - bracket.min;
+        duty = bracket.fixedFee + (amountOverMin * bracket.rate);
+        break; // Use only one bracket based on total price
+      }
+    }
+  } else if (state === 'NT' && price > 525000) {
+    // NT properties over $525,000 use flat percentage of total value
+    const rates = STAMP_DUTY_RATES[state];
+    
+    // Find the appropriate bracket and calculate duty
+    for (const bracket of rates) {
+      if (price <= bracket.max) {
+        // For NT over $525k: Rate × Total property value (not amount over minimum)
+        duty = price * bracket.rate;
+        break; // Use only one bracket based on total price
+      }
+    }
+  } else {
+    // Standard calculation for all other states using fixed fee approach
+    const rates = STAMP_DUTY_RATES[state] || STAMP_DUTY_RATES.NSW;
+    
+    // Find the appropriate bracket and calculate duty
+    for (const bracket of rates) {
+      if (price <= bracket.max) {
+        // Calculate: Fixed Fee + (Rate × Amount over the bracket minimum)
+        const amountOverMin = price - bracket.min;
+        duty = bracket.fixedFee + (amountOverMin * bracket.rate);
+        break; // Use only one bracket based on total price
+      }
+    }
   }
 
   // First home buyer concessions (state-specific)

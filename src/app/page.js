@@ -55,6 +55,8 @@ export default function App() {
     setIncludeBodyCorporate,
     customBodyCorporate,
     setCustomBodyCorporate,
+    customLandTax,
+    setCustomLandTax,
     handleAddressSearch
   } = usePropertyData();
 
@@ -90,6 +92,7 @@ export default function App() {
     customWaterRates,
     includeBodyCorporate,
     customBodyCorporate,
+    customLandTax,
     calculateCount
   );
 
@@ -191,6 +194,9 @@ export default function App() {
               setIncludeBodyCorporate={setIncludeBodyCorporate}
               bodyCorporate={customBodyCorporate}
               setBodyCorporate={setCustomBodyCorporate}
+              customLandTax={customLandTax}
+              setCustomLandTax={setCustomLandTax}
+              isInvestor={isInvestor}
             />
           </div>
 
