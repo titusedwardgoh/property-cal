@@ -15,7 +15,7 @@ import {
   calculateLandTax
 } from '../utils/calculations.js';
 
-export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan, customLandTransferFee, customLegalFees, customInspectionFees, includeCouncilRates, includeWaterRates, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, calculateCount = 0) {
+export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan, customLandTransferFee, customLegalFees, customInspectionFees, includeCouncilRates, includeWaterRates, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, isPPR, calculateCount = 0) {
   const [results, setResults] = useState({
     monthlyRepayment: 0,
     stampDuty: 0,
@@ -29,7 +29,8 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     lmiAmount: 0,
     firstHomeOwnersGrant: 0,
     totalUpfrontCosts: 0,
-    totalMonthlyCosts: 0
+    totalMonthlyCosts: 0,
+    fhogCalculationState: null
   });
   
   // Store the last manually entered deposit amount
@@ -205,11 +206,11 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
         // For land, require both price and estimated build cost
         if (propertyData.propertyCategory === 'land') {
           if (propertyData.estimatedBuildCost !== undefined && propertyData.estimatedBuildCost !== null) {
-            firstHomeOwnersGrant = calculateFirstHomeOwnersGrant(price, propertyData.state, propertyData.propertyType, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.waRegion);
+            firstHomeOwnersGrant = calculateFirstHomeOwnersGrant(price, propertyData.state, propertyData.propertyType, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.waRegion, isPPR);
           }
         } else {
           // For other property types, only require price
-          firstHomeOwnersGrant = calculateFirstHomeOwnersGrant(price, propertyData.state, propertyData.propertyType, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.waRegion);
+          firstHomeOwnersGrant = calculateFirstHomeOwnersGrant(price, propertyData.state, propertyData.propertyType, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.waRegion, isPPR);
         }
       }
 
@@ -217,6 +218,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       setResults(prev => ({
         ...prev,
         firstHomeOwnersGrant,
+        fhogCalculationState: propertyData.state,
         totalUpfrontCosts: prev.totalUpfrontCosts + firstHomeOwnersGrant - (prev.firstHomeOwnersGrant || 0)
       }));
     }

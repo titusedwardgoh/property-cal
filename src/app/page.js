@@ -23,6 +23,8 @@ export default function App() {
     setIsFirstHomeBuyer,
     isInvestor,
     setIsInvestor,
+    isPPR,
+    setIsPPR,
     needsLoan,
     setNeedsLoan,
     savingsAmount,
@@ -93,6 +95,7 @@ export default function App() {
     includeBodyCorporate,
     customBodyCorporate,
     customLandTax,
+    isPPR,
     calculateCount
   );
 
@@ -109,7 +112,8 @@ export default function App() {
     propertyData.propertyCategory,
     propertyData.estimatedBuildCost,
     propertyData.waRegion,
-    isFirstHomeBuyer
+    isFirstHomeBuyer,
+    isPPR
   ]);
 
   return (
@@ -129,6 +133,8 @@ export default function App() {
               setIsFirstHomeBuyer={setIsFirstHomeBuyer}
               isInvestor={isInvestor}
               setIsInvestor={setIsInvestor}
+              isPPR={isPPR}
+              setIsPPR={setIsPPR}
               isSearching={isSearching}
               propertyPrice={propertyData.price}
               savingsAmount={savingsAmount}

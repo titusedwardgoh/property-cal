@@ -1,5 +1,5 @@
-import { DollarSign, FileText, Globe, Calendar } from 'lucide-react';
-import { formatCurrency } from '../utils/calculations.js';
+import { DollarSign, FileText, Globe, Calendar, Info } from 'lucide-react';
+import { formatCurrency, getFHOGPPRRequirements } from '../utils/calculations.js';
 import LoanSummaryCard from './LoanSummaryCard.js';
 
 export default function ResultsSection({ results, loanDetails, isForeignBuyer, includeBodyCorporate, hasCalculated, fieldsChanged, onCalculate, propertyData, isFirstHomeBuyer }) {
@@ -26,6 +26,58 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
 
   const canCalculate = isCalculationValid();
   
+  // Calculate total upfront costs based on what's actually being displayed
+  const calculateTotalUpfront = () => {
+    let total = 0;
+    
+    // Add deposit if showing
+    if (loanDetails.deposit && loanDetails.deposit > 0) {
+      total += loanDetails.deposit;
+    }
+    
+    // Add stamp duty if showing
+    if (propertyData.price && propertyData.price > 0 && propertyData.state && results.stampDuty > 0) {
+      total += results.stampDuty;
+    }
+    
+    // Add foreign buyer duty if showing
+    if (isForeignBuyer) {
+      total += results.foreignBuyerDuty;
+    }
+    
+    // Add land transfer fee if showing
+    if (results.landTransferFee > 0) {
+      total += results.landTransferFee;
+    }
+    
+    // Add bank settlement fee if showing
+    if (loanDetails.deposit && loanDetails.deposit > 0 && results.mortgageRegistrationFee > 0) {
+      total += results.mortgageRegistrationFee;
+    }
+    
+    // Add loan establishment fee if showing
+    if (loanDetails.deposit && loanDetails.deposit > 0 && results.loanEstablishmentFee > 0) {
+      total += results.loanEstablishmentFee;
+    }
+    
+    // Add legal fees if showing
+    if (results.legalFees > 0) {
+      total += results.legalFees;
+    }
+    
+    // Add inspection fees if showing
+    if (results.inspectionFees > 0) {
+      total += results.inspectionFees;
+    }
+    
+    // Subtract first home owners grant if showing
+    if (hasCalculated && results.firstHomeOwnersGrant > 0) {
+      total -= results.firstHomeOwnersGrant;
+    }
+    
+    return total;
+  };
+  
   return (
     <div className="space-y-6">
       {/* Upfront Costs */}
@@ -36,18 +88,29 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
         </div>
         
         <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Deposit</span>
-            <span className="font-semibold">
-              {formatCurrency(loanDetails.deposit)}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Stamp Duty</span>
-            <span className="font-semibold">
-              {formatCurrency(results.stampDuty)}
-            </span>
-          </div>
+          {(() => {
+            const shouldShowDeposit = loanDetails.deposit && loanDetails.deposit > 0;
+            return shouldShowDeposit ? (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Deposit</span>
+                <span className="font-semibold">
+                  {formatCurrency(loanDetails.deposit)}
+                </span>
+              </div>
+            ) : null;
+          })()}
+          {/* Debug: {JSON.stringify({price: propertyData.price, state: propertyData.state, stampDuty: results.stampDuty})} */}
+          {(() => {
+            const shouldShow = propertyData.price && propertyData.price > 0 && propertyData.state && results.stampDuty > 0;
+            return shouldShow ? (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Stamp Duty</span>
+                <span className="font-semibold">
+                  {formatCurrency(results.stampDuty)}
+                </span>
+              </div>
+            ) : null;
+          })()}
           {isForeignBuyer && (
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Foreign Buyer Duty</span>
@@ -64,22 +127,28 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
               </span>
             </div>
           )}
-          {results.mortgageRegistrationFee > 0 && (
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Bank Settlement Fee</span>
-              <span className="font-semibold">
-                {formatCurrency(results.mortgageRegistrationFee)}
-              </span>
-            </div>
-          )}
-          {results.loanEstablishmentFee > 0 && (
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Loan Establishment Fee</span>
-              <span className="font-semibold">
-                {formatCurrency(results.loanEstablishmentFee)}
-              </span>
-            </div>
-          )}
+          {(() => {
+            const shouldShowBankFee = loanDetails.deposit && loanDetails.deposit > 0 && results.mortgageRegistrationFee > 0;
+            return shouldShowBankFee ? (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Bank Settlement Fee</span>
+                <span className="font-semibold">
+                  {formatCurrency(results.mortgageRegistrationFee)}
+                </span>
+              </div>
+            ) : null;
+          })()}
+          {(() => {
+            const shouldShowLoanFee = loanDetails.deposit && loanDetails.deposit > 0 && results.loanEstablishmentFee > 0;
+            return shouldShowLoanFee ? (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Loan Establishment Fee</span>
+                <span className="font-semibold">
+                  {formatCurrency(results.loanEstablishmentFee)}
+                </span>
+              </div>
+            ) : null;
+          })()}
           {results.legalFees > 0 && (
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Legal/Conveyancing</span>
@@ -98,7 +167,16 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
           )}
           {hasCalculated && results.firstHomeOwnersGrant > 0 && (
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">First Home Owners Grant</span>
+              <div className="flex items-center space-x-2">
+                <span className="text-gray-600">First Home Owners Grant</span>
+                <div className="relative group">
+                  <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                    {getFHOGPPRRequirements(results.fhogCalculationState)}
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                  </div>
+                </div>
+              </div>
               <span className="font-semibold text-green-600">
                 -{formatCurrency(results.firstHomeOwnersGrant)}
               </span>
@@ -108,7 +186,7 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
           <div className="flex justify-between items-center">
             <span className="font-semibold text-gray-900">Total Upfront</span>
             <span className="font-bold text-xl text-orange-600">
-              {formatCurrency(results.totalUpfrontCosts)}
+              {formatCurrency(calculateTotalUpfront())}
             </span>
           </div>
         </div>

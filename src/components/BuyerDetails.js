@@ -10,6 +10,8 @@ export default function BuyerDetails({
   setIsFirstHomeBuyer,
   isInvestor,
   setIsInvestor,
+  isPPR,
+  setIsPPR,
   isSearching,
   propertyPrice,
   savingsAmount,
@@ -66,7 +68,10 @@ export default function BuyerDetails({
                   name="propertyPurpose"
                   value="investor"
                   checked={isInvestor === true}
-                  onChange={() => setIsInvestor(true)}
+                  onChange={() => {
+                    setIsInvestor(true);
+                    setIsPPR(false); // Investors cannot have PPR
+                  }}
                   className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                   disabled={isSearching}
                 />
@@ -75,6 +80,49 @@ export default function BuyerDetails({
                 </label>
               </div>
             </div>
+          </div>
+
+          {/* Principal Place of Residence */}
+          <div>
+            <h3 className="text-sm font-medium text-gray-700 mb-3">Will this be your principal place of residence (PPR)?</h3>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id="pprYes"
+                  name="pprStatus"
+                  value="yes"
+                  checked={isPPR === true}
+                  onChange={() => setIsPPR(true)}
+                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                  disabled={isSearching || isInvestor}
+                />
+                <label htmlFor="pprYes" className={`text-sm ${isInvestor ? 'text-gray-400' : 'text-gray-700'}`}>
+                  Yes
+                </label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id="pprNo"
+                  name="pprStatus"
+                  value="no"
+                  checked={isPPR === false}
+                  onChange={() => setIsPPR(false)}
+                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                  disabled={isSearching || isInvestor}
+                />
+                <label htmlFor="pprNo" className={`text-sm ${isInvestor ? 'text-gray-400' : 'text-gray-700'}`}>
+                  No
+                </label>
+              </div>
+            </div>
+            {isInvestor && (
+              <p className="text-sm text-gray-500 mt-2">
+                (Investors cannot claim a property as their principal place of residence)
+              </p>
+            )}
           </div>
 
           {/* Citizenship Status */}

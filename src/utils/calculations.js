@@ -3,6 +3,11 @@ import { STAMP_DUTY_RATES, ACT_OWNER_OCCUPIER_RATES, ACT_INVESTOR_RATES, FOREIGN
 export const calculateStampDuty = (price, state, isFirstHomeBuyer = false, isInvestor = false) => {
   let duty = 0;
 
+  // Return 0 if no price or no state
+  if (!price || price <= 0 || !state) {
+    return 0;
+  }
+
   // Special handling for Northern Territory properties under $525,000
   if (state === 'NT' && price <= 525000) {
     // NT has a special formula for properties under $525,000
@@ -431,10 +436,15 @@ export const calculateBodyCorporate = (price, propertyCategory) => {
   }
 };
 
-export const calculateFirstHomeOwnersGrant = (price, state, propertyType, propertyCategory, estimatedBuildCost = 0, waRegion = null) => {
+export const calculateFirstHomeOwnersGrant = (price, state, propertyType, propertyCategory, estimatedBuildCost = 0, waRegion = null, isPPR = false) => {
   const grantAmount = FIRST_HOME_OWNERS_GRANT[state] || 0;
   
   if (grantAmount === 0) return 0; // No grant available (e.g., ACT)
+  
+  // First Home Owners Grant requires the property to be the Principal Place of Residence
+  if (!isPPR) {
+    return 0;
+  }
   
   // First Home Owners Grant is only available for off-the-plan properties
   if (propertyType !== 'off-the-plan') {
@@ -523,6 +533,21 @@ export const calculateLandTax = (price, state) => {
   if (price <= 500000) return 0;
   if (price <= 1000000) return price * 0.001; // 0.1% for properties $500k-$1M
   return price * 0.002; // 0.2% for properties over $1M
+};
+
+export const getFHOGPPRRequirements = (state) => {
+  const requirements = {
+    'VIC': 'Must live for 12 months within 12 months of settlement',
+    'NSW': 'Must live for 6 months within 12 months of settlement',
+    'QLD': 'Must live for 6 months within 12 months of settlement',
+    'SA': 'Must live for 6 months within 12 months of settlement',
+    'WA': 'Must live for 6 months within 12 months of settlement',
+    'TAS': 'Must live for 6 months within 12 months of settlement',
+    'ACT': 'Must live for 12 months within 12 months of settlement',
+    'NT': 'Must live for 12 months within 12 months of settlement'
+  };
+  
+  return requirements[state] || 'PPR requirements vary by state';
 };
 
 export const formatCurrency = (amount) => {

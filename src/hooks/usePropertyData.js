@@ -25,6 +25,7 @@ export function usePropertyData() {
   const [searchError, setSearchError] = useState(null);
   const [includeOtherFees, setIncludeOtherFees] = useState(false);
   const [isInvestor, setIsInvestor] = useState(null);
+  const [isPPR, setIsPPR] = useState(null);
   
   // Optional fees checkboxes
   const [includeLandTransferFee, setIncludeLandTransferFee] = useState(false);
@@ -133,6 +134,8 @@ export function usePropertyData() {
     setIncludeOtherFees: handleOtherFeesToggle,
     isInvestor,
     setIsInvestor,
+    isPPR,
+    setIsPPR,
     includeLandTransferFee,
     setIncludeLandTransferFee: handleLandTransferFeeChange,
     includeLegalFees,
