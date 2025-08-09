@@ -15,7 +15,7 @@ import {
   calculateLandTax
 } from '../utils/calculations.js';
 
-export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan, customLandTransferFee, customLegalFees, customInspectionFees, includeCouncilRates, includeWaterRates, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, isPPR, calculateCount = 0) {
+export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan, customLandTransferFee, customLegalFees, customInspectionFees, includeCouncilRates, includeWaterRates, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, isPPR, calculateCount = 0, claimVacantLandConcession = false) {
   const [results, setResults] = useState({
     monthlyRepayment: 0,
     stampDuty: 0,
@@ -41,13 +41,13 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
   const price = useEstimatedPrice ? propertyData.estimatedPrice || 0 : propertyData.price;
   const depositPercentage = price > 0 ? (loanDetails.deposit / price) * 100 : 0;
   
-  // Calculate stamp duty for LMI determination
-  const stampDutyForLMI = price > 0 ? calculateStampDuty(price, propertyData.state, isFirstHomeBuyer, isInvestor) : 0;
+          // Calculate stamp duty for LMI determination
+        const stampDutyForLMI = price > 0 ? calculateStampDuty(price, propertyData.state, isFirstHomeBuyer, isInvestor, isPPR, propertyData.propertyType, propertyData.claimVacantLandConcession, propertyData.propertyCategory) : 0;
   const totalPropertyCost = price + stampDutyForLMI;
   const depositPercentageOfTotal = totalPropertyCost > 0 ? (loanDetails.deposit / totalPropertyCost) * 100 : 0;
   
-  // Calculate if mortgage is needed for mortgage registration fee
-  const stampDuty = calculateStampDuty(price, propertyData.state, isFirstHomeBuyer, isInvestor);
+          // Calculate if mortgage is needed for mortgage registration fee
+        const stampDuty = calculateStampDuty(price, propertyData.state, isFirstHomeBuyer, isInvestor, isPPR, propertyData.propertyType, propertyData.claimVacantLandConcession, propertyData.propertyCategory);
   const foreignBuyerDuty = calculateForeignBuyerDuty(price, propertyData.state, isForeignBuyer);
   const calculatedLandTransferFee = (price > 0 && includeLandTransferFee) ? calculateLandTransferFee(price, propertyData.state) : 0;
   const calculatedLegalFees = (price > 0 && includeLegalFees) ? calculateLegalFees(price, propertyData.propertyType) : 0;

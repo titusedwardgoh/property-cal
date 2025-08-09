@@ -36,7 +36,7 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
     }
     
     // Add stamp duty if showing
-    if (propertyData.price && propertyData.price > 0 && propertyData.state && results.stampDuty > 0) {
+    if (propertyData.price && propertyData.price > 0 && propertyData.state) {
       total += results.stampDuty;
     }
     
@@ -101,10 +101,19 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
           })()}
           {/* Debug: {JSON.stringify({price: propertyData.price, state: propertyData.state, stampDuty: results.stampDuty})} */}
           {(() => {
-            const shouldShow = propertyData.price && propertyData.price > 0 && propertyData.state && results.stampDuty > 0;
+            const shouldShow = propertyData.price && propertyData.price > 0 && propertyData.state;
             return shouldShow ? (
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Stamp Duty</span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-gray-600">Stamp Duty</span>
+                  <div className="relative group">
+                    <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-4 py-2 bg-gray-100 text-gray-800 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 w-80 text-center border border-gray-300">
+                      Stamp duty calculations are an estimate only. Please use your state revenue office website for more information and calculators.
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-b-4 border-l-4 border-r-4 border-transparent border-b-gray-100"></div>
+                    </div>
+                  </div>
+                </div>
                 <span className="font-semibold">
                   {formatCurrency(results.stampDuty)}
                 </span>
@@ -193,121 +202,125 @@ export default function ResultsSection({ results, loanDetails, isForeignBuyer, i
       </div>
 
       {/* Monthly Repayments */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-        <div className="flex items-center space-x-3 mb-2">
-          <DollarSign className="w-5 h-5 text-green-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Monthly Costs</h3>
-        </div>
-        {loanDetails.repaymentType && loanDetails.repaymentType.startsWith('interest-only-') && (
-          <p className="text-sm text-gray-600 mb-4">
-            (for the first {loanDetails.repaymentType.split('-')[2]} {loanDetails.repaymentType.split('-')[2] === '1' ? 'year' : 'years'})
-          </p>
-        )}
-        
-        <div className="space-y-3">
-          {results.hasLoan && (
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Loan Repayment</span>
-              <span className="font-semibold text-lg">
-                {formatCurrency(results.monthlyRepayment)}
-              </span>
-            </div>
+      {hasCalculated && (
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+          <div className="flex items-center space-x-3 mb-2">
+            <DollarSign className="w-5 h-5 text-green-600" />
+            <h3 className="text-lg font-semibold text-gray-900">Monthly Costs</h3>
+          </div>
+          {loanDetails.repaymentType && loanDetails.repaymentType.startsWith('interest-only-') && (
+            <p className="text-sm text-gray-600 mb-4">
+              (for the first {loanDetails.repaymentType.split('-')[2]} {loanDetails.repaymentType.split('-')[2] === '1' ? 'year' : 'years'})
+            </p>
           )}
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Council Rates</span>
-            <span className="font-semibold">
-              {formatCurrency(results.councilRates / 12)}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Water Rates</span>
-            <span className="font-semibold">
-              {formatCurrency(results.waterRates / 12)}
-            </span>
-          </div>
-          {includeBodyCorporate && (
+          
+          <div className="space-y-3">
+            {results.hasLoan && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Loan Repayment</span>
+                <span className="font-semibold text-lg">
+                  {formatCurrency(results.monthlyRepayment)}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Body Corporate/Strata</span>
+              <span className="text-gray-600">Council Rates</span>
               <span className="font-semibold">
-                {formatCurrency(results.bodyCorporate / 12)}
+                {formatCurrency(results.councilRates / 12)}
               </span>
             </div>
-          )}
-          {results.landTax > 0 && (
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Land Tax</span>
+              <span className="text-gray-600">Water Rates</span>
               <span className="font-semibold">
-                {formatCurrency(results.landTax / 12)}
+                {formatCurrency(results.waterRates / 12)}
               </span>
             </div>
-          )}
-          <hr />
-          <div className="flex justify-between items-center">
-            <span className="font-semibold text-gray-900">Total Monthly</span>
-            <span className="font-bold text-xl text-blue-600">
-              {formatCurrency(results.totalMonthlyCosts)}
-            </span>
+            {includeBodyCorporate && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Body Corporate/Strata</span>
+                <span className="font-semibold">
+                  {formatCurrency(results.bodyCorporate / 12)}
+                </span>
+              </div>
+            )}
+            {results.landTax > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Land Tax</span>
+                <span className="font-semibold">
+                  {formatCurrency(results.landTax / 12)}
+                </span>
+              </div>
+            )}
+            <hr />
+            <div className="flex justify-between items-center">
+              <span className="font-semibold text-gray-900">Total Monthly</span>
+              <span className="font-bold text-xl text-blue-600">
+                {formatCurrency(results.totalMonthlyCosts)}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Annual Costs */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-        <div className="flex items-center space-x-3 mb-2">
-          <Calendar className="w-5 h-5 text-green-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Annual Costs</h3>
-        </div>
-        {loanDetails.repaymentType && loanDetails.repaymentType.startsWith('interest-only-') && (
-          <p className="text-sm text-gray-600 mb-4">
-            (for the first {loanDetails.repaymentType.split('-')[2]} {loanDetails.repaymentType.split('-')[2] === '1' ? 'year' : 'years'})
-          </p>
-        )}
-        <div className="space-y-3">
-          {results.hasLoan && (
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Loan Repayment</span>
-              <span className="font-semibold text-lg">
-                {formatCurrency(results.monthlyRepayment * 12)}
-              </span>
-            </div>
+      {hasCalculated && (
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+          <div className="flex items-center space-x-3 mb-2">
+            <Calendar className="w-5 h-5 text-green-600" />
+            <h3 className="text-lg font-semibold text-gray-900">Annual Costs</h3>
+          </div>
+          {loanDetails.repaymentType && loanDetails.repaymentType.startsWith('interest-only-') && (
+            <p className="text-sm text-gray-600 mb-4">
+              (for the first {loanDetails.repaymentType.split('-')[2]} {loanDetails.repaymentType.split('-')[2] === '1' ? 'year' : 'years'})
+            </p>
           )}
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Council Rates</span>
-            <span className="font-semibold">
-              {formatCurrency(results.councilRates)}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Water Rates</span>
-            <span className="font-semibold">
-              {formatCurrency(results.waterRates)}
-            </span>
-          </div>
-          {includeBodyCorporate && (
+          <div className="space-y-3">
+            {results.hasLoan && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Loan Repayment</span>
+                <span className="font-semibold text-lg">
+                  {formatCurrency(results.monthlyRepayment * 12)}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Body Corporate/Strata</span>
+              <span className="text-gray-600">Council Rates</span>
               <span className="font-semibold">
-                {formatCurrency(results.bodyCorporate)}
+                {formatCurrency(results.councilRates)}
               </span>
             </div>
-          )}
-          {results.landTax > 0 && (
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Land Tax</span>
+              <span className="text-gray-600">Water Rates</span>
               <span className="font-semibold">
-                {formatCurrency(results.landTax)}
+                {formatCurrency(results.waterRates)}
               </span>
             </div>
-          )}
-          <hr />
-          <div className="flex justify-between items-center">
-            <span className="font-semibold text-gray-900">Total Annual</span>
-            <span className="font-bold text-xl text-purple-600">
-              {formatCurrency(results.totalMonthlyCosts * 12)}
-            </span>
+            {includeBodyCorporate && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Body Corporate/Strata</span>
+                <span className="font-semibold">
+                  {formatCurrency(results.bodyCorporate)}
+                </span>
+              </div>
+            )}
+            {results.landTax > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Land Tax</span>
+                <span className="font-semibold">
+                  {formatCurrency(results.landTax)}
+                </span>
+              </div>
+            )}
+            <hr />
+            <div className="flex justify-between items-center">
+              <span className="font-semibold text-gray-900">Total Annual</span>
+              <span className="font-bold text-xl text-purple-600">
+                {formatCurrency(results.totalMonthlyCosts * 12)}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
       
       <LoanSummaryCard 
         lvr={results.lvr}

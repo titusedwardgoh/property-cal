@@ -96,7 +96,8 @@ export default function App() {
     customBodyCorporate,
     customLandTax,
     isPPR,
-    calculateCount
+    calculateCount,
+    propertyData.claimVacantLandConcession
   );
 
   // Monitor changes in fields that affect FHOG calculation
@@ -112,6 +113,7 @@ export default function App() {
     propertyData.propertyCategory,
     propertyData.estimatedBuildCost,
     propertyData.waRegion,
+    propertyData.claimVacantLandConcession,
     isFirstHomeBuyer,
     isPPR
   ]);

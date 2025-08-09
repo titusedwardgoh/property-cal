@@ -13,7 +13,10 @@ export function usePropertyData() {
     developerName: '',
     constructionStarted: false,
     developmentCompletion: null,
-    dutiableValue: null
+    dutiableValue: null,
+    estimatedBuildCost: null,
+    claimVacantLandConcession: false,
+    waMetroRegion: null
   });
 
   const [useEstimatedPrice, setUseEstimatedPrice] = useState(false);

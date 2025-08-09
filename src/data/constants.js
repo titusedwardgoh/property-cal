@@ -15,11 +15,10 @@ export const STAMP_DUTY_RATES = {
     { min: 2000000, max: Infinity, rate: 0.065, fixedFee: 110000 }
   ],
   QLD: [
-    { min: 0, max: 5000, rate: 0, fixedFee: 0 },
-    { min: 5000, max: 75000, rate: 0.015, fixedFee: 0 }, // $1.50 per $100 = 1.5%
-    { min: 75000, max: 540000, rate: 0.035, fixedFee: 1050 }, // $3.50 per $100 = 3.5%
-    { min: 540000, max: 1000000, rate: 0.045, fixedFee: 17325 }, // $4.50 per $100 = 4.5%
-    { min: 1000000, max: Infinity, rate: 0.0575, fixedFee: 38025 } // $5.75 per $100 = 5.75%
+    { min: 0, max: 350000, rate: 0.01, fixedFee: 0 }, // $1.00 per $100 = 1%
+    { min: 350000, max: 540000, rate: 0.035, fixedFee: 3500 }, // $3,500 + $3.50 per $100 over $350,000
+    { min: 540000, max: 1000000, rate: 0.045, fixedFee: 10150 }, // $10,150 + $4.50 per $100 over $540,000
+    { min: 1000000, max: Infinity, rate: 0.0575, fixedFee: 30850 } // $30,850 + $5.75 per $100 over $1,000,000
   ],
   WA: [
     { min: 0, max: 120000, rate: 0.019, fixedFee: 0 }, // $1.90 per $100 = 1.9%

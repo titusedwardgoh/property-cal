@@ -1,12 +1,20 @@
 import { STAMP_DUTY_RATES, ACT_OWNER_OCCUPIER_RATES, ACT_INVESTOR_RATES, FOREIGN_BUYER_RATES, STATE_AVERAGES, FIRST_HOME_OWNERS_GRANT } from '../data/constants.js';
 
-export const calculateStampDuty = (price, state, isFirstHomeBuyer = false, isInvestor = false) => {
+export const calculateStampDuty = (price, state, isFirstHomeBuyer = false, isInvestor = false, isPPR = false, propertyType = 'new', claimVacantLandConcession = false, propertyCategory = null) => {
   let duty = 0;
+  
+  // Queensland Vacant Land Concession: If claimed, stamp duty is $0 with no caps
+  if (state === 'QLD' && claimVacantLandConcession) {
+    return 0;
+  }
 
   // Return 0 if no price or no state
   if (!price || price <= 0 || !state) {
     return 0;
   }
+  
+  // Queensland special handling: PPR properties get home concession rates regardless of citizenship
+  // First home buyers get additional concessions on top of the home concession rates
 
   // Special handling for Northern Territory properties under $525,000
   if (state === 'NT' && price <= 525000) {
@@ -41,6 +49,7 @@ export const calculateStampDuty = (price, state, isFirstHomeBuyer = false, isInv
     }
   } else {
     // Standard calculation for all other states using fixed fee approach
+    // Note: Queensland PPR properties automatically get these home concession rates
     const rates = STAMP_DUTY_RATES[state] || STAMP_DUTY_RATES.NSW;
     
     // Find the appropriate bracket and calculate duty
@@ -56,40 +65,151 @@ export const calculateStampDuty = (price, state, isFirstHomeBuyer = false, isInv
 
   // First home buyer concessions (state-specific)
   if (isFirstHomeBuyer) {
-    duty = applyFirstHomeBuyerConcession(duty, price, state);
+    duty = applyFirstHomeBuyerConcession(duty, price, state, isPPR, propertyType, isFirstHomeBuyer, propertyCategory);
   }
 
   return duty;
 };
 
-const applyFirstHomeBuyerConcession = (duty, price, state) => {
+// Helper function to calculate Queensland first home buyer concession amounts
+// This applies to existing properties only - new/off-the-plan properties get full exemption
+const calculateQueenslandConcession = (price) => {
+  // Queensland first home buyer concession amounts based on purchase price
+  // Contracts signed on or after 9 June 2024
+  const concessionBrackets = [
+    { min: 0, max: 709999.99, concession: 17350 },
+    { min: 710000, max: 719999.99, concession: 15615 },
+    { min: 720000, max: 729999.99, concession: 13880 },
+    { min: 730000, max: 739999.99, concession: 12145 },
+    { min: 740000, max: 749999.99, concession: 10410 },
+    { min: 750000, max: 759999.99, concession: 8675 },
+    { min: 760000, max: 769999.99, concession: 6940 },
+    { min: 770000, max: 779999.99, concession: 5205 },
+    { min: 780000, max: 789999.99, concession: 3470 },
+    { min: 790000, max: 799999.99, concession: 1735 },
+    { min: 800000, max: Infinity, concession: 0 } // $800,000 or more: Nil
+  ];
+
+  // Find the appropriate bracket for the price
+  for (const bracket of concessionBrackets) {
+    if (price >= bracket.min && price <= bracket.max) {
+      return bracket.concession;
+    }
+  }
+  
+  return 0; // Default to 0 if no bracket found
+};
+
+const applyFirstHomeBuyerConcession = (duty, price, state, isPPR, propertyType, isFirstHomeBuyer, propertyCategory) => {
   switch (state) {
     case 'NSW':
-      // NSW: Exempt from transfer duty on new and existing homes up to $800,000
-      // Concessions apply between $800,000 and $1,000,000
-      if (price <= 800000) return 0; // Full exemption
-      if (price <= 1000000) return duty * (1 - (1000000 - price) / 200000); // Partial exemption
+      // NSW: First home buyer concessions for PPR properties
+      if (!isPPR) {
+        return duty; // No concession if not PPR
+      }
+      
+      // Check if this is a land property - use different rates for land between $350k-$450k
+      if (propertyCategory === 'land' && price >= 350000 && price <= 450000) {
+        // NSW Land-specific concessional rates for properties between $350k and $450k
+        const landConcessionalRates = {
+          350000: 0.0000, 350001: 0.0001, 355000: 0.0020, 360000: 0.0039, 365000: 0.0057,
+          370000: 0.0075, 375000: 0.0093, 380000: 0.0112, 385000: 0.0130, 390000: 0.0147,
+          395000: 0.0164, 400000: 0.0181, 405000: 0.0197, 410000: 0.0212, 415000: 0.0228,
+          420000: 0.0243, 425000: 0.0257, 430000: 0.0272, 435000: 0.0286, 440000: 0.0299,
+          445000: 0.0313, 450000: 0.0326
+        };
+        
+        // Find the appropriate rate for the price
+        let landConcessionalRate = 0;
+        for (const [threshold, rate] of Object.entries(landConcessionalRates)) {
+          if (price <= parseInt(threshold)) {
+            landConcessionalRate = rate;
+            break;
+          }
+        }
+        
+        // Calculate concessional duty: price * concessional rate
+        return price * landConcessionalRate;
+      }
+      
+      // For land properties $450k+: use standard stamp duty rates (no concessions)
+      if (propertyCategory === 'land' && price > 450000) {
+        return duty; // Return the original duty calculation (no concessions)
+      }
+      
+      // For non-land properties under $800k: full exemption
+      if (price <= 800000) {
+        return 0;
+      }
+      if (price >= 1000000) return duty; // No concession at or above $1M
+      if (price > 800000 && price < 1000000) {
+        // Between $800k and $1M - use existing concessional rates
+        const concessionalRates = {
+          805000: 0.001224, 810000: 0.002433, 815000: 0.003627, 820000: 0.004806, 825000: 0.005972,
+          830000: 0.007123, 835000: 0.008260, 840000: 0.009384, 845000: 0.010494, 850000: 0.011592,
+          855000: 0.012676, 860000: 0.013748, 865000: 0.014808, 870000: 0.015855, 875000: 0.016891,
+          880000: 0.017915, 885000: 0.018927, 890000: 0.019927, 895000: 0.020917, 900000: 0.021896,
+          905000: 0.022863, 910000: 0.023820, 915000: 0.024767, 920000: 0.025703, 925000: 0.026630,
+          930000: 0.027546, 935000: 0.028453, 940000: 0.029349, 945000: 0.030240, 950000: 0.031115,
+          955000: 0.031984, 960000: 0.032843, 965000: 0.033694, 970000: 0.034536, 975000: 0.035370,
+          980000: 0.036195, 985000: 0.037011, 990000: 0.037820, 995000: 0.038620, 999999: 0.039412
+        };
+        
+        // Find the appropriate rate for the price
+        let concessionalRate = 0;
+        for (const [threshold, rate] of Object.entries(concessionalRates)) {
+          if (price <= parseInt(threshold)) {
+            concessionalRate = rate;
+            break;
+          }
+        }
+        
+        // Calculate concessional duty: price * concessional rate
+        return price * concessionalRate;
+      }
       break;
       
     case 'VIC':
       // VIC: Exempt from stamp duty on properties up to $600,000
       // Concession available between $600,001 and $750,000
+      // BUT only if BOTH first home buyer AND PPR
+      if (!isPPR) return duty; // No concession if not PPR
       if (price <= 600000) return 0; // Full exemption
       if (price <= 750000) return duty * (1 - (750000 - price) / 150000); // Partial exemption
       break;
       
     case 'QLD':
-      // QLD: Full transfer duty concession for new homes
-      // No specific price cap mentioned in current info, using previous logic
-      if (price <= 500000) return 0; // Full exemption
-      if (price <= 550000) return duty * (1 - (550000 - price) / 50000); // Partial exemption
+      // QLD: Concessions available for PPR (Principal Place of Residence) regardless of citizenship
+      if (isPPR) {
+        // For new/off-the-plan properties: no stamp duty
+        if (propertyType === 'new' || propertyType === 'off-the-plan') {
+          return 0; // Full exemption for new/off-the-plan properties
+        }
+        
+        // For existing properties: apply first home buyer concession if applicable
+        if (isFirstHomeBuyer) {
+          // First home concession: duty calculated at home concession rate minus additional concession amount
+          const concessionAmount = calculateQueenslandConcession(price);
+          const discountedDuty = Math.max(0, duty - concessionAmount);
+          return discountedDuty;
+        }
+        
+        // For PPR but not first home buyer: still get home concession rates (already applied above)
+        return duty;
+      }
+      
+      // For non-PPR (investment properties): no concessions
+      return duty;
       break;
       
     case 'SA':
-      // SA: Stamp duty relief for first home buyers on eligible new homes
-      // No specific price cap mentioned in current info, using previous logic
-      if (price <= 650000) return 0; // Full exemption
-      if (price <= 700000) return duty * (1 - (700000 - price) / 50000); // Partial exemption
+      // SA: Stamp duty relief for first home buyers on NEW homes only
+      // Existing properties: full stamp duty at normal rates (no exemptions)
+      if (propertyType === 'existing') {
+        return duty; // Full stamp duty for existing properties
+      }
+      // For new/off-the-plan properties: full exemption (no price caps)
+      return 0;
       break;
       
     case 'WA':
