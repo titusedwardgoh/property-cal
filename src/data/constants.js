@@ -129,3 +129,97 @@ export const FIRST_HOME_OWNERS_GRANT = {
   NT: 50000,  // $50,000 for new homes (HomeGrown Territory Grant)
   ACT: 0      // No FHOG, replaced by Home Buyer Concession Scheme (full stamp duty concession)
 }; 
+
+// WA Stamp Duty Concessions
+export const WA_STAMP_DUTY_CONCESSIONS = {
+  // First Home Owner Concessions (requires: first home, PPR, Australian citizen)
+  FIRST_HOME_OWNER: {
+    LAND: [
+      {
+        maxValue: 350000,
+        concession: 1.0, // 100% concession (no duty payable)
+        description: "No duty payable"
+      },
+      {
+        minValue: 350001,
+        maxValue: 450000,
+        concession: 0.1539, // $15.39 per $100 over $350,000
+        description: "$15.39 per $100 over $350,000"
+      }
+    ],
+    ESTABLISHED_HOME: [
+      {
+        maxValue: 500000,
+        concession: 1.0, // 100% concession (no duty payable)
+        description: "No duty payable"
+      },
+      {
+        minValue: 500001,
+        maxValue: 700000,
+        concession: 0.1363, // $13.63 per $100 over $500,000 (Metropolitan)
+        description: "$13.63 per $100 over $500,000 (Metropolitan)",
+        region: "METROPOLITAN"
+      },
+      {
+        minValue: 500001,
+        maxValue: 750000,
+        concession: 0.1189, // $11.89 per $100 over $500,000 (Local region)
+        description: "$11.89 per $100 over $500,000 (Local region)",
+        region: "LOCAL"
+      }
+    ]
+  },
+  
+  // Off-the-Plan Concessions (no PPR requirement, can be foreigner, max $50k concession)
+  OFF_THE_PLAN: {
+    PRE_CONSTRUCTION: [
+      {
+        maxValue: 750000,
+        concession: 1.0, // 100% duty concession
+        maxConcessionAmount: 50000,
+        description: "100% duty concession (max $50,000)"
+      },
+      {
+        minValue: 750001,
+        concession: 0.5, // 50% concession
+        maxConcessionAmount: 50000,
+        description: "50% concession (max $50,000)"
+      }
+    ],
+    UNDER_CONSTRUCTION: [
+      {
+        maxValue: 750000,
+        concession: 0.75, // 75% concession
+        maxConcessionAmount: 50000,
+        description: "75% concession (max $50,000)"
+      },
+      {
+        minValue: 750001,
+        concession: 0.375, // 37.5% concession
+        maxConcessionAmount: 50000,
+        description: "37.5% concession (max $50,000)"
+      }
+    ]
+  }
+};
+
+// WA Concession Eligibility Requirements
+export const WA_CONCESSION_REQUIREMENTS = {
+  FIRST_HOME_OWNER: {
+    requirements: [
+      "Must be first home buyer",
+      "Must be Principal Place of Residence (PPR)",
+      "Must be Australian citizen"
+    ],
+    description: "First home owner concessions require first home, PPR, and Australian citizenship"
+  },
+  OFF_THE_PLAN: {
+    requirements: [
+      "No PPR requirement",
+      "No first home owner requirement", 
+      "Can be foreign buyer"
+    ],
+    description: "Off-the-plan concessions have no PPR or citizenship requirements",
+    maxConcession: "Maximum concession capped at $50,000"
+  }
+}; 

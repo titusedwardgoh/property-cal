@@ -300,11 +300,12 @@ export default function PropertyDetails({
 
 
 
-          {/* Western Australia Metro Region - Only show for WA first home buyers who are PPR */}
-          {propertyData.state === 'WA' && isFirstHomeBuyer && (
+          {/* Western Australia Metro Region - Only show for WA established homes (affects first home buyer stamp duty) */}
+          {propertyData.state === 'WA' && isFirstHomeBuyer && isExistingProperty && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 WA Metro Region <span className="text-red-500">*</span>
+                <span className="text-xs text-gray-500 ml-2">(Affects stamp duty concessions)</span>
               </label>
               <div className="flex space-x-6">
                 <div className="flex items-center">
@@ -343,11 +344,12 @@ export default function PropertyDetails({
             </div>
           )}
 
-          {/* Western Australia Region - Only show for WA */}
-          {propertyData.state === 'WA' && (
+          {/* Western Australia Region - Only show for WA new homes (affects First Home Owners Grant) */}
+          {propertyData.state === 'WA' && isOffThePlan && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Western Australia Region <span className="text-red-500">*</span>
+                <span className="text-xs text-gray-500 ml-2">(Affects FHOG amount)</span>
               </label>
               <div className="flex space-x-6">
                 <div className="flex items-center">

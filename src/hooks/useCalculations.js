@@ -42,12 +42,12 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
   const depositPercentage = price > 0 ? (loanDetails.deposit / price) * 100 : 0;
   
           // Calculate stamp duty for LMI determination
-        const stampDutyForLMI = price > 0 ? calculateStampDuty(price, propertyData.state, isFirstHomeBuyer, isInvestor, isPPR, propertyData.propertyType, propertyData.claimVacantLandConcession, propertyData.propertyCategory) : 0;
+        const stampDutyForLMI = price > 0 ? calculateStampDuty(price, propertyData.state, isFirstHomeBuyer, isInvestor, isPPR, propertyData.propertyType, propertyData.claimVacantLandConcession, propertyData.propertyCategory, propertyData.waMetroRegion, propertyData.constructionStarted) : 0;
   const totalPropertyCost = price + stampDutyForLMI;
   const depositPercentageOfTotal = totalPropertyCost > 0 ? (loanDetails.deposit / totalPropertyCost) * 100 : 0;
   
           // Calculate if mortgage is needed for mortgage registration fee
-        const stampDuty = calculateStampDuty(price, propertyData.state, isFirstHomeBuyer, isInvestor, isPPR, propertyData.propertyType, propertyData.claimVacantLandConcession, propertyData.propertyCategory);
+        const stampDuty = calculateStampDuty(price, propertyData.state, isFirstHomeBuyer, isInvestor, isPPR, propertyData.propertyType, propertyData.claimVacantLandConcession, propertyData.propertyCategory, propertyData.waMetroRegion, propertyData.constructionStarted);
   const foreignBuyerDuty = calculateForeignBuyerDuty(price, propertyData.state, isForeignBuyer);
   const calculatedLandTransferFee = (price > 0 && includeLandTransferFee) ? calculateLandTransferFee(price, propertyData.state) : 0;
   const calculatedLegalFees = (price > 0 && includeLegalFees) ? calculateLegalFees(price, propertyData.propertyType) : 0;
@@ -195,7 +195,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       loanAmount: finalLoanAmount, 
       lmiAmount: lmiAmount 
     }));
-  }, [propertyData, propertyData.estimatedBuildCost, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.repaymentType, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, setLoanDetails, needsLoan, isInvestor, price, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, councilRates, waterRates, bodyCorporate, totalPropertyCost]);
+  }, [propertyData, propertyData.estimatedBuildCost, propertyData.constructionStarted, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.repaymentType, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, setLoanDetails, needsLoan, isInvestor, price, isPPR, claimVacantLandConcession]);
 
   // Manual FHOG calculation - only when calculate button is pressed
   useEffect(() => {

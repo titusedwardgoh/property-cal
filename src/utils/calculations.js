@@ -1,6 +1,6 @@
-import { STAMP_DUTY_RATES, ACT_OWNER_OCCUPIER_RATES, ACT_INVESTOR_RATES, FOREIGN_BUYER_RATES, STATE_AVERAGES, FIRST_HOME_OWNERS_GRANT } from '../data/constants.js';
+import { STAMP_DUTY_RATES, ACT_OWNER_OCCUPIER_RATES, ACT_INVESTOR_RATES, FOREIGN_BUYER_RATES, STATE_AVERAGES, FIRST_HOME_OWNERS_GRANT, WA_STAMP_DUTY_CONCESSIONS } from '../data/constants.js';
 
-export const calculateStampDuty = (price, state, isFirstHomeBuyer = false, isInvestor = false, isPPR = false, propertyType = 'new', claimVacantLandConcession = false, propertyCategory = null) => {
+export const calculateStampDuty = (price, state, isFirstHomeBuyer = false, isInvestor = false, isPPR = false, propertyType = 'existing', claimVacantLandConcession = false, propertyCategory = null, waRegion = null, constructionStarted = false) => {
   let duty = 0;
   
   // Queensland Vacant Land Concession: If claimed, stamp duty is $0 with no caps
@@ -63,9 +63,25 @@ export const calculateStampDuty = (price, state, isFirstHomeBuyer = false, isInv
     }
   }
 
+  // Off-the-plan concessions (apply regardless of first home buyer status)
+  console.log('Checking off-the-plan concessions:', {
+    propertyType,
+    constructionStarted,
+    price,
+    state
+  });
+  
+  if (propertyType === 'off-the-plan') {
+    console.log('Applying off-the-plan concessions');
+    duty = applyOffThePlanConcession(duty, price, state, constructionStarted);
+    console.log('Duty after off-the-plan concessions:', duty);
+  } else {
+    console.log('Not off-the-plan property, skipping concessions');
+  }
+  
   // First home buyer concessions (state-specific)
   if (isFirstHomeBuyer) {
-    duty = applyFirstHomeBuyerConcession(duty, price, state, isPPR, propertyType, isFirstHomeBuyer, propertyCategory);
+    duty = applyFirstHomeBuyerConcession(duty, price, state, isPPR, propertyType, isFirstHomeBuyer, propertyCategory, waRegion);
   }
 
   return duty;
@@ -100,7 +116,72 @@ const calculateQueenslandConcession = (price) => {
   return 0; // Default to 0 if no bracket found
 };
 
-const applyFirstHomeBuyerConcession = (duty, price, state, isPPR, propertyType, isFirstHomeBuyer, propertyCategory) => {
+const applyOffThePlanConcession = (duty, price, state, constructionStarted = false) => {
+  switch (state) {
+    case 'WA':
+      // WA: Off-the-plan concessions from constants
+      // Choose rates based on construction status
+      const rates = constructionStarted 
+        ? WA_STAMP_DUTY_CONCESSIONS.OFF_THE_PLAN.UNDER_CONSTRUCTION
+        : WA_STAMP_DUTY_CONCESSIONS.OFF_THE_PLAN.PRE_CONSTRUCTION;
+      
+      console.log('WA Off-the-Plan Concession Debug:', {
+        constructionStarted,
+        price,
+        duty,
+        rates,
+        selectedRates: constructionStarted ? 'UNDER_CONSTRUCTION' : 'PRE_CONSTRUCTION'
+      });
+      
+      // Find the appropriate bracket
+      for (const bracket of rates) {
+        console.log('Checking bracket:', bracket);
+        
+        // Check if this bracket applies to the price
+        let bracketApplies = false;
+        
+        if (bracket.maxValue && price <= bracket.maxValue) {
+          // Bracket with maxValue (e.g., $750k and under)
+          bracketApplies = true;
+        } else if (bracket.minValue && price >= bracket.minValue) {
+          // Bracket with minValue (e.g., $750k+)
+          bracketApplies = true;
+        }
+        
+        if (bracketApplies) {
+          console.log('Bracket found:', bracket);
+          if (bracket.concession === 1.0) {
+            console.log('100% concession applied, returning 0');
+            return 0; // 100% concession (no duty payable)
+          } else {
+            // Apply partial concession with maximum cap
+            const maxConcession = bracket.maxConcessionAmount || 50000;
+            const concessionAmount = duty * bracket.concession;
+            const actualConcession = Math.min(concessionAmount, maxConcession);
+            const finalDuty = Math.max(0, duty - actualConcession);
+            console.log('Partial concession applied:', {
+              maxConcession,
+              concessionAmount,
+              actualConcession,
+              finalDuty,
+              bracketConcession: bracket.concession
+            });
+            return finalDuty;
+          }
+        }
+      }
+      
+      console.log('No bracket found, returning full duty:', duty);
+      // If no bracket found, return full duty
+      return duty;
+      break;
+      
+    default:
+      return duty; // No off-the-plan concessions for other states
+  }
+};
+
+const applyFirstHomeBuyerConcession = (duty, price, state, isPPR, propertyType, isFirstHomeBuyer, propertyCategory, waRegion = null) => {
   switch (state) {
     case 'NSW':
       // NSW: First home buyer concessions for PPR properties
@@ -213,10 +294,51 @@ const applyFirstHomeBuyerConcession = (duty, price, state, isPPR, propertyType, 
       break;
       
     case 'WA':
-      // WA: Stamp duty concessions up to $700,000 (Perth Metro/Peel) or $750,000 (outside)
-      // Using $700,000 as default for calculations
-      if (price <= 700000) return 0; // Full exemption
-      if (price <= 750000) return duty * (1 - (750000 - price) / 50000); // Partial exemption
+      // WA: Use the proper concession rates from constants
+      if (!isPPR) return duty; // No concession if not PPR
+      
+      // For established homes, use the established home concession rates
+      const establishedHomeRates = WA_STAMP_DUTY_CONCESSIONS.FIRST_HOME_OWNER.ESTABLISHED_HOME;
+      
+      // Check if price exceeds the concession caps
+      const metroCap = 700000; // Metropolitan cap
+      const nonMetroCap = 750000; // Non-metropolitan cap
+      
+      if ((waRegion === 'non-metropolitan' && price > nonMetroCap) || 
+          (waRegion !== 'non-metropolitan' && price > metroCap)) {
+        // Price exceeds concession caps - use standard WA stamp duty rates for entire amount
+        return duty;
+      }
+      
+      // Find the appropriate bracket based on price
+      let applicableBracket = null;
+      for (const bracket of establishedHomeRates) {
+        if (price <= bracket.maxValue) {
+          applicableBracket = bracket;
+          break;
+        }
+      }
+      
+      if (!applicableBracket) {
+        return duty; // No bracket found, return full duty
+      }
+      
+      if (applicableBracket.concession === 1.0) {
+        return 0; // 100% concession (no duty payable)
+      }
+      
+      // For non-metropolitan regions, use the LOCAL bracket if available
+      // Check if there's a LOCAL bracket that covers this price range
+      const localBracket = establishedHomeRates.find(b => b.region === 'LOCAL' && price <= b.maxValue);
+      if (waRegion === 'non-metropolitan' && localBracket && price <= localBracket.maxValue) {
+        // Use the local (lower) rate
+        const excessAmount = price - localBracket.minValue;
+        return excessAmount * localBracket.concession;
+      }
+      
+      // Use the metropolitan rate (higher rate) by default
+      const excessAmount = price - applicableBracket.minValue;
+      return excessAmount * applicableBracket.concession;
       break;
       
     case 'TAS':
