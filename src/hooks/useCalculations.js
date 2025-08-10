@@ -243,7 +243,10 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
 
       // Update results with the calculated FHOG
       setResults(prev => {
-        const newTotalUpfrontCosts = prev.totalUpfrontCosts + firstHomeOwnersGrant - (prev.firstHomeOwnersGrant || 0);
+        // Calculate the difference in FHOG to adjust total upfront costs
+        const fhogDifference = firstHomeOwnersGrant - (prev.firstHomeOwnersGrant || 0);
+        const newTotalUpfrontCosts = prev.totalUpfrontCosts + fhogDifference;
+        
         return {
           ...prev,
           firstHomeOwnersGrant,
@@ -252,7 +255,8 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
         };
       });
     }
-  }, [calculateCount, isFirstHomeBuyer, price, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.state, propertyData.propertyType, propertyData.waRegion, isPPR]); // Removed circular dependencies
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calculateCount, isFirstHomeBuyer, price, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.state, propertyData.propertyType, propertyData.waRegion, isPPR]); // Disabled eslint rule to avoid circular dependency
 
   return {
     ...results,
