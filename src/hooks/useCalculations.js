@@ -102,7 +102,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       
       isUpdatingDeposit.current = false;
     }
-  }, [price, needsLoan, setLoanDetails]);
+  }, [price, needsLoan, setLoanDetails, loanDetails.deposit]);
 
   // Separate effect to track manual deposit changes
   useEffect(() => {
@@ -110,7 +110,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
     if (needsLoan && loanDetails.deposit > 0 && loanDetails.deposit !== price && loanDetails.deposit !== lastManualDeposit.current && !isUpdatingDeposit.current) {
       lastManualDeposit.current = loanDetails.deposit;
     }
-  }, [loanDetails.deposit, needsLoan, price]);
+  }, [loanDetails.deposit, needsLoan, price, lastManualDeposit, isUpdatingDeposit]);
 
 
     
@@ -195,7 +195,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       loanAmount: finalLoanAmount, 
       lmiAmount: lmiAmount 
     }));
-  }, [propertyData, propertyData.estimatedBuildCost, propertyData.constructionStarted, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.repaymentType, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, setLoanDetails, needsLoan, isInvestor, price, isPPR, claimVacantLandConcession]);
+  }, [propertyData, propertyData.estimatedBuildCost, propertyData.constructionStarted, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.repaymentType, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, setLoanDetails, needsLoan, isInvestor, price, isPPR, claimVacantLandConcession, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, councilRates, waterRates, bodyCorporate, totalPropertyCost, results.firstHomeOwnersGrant]);
 
   // Manual FHOG calculation - only when calculate button is pressed
   useEffect(() => {
@@ -222,7 +222,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
         totalUpfrontCosts: prev.totalUpfrontCosts + firstHomeOwnersGrant - (prev.firstHomeOwnersGrant || 0)
       }));
     }
-  }, [calculateCount]); // Only depends on calculateCount - nothing else
+  }, [calculateCount, isFirstHomeBuyer, price, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.state, propertyData.propertyType, propertyData.waRegion, isPPR, results.firstHomeOwnersGrant, results.totalUpfrontCosts]); // Dependencies for FHOG calculation
 
   return {
     ...results,

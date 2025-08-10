@@ -115,7 +115,8 @@ export default function App() {
     propertyData.waRegion,
     propertyData.claimVacantLandConcession,
     isFirstHomeBuyer,
-    isPPR
+    isPPR,
+    calculateCount
   ]);
 
   return (
