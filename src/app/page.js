@@ -72,6 +72,9 @@ export default function App() {
   
   // State to track if fields have changed since last calculation
   const [fieldsChanged, setFieldsChanged] = useState(false);
+  
+  // Store the last calculated values to compare against
+  const [lastCalculatedValues, setLastCalculatedValues] = useState({});
 
   const results = useCalculations(
     propertyData, 
@@ -103,8 +106,25 @@ export default function App() {
   // Monitor changes in fields that affect FHOG calculation
   React.useEffect(() => {
     if (calculateCount > 0) {
-      // If we've calculated before, check if relevant fields have changed
-      setFieldsChanged(true);
+      // Check if any relevant fields have changed since last calculation
+      const currentValues = {
+        price: propertyData.price,
+        state: propertyData.state,
+        propertyType: propertyData.propertyType,
+        propertyCategory: propertyData.propertyCategory,
+        estimatedBuildCost: propertyData.estimatedBuildCost,
+        waRegion: propertyData.waRegion,
+        claimVacantLandConcession: propertyData.claimVacantLandConcession,
+        isFirstHomeBuyer,
+        isPPR
+      };
+      
+      // Compare with last calculated values
+      const hasChanged = Object.keys(currentValues).some(key => 
+        currentValues[key] !== lastCalculatedValues[key]
+      );
+      
+      setFieldsChanged(hasChanged);
     }
   }, [
     propertyData.price,
@@ -116,7 +136,8 @@ export default function App() {
     propertyData.claimVacantLandConcession,
     isFirstHomeBuyer,
     isPPR,
-    calculateCount
+    calculateCount,
+    lastCalculatedValues
   ]);
 
   return (
@@ -223,6 +244,19 @@ export default function App() {
               onCalculate={() => {
                 setCalculateCount(prev => prev + 1);
                 setFieldsChanged(false);
+                
+                // Store current values for comparison
+                setLastCalculatedValues({
+                  price: propertyData.price,
+                  state: propertyData.state,
+                  propertyType: propertyData.propertyType,
+                  propertyCategory: propertyData.propertyCategory,
+                  estimatedBuildCost: propertyData.estimatedBuildCost,
+                  waRegion: propertyData.waRegion,
+                  claimVacantLandConcession: propertyData.claimVacantLandConcession,
+                  isFirstHomeBuyer,
+                  isPPR
+                });
               }}
             />
           </div>

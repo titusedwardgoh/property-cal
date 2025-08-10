@@ -11,9 +11,16 @@ import {
   calculateCouncilRates,
   calculateWaterRates,
   calculateBodyCorporate,
-  calculateFirstHomeOwnersGrant,
   calculateLandTax
 } from '../utils/calculations.js';
+
+// Import state-specific FHOG functions
+import { calculateNSWFirstHomeOwnersGrant } from '../states/nsw/calculations.js';
+import { calculateVICFirstHomeOwnersGrant } from '../states/vic/calculations.js';
+import { calculateQLDFirstHomeOwnersGrant } from '../states/qld/calculations.js';
+import { calculateSAFirstHomeOwnersGrant } from '../states/sa/calculations.js';
+import { calculateWAFirstHomeOwnersGrant } from '../states/wa/calculations.js';
+import { calculateTASFirstHomeOwnersGrant } from '../states/tas/calculations.js';
 
 export function useCalculations(propertyData, loanDetails, setLoanDetails, isForeignBuyer, isFirstHomeBuyer, isInvestor, useEstimatedPrice, includeLandTransferFee, includeLegalFees, includeInspectionFees, needsLoan, customLandTransferFee, customLegalFees, customInspectionFees, includeCouncilRates, includeWaterRates, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, isPPR, calculateCount = 0, claimVacantLandConcession = false) {
   const [results, setResults] = useState({
@@ -195,7 +202,27 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
       loanAmount: finalLoanAmount, 
       lmiAmount: lmiAmount 
     }));
-  }, [propertyData, propertyData.estimatedBuildCost, propertyData.constructionStarted, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.repaymentType, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, setLoanDetails, needsLoan, isInvestor, price, isPPR, claimVacantLandConcession, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, councilRates, waterRates, bodyCorporate, totalPropertyCost, results.firstHomeOwnersGrant]);
+  }, [propertyData, propertyData.estimatedBuildCost, propertyData.constructionStarted, loanDetails.deposit, loanDetails.interestRate, loanDetails.loanTerm, loanDetails.repaymentType, loanDetails.includeLMI, loanDetails.mortgageRegistrationFee, loanDetails.loanEstablishmentFee, isForeignBuyer, useEstimatedPrice, isFirstHomeBuyer, includeLandTransferFee, includeLegalFees, includeInspectionFees, includeCouncilRates, includeWaterRates, customLandTransferFee, customLegalFees, customInspectionFees, customCouncilRates, customWaterRates, includeBodyCorporate, customBodyCorporate, customLandTax, setLoanDetails, needsLoan, isInvestor, price, isPPR, claimVacantLandConcession, stampDuty, foreignBuyerDuty, landTransferFee, legalFees, inspectionFees, councilRates, waterRates, bodyCorporate, totalPropertyCost]);
+
+  // Helper function to call state-specific FHOG calculation
+  const calculateStateSpecificFHOG = (price, state, propertyType, propertyCategory, estimatedBuildCost, waRegion, isPPR) => {
+    switch (state) {
+      case 'NSW':
+        return calculateNSWFirstHomeOwnersGrant(price, propertyType, propertyCategory, estimatedBuildCost, isPPR);
+      case 'VIC':
+        return calculateVICFirstHomeOwnersGrant(price, propertyType, propertyCategory, estimatedBuildCost, isPPR);
+      case 'QLD':
+        return calculateQLDFirstHomeOwnersGrant(price, propertyType, propertyCategory, estimatedBuildCost, isPPR);
+      case 'SA':
+        return calculateSAFirstHomeOwnersGrant(price, propertyType, propertyCategory, estimatedBuildCost, isPPR);
+      case 'WA':
+        return calculateWAFirstHomeOwnersGrant(price, propertyType, propertyCategory, estimatedBuildCost, waRegion, isPPR);
+      case 'TAS':
+        return calculateTASFirstHomeOwnersGrant(price, propertyType, propertyCategory, estimatedBuildCost, isPPR);
+      default:
+        return 0;
+    }
+  };
 
   // Manual FHOG calculation - only when calculate button is pressed
   useEffect(() => {
@@ -206,23 +233,26 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
         // For land, require both price and estimated build cost
         if (propertyData.propertyCategory === 'land') {
           if (propertyData.estimatedBuildCost !== undefined && propertyData.estimatedBuildCost !== null) {
-            firstHomeOwnersGrant = calculateFirstHomeOwnersGrant(price, propertyData.state, propertyData.propertyType, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.waRegion, isPPR);
+            firstHomeOwnersGrant = calculateStateSpecificFHOG(price, propertyData.state, propertyData.propertyType, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.waRegion, isPPR);
           }
         } else {
           // For other property types, only require price
-          firstHomeOwnersGrant = calculateFirstHomeOwnersGrant(price, propertyData.state, propertyData.propertyType, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.waRegion, isPPR);
+          firstHomeOwnersGrant = calculateStateSpecificFHOG(price, propertyData.state, propertyData.propertyType, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.waRegion, isPPR);
         }
       }
 
       // Update results with the calculated FHOG
-      setResults(prev => ({
-        ...prev,
-        firstHomeOwnersGrant,
-        fhogCalculationState: propertyData.state,
-        totalUpfrontCosts: prev.totalUpfrontCosts + firstHomeOwnersGrant - (prev.firstHomeOwnersGrant || 0)
-      }));
+      setResults(prev => {
+        const newTotalUpfrontCosts = prev.totalUpfrontCosts + firstHomeOwnersGrant - (prev.firstHomeOwnersGrant || 0);
+        return {
+          ...prev,
+          firstHomeOwnersGrant,
+          fhogCalculationState: propertyData.state,
+          totalUpfrontCosts: newTotalUpfrontCosts
+        };
+      });
     }
-  }, [calculateCount, isFirstHomeBuyer, price, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.state, propertyData.propertyType, propertyData.waRegion, isPPR, results.firstHomeOwnersGrant, results.totalUpfrontCosts]); // Dependencies for FHOG calculation
+  }, [calculateCount, isFirstHomeBuyer, price, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.state, propertyData.propertyType, propertyData.waRegion, isPPR]); // Removed circular dependencies
 
   return {
     ...results,
