@@ -106,7 +106,7 @@ export default function PropertyDetailsCard({ formData, updateFormData }) {
                   <button
                     key={state}
                     onClick={() => updateFormData('selectedState', state)}
-                    className={`px-6 py-4 text-lg font-semibold rounded-lg border-2 transition-colors ${
+                    className={`px-3 py-3 text-lg font-semibold rounded-lg border-2 transition-colors text-center ${
                       formData.selectedState === state
                         ? 'border-blue-500 bg-blue-50 text-blue-700'
                         : 'border-gray-300 hover:border-gray-400'
@@ -135,22 +135,21 @@ export default function PropertyDetailsCard({ formData, updateFormData }) {
             <div className="mb-8">
               <div className="grid grid-cols-2 gap-4 max-w-2xl mx-auto">
                 {[
-                  { value: 'house', label: '🏡 House', description: 'Standalone house' },
-                  { value: 'apartment', label: '🏢 Apartment', description: 'Unit or apartment' },
-                  { value: 'townhouse', label: '🏘️ Townhouse', description: 'Attached townhouse' },
-                  { value: 'land', label: '🌱 Land', description: 'Vacant land' }
+                  { value: 'house', label: '🏡 House' },
+                  { value: 'apartment', label: '🏢 Apartment' },
+                  { value: 'townhouse', label: '🏘️ Townhouse' },
+                  { value: 'land', label: '🌱 Land' }
                 ].map((option) => (
                   <button
                     key={option.value}
                     onClick={() => updateFormData('propertyCategory', option.value)}
-                    className={`p-5 rounded-lg border-2 transition-colors text-left ${
+                    className={`p-5 rounded-lg border-2 transition-colors text-center flex items-center justify-center ${
                       formData.propertyCategory === option.value
                         ? 'border-blue-500 bg-blue-50'
                         : 'border-gray-300 hover:border-gray-400'
                     }`}
                   >
-                    <div className="text-lg font-semibold mb-1">{option.label}</div>
-                    <div className="text-sm text-gray-600">{option.description}</div>
+                    <div className="text-lg font-semibold text-center">{option.label}</div>
                   </button>
                 ))}
               </div>
@@ -179,7 +178,7 @@ export default function PropertyDetailsCard({ formData, updateFormData }) {
                   <button
                     key={option.value}
                     onClick={() => updateFormData('propertyType', option.value)}
-                    className={`p-5 rounded-lg border-2 transition-colors text-left ${
+                    className={`px-5 py-2 rounded-lg border-2 transition-colors text-left ${
                       formData.propertyType === option.value
                         ? 'border-blue-500 bg-blue-50'
                         : 'border-gray-300 hover:border-gray-400'
