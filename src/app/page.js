@@ -1,267 +1,81 @@
 "use client";
 
-import React, { useState } from 'react';
-import Header from '../components/Header.js';
-import PropertyDetails from '../components/PropertyDetails.js';
-import BuyerDetails from '../components/BuyerDetails.js';
-import LoanDetails from '../components/LoanDetails.js';
-import OtherFees from '../components/OtherFees.js';
-import ResultsSection from '../components/ResultsSection.js';
-import { usePropertyData } from '../hooks/usePropertyData.js';
-import { useLoanDetails } from '../hooks/useLoanDetails.js';
-import { useCalculations } from '../hooks/useCalculations.js';
+import { useState } from 'react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import PropertyDetailsCard from '../components/PropertyDetailsCard(new)';
+import UpfrontCostsDisplay from '../components/UpfrontCostsDisplay(new)';
+import PropertySummary from '../components/PropertySummary(new)';
 
-export default function App() {
-  const {
-    propertyData,
-    setPropertyData,
-    useEstimatedPrice,
-    setUseEstimatedPrice,
-    isForeignBuyer,
-    setIsForeignBuyer,
-    isFirstHomeBuyer,
-    setIsFirstHomeBuyer,
-    isInvestor,
-    setIsInvestor,
-    isPPR,
-    setIsPPR,
-    needsLoan,
-    setNeedsLoan,
-    savingsAmount,
-    setSavingsAmount,
-    isSearching,
-    searchError,
-    includeOtherFees,
-    setIncludeOtherFees,
-    includeLandTransferFee,
-    setIncludeLandTransferFee,
-    includeLegalFees,
-    setIncludeLegalFees,
-    includeInspectionFees,
-    setIncludeInspectionFees,
-    customLandTransferFee,
-    setCustomLandTransferFee,
-    customLegalFees,
-    setCustomLegalFees,
-    customInspectionFees,
-    setCustomInspectionFees,
-    includeCouncilRates,
-    setIncludeCouncilRates,
-    includeWaterRates,
-    setIncludeWaterRates,
-    customCouncilRates,
-    setCustomCouncilRates,
-    customWaterRates,
-    setCustomWaterRates,
-    includeBodyCorporate,
-    setIncludeBodyCorporate,
-    customBodyCorporate,
-    setCustomBodyCorporate,
-    customLandTax,
-    setCustomLandTax,
-    handleAddressSearch
-  } = usePropertyData();
+export default function Home() {
+  const [formData, setFormData] = useState({
+    // Property details
+    propertyPrice: '',
+    propertyAddress: '', // Added property address
+    selectedState: '',
+    propertyType: '',
+    propertyCategory: '',
+    
+    // Buyer details (will be added later)
+    isFirstHomeBuyer: false,
+    isPPR: false,
+    isForeignBuyer: false,
+    
+    // Loan details (will be added later)
+    loanAmount: '',
+    loanTerm: '',
+    interestRate: '',
+    
+    // Results (will be calculated as they go)
+    stampDuty: 0,
+    firstHomeOwnersGrant: 0,
+    landTransferFee: 0,
+    foreignBuyerDuty: 0,
+    legalFees: 0,
+    inspectionFees: 0,
+    councilRates: 0,
+    waterRates: 0,
+    bodyCorporate: 0,
+    insurance: 0,
+    movingCosts: 0,
+    utilityConnections: 0
+  });
 
-  const {
-    loanDetails,
-    setLoanDetails
-  } = useLoanDetails();
-
-  // State to track calculate button presses
-  const [calculateCount, setCalculateCount] = useState(0);
-  
-  // State to track if fields have changed since last calculation
-  const [fieldsChanged, setFieldsChanged] = useState(false);
-  
-  // Store the last calculated values to compare against
-  const [lastCalculatedValues, setLastCalculatedValues] = useState({});
-
-  const results = useCalculations(
-    propertyData, 
-    loanDetails,
-    setLoanDetails,
-    isForeignBuyer, 
-    isFirstHomeBuyer, 
-    isInvestor,
-    useEstimatedPrice,
-    includeLandTransferFee,
-    includeLegalFees,
-    includeInspectionFees,
-    needsLoan,
-    customLandTransferFee,
-    customLegalFees,
-    customInspectionFees,
-    includeCouncilRates,
-    includeWaterRates,
-    customCouncilRates,
-    customWaterRates,
-    includeBodyCorporate,
-    customBodyCorporate,
-    customLandTax,
-    isPPR,
-    calculateCount,
-    propertyData.claimVacantLandConcession
-  );
-
-  // Monitor changes in fields that affect FHOG calculation
-  React.useEffect(() => {
-    if (calculateCount > 0) {
-      // Check if any relevant fields have changed since last calculation
-      const currentValues = {
-        price: propertyData.price,
-        state: propertyData.state,
-        propertyType: propertyData.propertyType,
-        propertyCategory: propertyData.propertyCategory,
-        estimatedBuildCost: propertyData.estimatedBuildCost,
-        waRegion: propertyData.waRegion,
-        claimVacantLandConcession: propertyData.claimVacantLandConcession,
-        isFirstHomeBuyer,
-        isPPR
-      };
-      
-      // Compare with last calculated values
-      const hasChanged = Object.keys(currentValues).some(key => 
-        currentValues[key] !== lastCalculatedValues[key]
-      );
-      
-      setFieldsChanged(hasChanged);
-    }
-  }, [
-    propertyData.price,
-    propertyData.state,
-    propertyData.propertyType,
-    propertyData.propertyCategory,
-    propertyData.estimatedBuildCost,
-    propertyData.waRegion,
-    propertyData.claimVacantLandConcession,
-    isFirstHomeBuyer,
-    isPPR,
-    calculateCount,
-    lastCalculatedValues
-  ]);
+  const updateFormData = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Input Section */}
-          <div className="lg:col-span-2 space-y-6">
-            <BuyerDetails
-              needsLoan={needsLoan}
-              setNeedsLoan={setNeedsLoan}
-              isForeignBuyer={isForeignBuyer}
-              setIsForeignBuyer={setIsForeignBuyer}
-              isFirstHomeBuyer={isFirstHomeBuyer}
-              setIsFirstHomeBuyer={setIsFirstHomeBuyer}
-              isInvestor={isInvestor}
-              setIsInvestor={setIsInvestor}
-              isPPR={isPPR}
-              setIsPPR={setIsPPR}
-              isSearching={isSearching}
-              propertyPrice={propertyData.price}
-              savingsAmount={savingsAmount}
-              setSavingsAmount={setSavingsAmount}
-            />
-
-            <PropertyDetails
-              propertyData={propertyData}
-              setPropertyData={setPropertyData}
-              loanDetails={loanDetails}
-              setLoanDetails={setLoanDetails}
-              useEstimatedPrice={useEstimatedPrice}
-              setUseEstimatedPrice={setUseEstimatedPrice}
-              isSearching={isSearching}
-              searchError={searchError}
-              onAddressSearch={handleAddressSearch}
-              isInvestor={isInvestor}
-              isForeignBuyer={isForeignBuyer}
-              isFirstHomeBuyer={isFirstHomeBuyer}
-              needsLoan={needsLoan}
-              savingsAmount={savingsAmount}
-            />
-
-            {needsLoan && (
-              <LoanDetails
-                loanDetails={loanDetails}
-                setLoanDetails={setLoanDetails}
-                shouldShowLMI={results.shouldShowLMI}
-                shouldDefaultLMI={results.shouldDefaultLMI}
-                depositWarning={results.depositWarning}
-                depositPercentage={results.depositPercentage}
-                hasMortgage={results.hasMortgage}
-                propertyData={propertyData}
-                useEstimatedPrice={useEstimatedPrice}
-              />
-            )}
-
-            <OtherFees
-              includeLandTransferFee={includeLandTransferFee}
-              setIncludeLandTransferFee={setIncludeLandTransferFee}
-              includeLegalFees={includeLegalFees}
-              setIncludeLegalFees={setIncludeLegalFees}
-              includeInspectionFees={includeInspectionFees}
-              setIncludeInspectionFees={setIncludeInspectionFees}
-              price={useEstimatedPrice ? propertyData.estimatedPrice || 0 : propertyData.price}
-              landTransferFee={customLandTransferFee > 0 ? customLandTransferFee : results.landTransferFee}
-              legalFees={customLegalFees > 0 ? customLegalFees : results.legalFees}
-              inspectionFees={customInspectionFees > 0 ? customInspectionFees : results.inspectionFees}
-              setLandTransferFee={setCustomLandTransferFee}
-              setLegalFees={setCustomLegalFees}
-              setInspectionFees={setCustomInspectionFees}
-              propertyData={propertyData}
-              setPropertyData={setPropertyData}
-              includeCouncilRates={includeCouncilRates}
-              setIncludeCouncilRates={setIncludeCouncilRates}
-              includeWaterRates={includeWaterRates}
-              setIncludeWaterRates={setIncludeWaterRates}
-              councilRates={customCouncilRates > 0 ? customCouncilRates : results.councilRates}
-              waterRates={customWaterRates > 0 ? customWaterRates : results.waterRates}
-              setCouncilRates={setCustomCouncilRates}
-              setWaterRates={setCustomWaterRates}
-              includeBodyCorporate={includeBodyCorporate}
-              setIncludeBodyCorporate={setIncludeBodyCorporate}
-              bodyCorporate={customBodyCorporate}
-              setBodyCorporate={setCustomBodyCorporate}
-              customLandTax={customLandTax}
-              setCustomLandTax={setCustomLandTax}
-              isInvestor={isInvestor}
-            />
-          </div>
-
-          {/* Results Section - Sticky on large screens */}
-          <div className="lg:sticky lg:top-8 lg:self-start">
-            <ResultsSection
-              results={results}
-              loanDetails={loanDetails}
-              isForeignBuyer={isForeignBuyer}
-              includeBodyCorporate={includeBodyCorporate}
-              hasCalculated={calculateCount > 0}
-              fieldsChanged={fieldsChanged}
-              propertyData={propertyData}
-              isFirstHomeBuyer={isFirstHomeBuyer}
-              onCalculate={() => {
-                setCalculateCount(prev => prev + 1);
-                setFieldsChanged(false);
-                
-                // Store current values for comparison
-                setLastCalculatedValues({
-                  price: propertyData.price,
-                  state: propertyData.state,
-                  propertyType: propertyData.propertyType,
-                  propertyCategory: propertyData.propertyCategory,
-                  estimatedBuildCost: propertyData.estimatedBuildCost,
-                  waRegion: propertyData.waRegion,
-                  claimVacantLandConcession: propertyData.claimVacantLandConcession,
-                  isFirstHomeBuyer,
-                  isPPR
-                });
-              }}
-            />
-          </div>
+      <main className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Main Card Container */}
+        <div className="space-y-6">
+          
+          {/* Property Details Card */}
+          <PropertyDetailsCard 
+            formData={formData}
+            updateFormData={updateFormData}
+          />
+          
+          {/* Upfront Costs Display */}
+          <UpfrontCostsDisplay 
+            formData={formData}
+          />
+          
+          {/* Property Summary - Below upfront costs */}
+          <PropertySummary 
+            formData={formData}
+          />
+          
         </div>
-      </div>
+      </main>
+      
+      <Footer />
     </div>
   );
 }
