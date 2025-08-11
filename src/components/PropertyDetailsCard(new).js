@@ -41,7 +41,7 @@ export default function PropertyDetailsCard({ formData, updateFormData }) {
           <div className="h-full flex flex-col">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                🏘️ What's the property price?
+                🏘️ What&apos;s the property price?
               </h2>
               <p className="text-xl text-gray-600">
                 This will help us calculate your stamp duty and other costs
@@ -66,7 +66,7 @@ export default function PropertyDetailsCard({ formData, updateFormData }) {
           <div className="h-full flex flex-col">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                📍 What's the property address?
+                📍 What&apos;s the property address?
               </h2>
               <p className="text-xl text-gray-600">
                 This helps us determine the state and provide more accurate calculations
