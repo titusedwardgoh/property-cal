@@ -24,20 +24,38 @@ import {
   calculateQLDForeignBuyerDuty 
 } from './qld/calculations.js';
 
+// Import NT-specific functions
+import { 
+  calculateNTStampDuty, 
+  calculateNTFirstHomeOwnersGrant, 
+  calculateNTLandTransferFee, 
+  calculateNTForeignBuyerDuty 
+} from './nt/calculations.js';
+
+// Import ACT-specific functions
+import { 
+  calculateACTStampDuty, 
+  calculateACTFirstHomeOwnersGrant, 
+  calculateACTLandTransferFee, 
+  calculateACTForeignBuyerDuty 
+} from './act/calculations.js';
+
 // Import shared functions
 import { 
   calculateMonthlyRepayment, 
   calculateTotalRepayments, 
-  calculateLMI,
+  calculateLMI
+} from './shared/loanCalculations.js';
+
+import { 
   calculateLegalFees,
   calculateInspectionFees,
   calculateCouncilRates,
   calculateWaterRates,
   calculateBodyCorporate
-} from './shared/baseCalculations.js';
+} from './shared/hiddenFees.js';
 
-// Import shared constants
-import { STATE_AVERAGES, PPR_REQUIREMENTS } from './shared/commonConstants.js';
+// No shared constants needed anymore
 
 export const useStateSelector = (selectedState) => {
   const [stateFunctions, setStateFunctions] = useState(null);
@@ -65,8 +83,8 @@ export const useStateSelector = (selectedState) => {
             });
             
             setStateConstants({
-              stateAverage: STATE_AVERAGES.NSW,
-              pprRequirement: PPR_REQUIREMENTS.NSW,
+              stateAverage: 1200000, // NSW_STATE_AVERAGE
+              pprRequirement: 'Must live for 6 months within 12 months of settlement', // NSW_PPR_REQUIREMENT
               foreignBuyerRate: 0.08,
               firstHomeOwnersGrant: 10000
             });
@@ -90,8 +108,8 @@ export const useStateSelector = (selectedState) => {
             });
             
             setStateConstants({
-              stateAverage: STATE_AVERAGES.VIC,
-              pprRequirement: PPR_REQUIREMENTS.VIC,
+              stateAverage: 900000, // VIC_STATE_AVERAGE
+              pprRequirement: 'Must live for 12 months within 12 months of settlement', // VIC_PPR_REQUIREMENT
               foreignBuyerRate: 0.08,
               firstHomeOwnersGrant: 10000
             });
@@ -114,15 +132,65 @@ export const useStateSelector = (selectedState) => {
                calculateBodyCorporate
              });
              
-             setStateConstants({
-               stateAverage: STATE_AVERAGES.QLD,
-               pprRequirement: PPR_REQUIREMENTS.QLD,
-               foreignBuyerRate: 0.07,
-               firstHomeOwnersGrant: 30000
-             });
+                         setStateConstants({
+              stateAverage: 650000, // QLD_STATE_AVERAGE
+              pprRequirement: 'Must live for 6 months within 12 months of settlement', // QLD_PPR_REQUIREMENT
+              foreignBuyerRate: 0.07,
+              firstHomeOwnersGrant: 30000
+            });
              break;
              
-           default:
+           case 'NT':
+             setStateFunctions({
+               calculateStampDuty: calculateNTStampDuty,
+               calculateFirstHomeOwnersGrant: calculateNTFirstHomeOwnersGrant,
+               calculateLandTransferFee: calculateNTLandTransferFee,
+               calculateForeignBuyerDuty: calculateNTForeignBuyerDuty,
+               // Shared functions
+               calculateMonthlyRepayment,
+               calculateTotalRepayments,
+               calculateLMI,
+               calculateLegalFees,
+               calculateInspectionFees,
+               calculateCouncilRates,
+               calculateWaterRates,
+               calculateBodyCorporate
+             });
+             
+                         setStateConstants({
+              stateAverage: 500000, // NT_STATE_AVERAGE
+              pprRequirement: 'Must live for 12 months within 12 months of settlement', // NT_PPR_REQUIREMENT
+              foreignBuyerRate: 0.07,
+              firstHomeOwnersGrant: 10000
+            });
+                           break;
+              
+            case 'ACT':
+              setStateFunctions({
+                calculateStampDuty: calculateACTStampDuty,
+                calculateFirstHomeOwnersGrant: calculateACTFirstHomeOwnersGrant,
+                calculateLandTransferFee: calculateACTLandTransferFee,
+                calculateForeignBuyerDuty: calculateACTForeignBuyerDuty,
+                // Shared functions
+                calculateMonthlyRepayment,
+                calculateTotalRepayments,
+                calculateLMI,
+                calculateLegalFees,
+                calculateInspectionFees,
+                calculateCouncilRates,
+                calculateWaterRates,
+                calculateBodyCorporate
+              });
+              
+                          setStateConstants({
+              stateAverage: 800000, // ACT_STATE_AVERAGE
+              pprRequirement: 'Must live for 12 months within 12 months of settlement', // ACT_PPR_REQUIREMENT
+              foreignBuyerRate: 0.08,
+              firstHomeOwnersGrant: 7000
+            });
+              break;
+              
+            default:
              // For now, fall back to NSW for other states
              // This will be expanded as we add more states
             setStateFunctions({
@@ -142,8 +210,8 @@ export const useStateSelector = (selectedState) => {
             });
             
             setStateConstants({
-              stateAverage: STATE_AVERAGES[selectedState] || STATE_AVERAGES.NSW,
-              pprRequirement: PPR_REQUIREMENTS[selectedState] || PPR_REQUIREMENTS.NSW,
+              stateAverage: 1200000, // Default to NSW average
+              pprRequirement: 'Must live for 6 months within 12 months of settlement', // Default to NSW requirement
               foreignBuyerRate: 0.08, // Default fallback
               firstHomeOwnersGrant: 10000 // Default fallback
             });
@@ -168,8 +236,8 @@ export const useStateSelector = (selectedState) => {
         });
         
         setStateConstants({
-          stateAverage: STATE_AVERAGES.NSW,
-          pprRequirement: PPR_REQUIREMENTS.NSW,
+          stateAverage: 1200000, // NSW_STATE_AVERAGE
+          pprRequirement: 'Must live for 6 months within 12 months of settlement', // NSW_PPR_REQUIREMENT
           foreignBuyerRate: 0.08,
           firstHomeOwnersGrant: 10000
         });
