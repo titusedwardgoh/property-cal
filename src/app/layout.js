@@ -1,8 +1,9 @@
-import { Cormorant, Unbounded } from "next/font/google";
+import { Roboto, Unbounded } from "next/font/google";
 import "./globals.css";
-import Footer from '../components/Footer.js';
+import Footer from '../components/Footer.js';3
+import Header from "@/components/Header";
 
-const cormorantFont = Cormorant({
+const robotoFont = Roboto({
   display: "swap",
   subsets: ["latin"],
 });
@@ -23,10 +24,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" data-theme="corporate">
+    <html lang="en" data-theme="flyingwizard">
       <body
-        className={cormorantFont.className}
+        className={robotoFont.className}
       >
+        <Header />
         {children}
         <Footer />
       </body>
