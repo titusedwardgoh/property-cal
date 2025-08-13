@@ -52,14 +52,14 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
         return (
           <div className="h-full flex flex-col justify-center items-center bg-base-100">
             <div className="max-w-2xl mx-auto">
-                <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-6 leading-tight flex items-center justify-center">
+                <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
                 What is the property&apos;s price?
               </h2>
-              <p className="text-lg md:text-2xl text-gray-500 leading-relaxed mb-12 max-w-lg mx-auto">
+              <p className=" md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
                 This will help us calculate your stamp duty and other costs
               </p>
-              <div className="max-w-md mx-auto relative">
-                <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-4xl font-light pointer-events-none ${
+              <div className="max-w-md mx-auto relative pr-8">
+                <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                   formData.propertyPrice ? 'text-gray-800' : 'text-gray-400'
                 }`}>
                   $
@@ -73,7 +73,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
                     const numericValue = e.target.value.replace(/[^\d]/g, '');
                     updateFormData('propertyPrice', numericValue);
                   }}
-                  className="w-full pl-8 pr-8 py-6 text-4xl font-light border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
                 />
               </div>
             </div>
@@ -209,9 +209,9 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
   };
 
   return (
-    <div className="bg-base-100 rounded-lg overflow-hidden">
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-25">
       <div className="flex">
-      <span className="text-primary text-sm font-extrabold mr-2 pt-4 whitespace-nowrap">1 <span className="text-xs">→</span></span>
+      <span className="text-primary text-xs font-extrabold mr-2 pt-14 whitespace-nowrap">1 <span className="text-xs">→</span></span>
       <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
         {/* Step Content */}
         <div className="h-80">
@@ -237,7 +237,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
               disabled={!isCurrentStepValid()}
               className={`w-full px-6 py-3 rounded-full border transition-all duration-300 ease-in-out text-base font-medium ${
                 !isCurrentStepValid()
-                  ? 'border-primary text-base-100 cursor-not-allowed bg-gray-50'
+                  ? 'border-primary text-base-100 cursor-not-allowed bg-primary'
                   : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm'
               }`}
             >
