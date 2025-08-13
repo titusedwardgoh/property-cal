@@ -249,7 +249,9 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
               <button
                 onClick={prevStep}
                 className={`bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0 ${
-                  isTransitioning && direction === 'backward' ? 'transform translate-x-4 opacity-0' : 'transform translate-x-0 opacity-100'
+                  isTransitioning && direction === 'backward' ? 'transform translate-x-4 opacity-0' : 
+                  isTransitioning && direction === 'forward' ? 'transform -translate-x-4 opacity-0' : 
+                  'transform translate-x-0 opacity-100'
                 }`}
               >
                 &lt;
