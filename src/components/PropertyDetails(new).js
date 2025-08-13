@@ -2,17 +2,29 @@ import { useState } from 'react';
 
 export default function PropertyDetailsNew({ formData, updateFormData }) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [direction, setDirection] = useState('forward'); // 'forward' or 'backward'
   const totalSteps = 5;
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
+      setDirection('forward');
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentStep(currentStep + 1);
+        setIsTransitioning(false);
+      }, 150);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      setDirection('backward');
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentStep(currentStep - 1);
+        setIsTransitioning(false);
+      }, 150);
     }
   };
 
@@ -199,8 +211,8 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden">
       <div className="flex">
-      <span className="text-primary text-sm font-extrabold mr-2">1 →</span>
-      <div className="py-6 md:p-8 pb-24 md:pb-8 flex">
+      <span className="text-primary text-sm font-extrabold mr-2 pt-4 whitespace-nowrap">1 <span className="text-xs">→</span></span>
+      <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
         {/* Step Content */}
         <div className="h-80">
           {renderStep()}
@@ -218,29 +230,44 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
         </div>
         
         <div className="flex justify-between max-w-4xl mx-auto mt-4">
-          <button
-            onClick={prevStep}
-            disabled={currentStep === 1}
-            className={`px-6 py-3 rounded-xl border border-gray-200 transition-all duration-200 text-base font-medium ${
-              currentStep === 1
-                ? 'border-gray-100 text-gray-300 cursor-not-allowed bg-gray-50'
-                : 'border-gray-200 text-base hover:bg-secondary hover:text-base-100 hover:border-gray-700 hover:shadow-sm'
-            }`}
-          >
-            ← Back
-          </button>
-          
-          <button
-            onClick={nextStep}
-            disabled={!isCurrentStepValid()}
-            className={`px-6 py-3 rounded-xl border transition-all duration-200 text-base font-medium ${
-              !isCurrentStepValid()
-                ? 'border-gray-100 text-gray-300 cursor-not-allowed bg-gray-50'
-                : 'border-gray-200 bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm'
-            }`}
-          >
-            {currentStep === totalSteps ? 'Complete' : 'Next →'}
-          </button>
+          {currentStep === 1 ? (
+            // Step 1: Full width OK button
+            <button
+              onClick={nextStep}
+              disabled={!isCurrentStepValid()}
+              className={`w-full px-6 py-3 rounded-full border transition-all duration-300 ease-in-out text-base font-medium ${
+                !isCurrentStepValid()
+                  ? 'border-primary text-base-100 cursor-not-allowed bg-gray-50'
+                  : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm'
+              }`}
+            >
+              OK
+            </button>
+          ) : (
+            // Step 2 onwards: Back and Next buttons with smooth transition
+            <>
+              <button
+                onClick={prevStep}
+                className={`bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0 ${
+                  isTransitioning && direction === 'backward' ? 'transform translate-x-4 opacity-0' : 'transform translate-x-0 opacity-100'
+                }`}
+              >
+                &lt;
+              </button>
+              
+              <button
+                onClick={nextStep}
+                disabled={!isCurrentStepValid()}
+                className={`flex-1 ml-4 px-6 py-3 rounded-full border transition-all duration-300 ease-in-out text-base font-medium ${
+                  !isCurrentStepValid()
+                    ? 'border-primary text-gray-300 cursor-not-allowed bg-gray-50'
+                    : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm'
+                }`}
+              >
+                {currentStep === totalSteps ? 'Complete' : 'OK'}
+              </button>
+            </>
+          )}
         </div>
       </div>
       </div>
