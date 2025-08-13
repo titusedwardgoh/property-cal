@@ -41,7 +41,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
           <div className="h-full flex flex-col justify-center items-center bg-base-100">
             <div className="max-w-2xl mx-auto">
                 <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-6 leading-tight flex items-center justify-center">
-                <span className="text-primary text-sm font-extrabold mr-2">1 →</span> What is the property&apos;s price?
+                What is the property&apos;s price?
               </h2>
               <p className="text-lg md:text-2xl text-gray-500 leading-relaxed mb-12 max-w-lg mx-auto">
                 This will help us calculate your stamp duty and other costs
@@ -198,24 +198,26 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
 
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden">
-      <div className="p-6 md:p-8 pb-24 md:pb-8">
+      <div className="flex">
+      <span className="text-primary text-sm font-extrabold mr-2">1 →</span>
+      <div className="py-6 md:p-8 pb-24 md:pb-8 flex">
         {/* Step Content */}
         <div className="h-80">
           {renderStep()}
         </div>
       </div>
 
-      {/* Progress Bar - Moved to bottom */}
-      <div className="w-full bg-gray-100 h-1">
-        <div 
-          className="bg-primary h-1 transition-all duration-300"
-          style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-        ></div>
-      </div>
-
       {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
-      <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent border-t md:border-t-0 border-gray-200 md:border-gray-200 p-4 md:p-0 md:mt-8 md:px-6 md:pb-8">
-        <div className="flex justify-between max-w-4xl mx-auto">
+      <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8">
+        {/* Progress Bar - Now IS the top border */}
+        <div className="w-full bg-gray-100 h-1">
+          <div 
+            className="bg-primary h-1 transition-all duration-300"
+            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+          ></div>
+        </div>
+        
+        <div className="flex justify-between max-w-4xl mx-auto mt-4">
           <button
             onClick={prevStep}
             disabled={currentStep === 1}
@@ -240,6 +242,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
             {currentStep === totalSteps ? 'Complete' : 'Next →'}
           </button>
         </div>
+      </div>
       </div>
     </div>
   );
