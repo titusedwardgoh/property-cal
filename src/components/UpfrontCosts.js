@@ -1,6 +1,6 @@
 export default function UpfrontCosts() {
   return (
-    <div className="bg-secondary rounded-lg shadow-lg  px-6 py-4 md:p-8">
+    <div className="bg-secondary rounded-lg shadow-lg px-6 py-4 md:p-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <h3 className="text-xl md:text-2xl font-medium text-base-100">Upfront Costs</h3>

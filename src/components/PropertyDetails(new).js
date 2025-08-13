@@ -82,25 +82,22 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
 
       case 2:
         return (
-          <div className="h-full flex flex-col justify-center items-center px-6">
-            <div className="text-center max-w-3xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-6 leading-tight">
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
                 What&apos;s the property address?
               </h2>
-              <p className="text-xl md:text-2xl text-gray-500 leading-relaxed mb-12 max-w-2xl mx-auto">
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
                 This helps us determine the state and provide more accurate calculations
               </p>
-              <div className="max-w-2xl mx-auto">
+              <div className="max-w-md mx-auto relative pr-8">
                 <input
                   type="text"
                   placeholder="Enter street address"
                   value={formData.propertyAddress || ''}
                   onChange={(e) => updateFormData('propertyAddress', e.target.value)}
-                  className="w-full px-8 py-6 text-2xl font-light text-center border-2 border-gray-200 rounded-lg focus:border-gray-400 focus:outline-none transition-all duration-200 hover:border-gray-300"
+                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
                 />
-                <p className="text-lg text-gray-400 mt-6 text-center">
-                  Example: 123 Main Street, Sydney NSW
-                </p>
               </div>
             </div>
           </div>
@@ -108,20 +105,20 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
 
       case 3:
         return (
-          <div className="h-full flex flex-col justify-center items-center px-6">
-            <div className="text-center max-w-4xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-6 leading-tight">
-                Which state is the property in?
-              </h2>
-              <p className="text-xl md:text-2xl text-gray-500 leading-relaxed mb-12 max-w-2xl mx-auto">
-                Different states have different stamp duty rates and concessions
-              </p>
-              <div className="grid grid-cols-4 gap-6 max-w-2xl mx-auto">
+          <div className="flex flex-col">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              Which state is the property in?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              Different states have different stamp duty rates and concessions
+            </p>
+            <div className="max-w-md relative pr-8">
+              <div className="grid grid-cols-2 gap-3 max-w-md">
                 {['NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT'].map((state) => (
                   <button
                     key={state}
                     onClick={() => updateFormData('selectedState', state)}
-                    className={`px-6 py-4 text-xl font-medium rounded-lg border-2 transition-all duration-200 text-center hover:scale-105 ${
+                    className={`px-3 py-2 text-base font-medium rounded-lg border-2 transition-all duration-200 text-center hover:scale-105 ${
                       formData.selectedState === state
                         ? 'border-gray-800 bg-gray-800 text-white shadow-lg'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
@@ -137,12 +134,12 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
 
       case 4:
         return (
-          <div className="h-full flex flex-col justify-center items-center px-6">
-            <div className="text-center max-w-4xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-6 leading-tight">
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
                 What type of property is it?
               </h2>
-              <p className="text-xl md:text-2xl text-gray-500 leading-relaxed mb-12 max-w-2xl mx-auto">
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
                 This affects your stamp duty concessions and ongoing costs
               </p>
               <div className="grid grid-cols-2 gap-6 max-w-3xl mx-auto">
@@ -171,12 +168,12 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
 
       case 5:
         return (
-          <div className="h-full flex flex-col justify-center items-center px-6">
-            <div className="text-center max-w-6xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-6 leading-tight">
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
                 Is this a new or existing property?
               </h2>
-              <p className="text-xl md:text-2xl text-gray-500 leading-relaxed mb-12 max-w-2xl mx-auto">
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
                 New properties may have different concessions and costs
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -211,7 +208,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden mt-25">
       <div className="flex">
-      <span className="text-primary text-xs font-extrabold mr-2 pt-14 whitespace-nowrap">1 <span className="text-xs">→</span></span>
+      <span className="text-primary text-xs font-extrabold mr-2 pt-14 whitespace-nowrap">{currentStep} <span className="text-xs">→</span></span>
       <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
         {/* Step Content */}
         <div className="h-80">
