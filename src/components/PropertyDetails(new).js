@@ -40,8 +40,8 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
         return (
           <div className="h-full flex flex-col justify-center items-center px-6 bg-base-100">
             <div className="text-center max-w-2xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-6 leading-tight flex items-center justify-center">
-              <span className="text-primary text-xl font-extrabold mr-2">1 →</span> What's the property price?
+                              <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-6 leading-tight flex items-center justify-center">
+                <span className="text-primary text-xl font-extrabold mr-2">1 →</span> What&apos;s the property price?
               </h2>
               <p className="text-xl md:text-2xl text-gray-500 leading-relaxed mb-12 max-w-lg mx-auto">
                 This will help us calculate your stamp duty and other costs
@@ -64,7 +64,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
           <div className="h-full flex flex-col justify-center items-center px-6">
             <div className="text-center max-w-3xl mx-auto">
               <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-6 leading-tight">
-                What's the property address?
+                What&apos;s the property address?
               </h2>
               <p className="text-xl md:text-2xl text-gray-500 leading-relaxed mb-12 max-w-2xl mx-auto">
                 This helps us determine the state and provide more accurate calculations

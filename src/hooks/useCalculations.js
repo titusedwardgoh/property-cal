@@ -255,8 +255,7 @@ export function useCalculations(propertyData, loanDetails, setLoanDetails, isFor
         };
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calculateCount, isFirstHomeBuyer, price, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.state, propertyData.propertyType, propertyData.waRegion, isPPR]); // Disabled eslint rule to avoid circular dependency
+  }, [calculateCount, isFirstHomeBuyer, price, propertyData.propertyCategory, propertyData.estimatedBuildCost, propertyData.state, propertyData.propertyType, propertyData.waRegion, isPPR, results.firstHomeOwnersGrant]);
 
   return {
     ...results,

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import UpfrontCosts from '../components/UpfrontCosts';
 import PropertyDetailsNew from '../components/PropertyDetails(new)';
 
-export default function page() {
+export default function Page() {
     const [formData, setFormData] = useState({
         propertyPrice: '',
         propertyAddress: '',
