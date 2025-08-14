@@ -65,9 +65,9 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
                   $
                 </div>
                 <input
-                  type="text"
+                  type="number"
                   placeholder="0"
-                  value={formData.propertyPrice ? Number(formData.propertyPrice).toLocaleString() : ''}
+                  value={formData.propertyPrice || ''}
                   onChange={(e) => {
                     // Remove all non-digit characters and update form data
                     const numericValue = e.target.value.replace(/[^\d]/g, '');
@@ -204,11 +204,12 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden mt-25">
       <div className="flex">
-      <span className="text-primary text-xs font-extrabold mr-2 pt-14 whitespace-nowrap">{currentStep} <span className="text-xs">→</span></span>
-      <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
-        {/* Step Content */}
-        <div className="h-80">
-          {renderStep()}
+        <span className="text-primary text-xs font-extrabold mr-2 pt-14 whitespace-nowrap">{currentStep} <span className="text-xs">→</span></span>
+        <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
+          {/* Step Content */}
+          <div className="h-80">
+            {renderStep()}
+          </div>
         </div>
       </div>
 
@@ -264,7 +265,6 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
             </>
           )}
         </div>
-      </div>
       </div>
     </div>
   );
