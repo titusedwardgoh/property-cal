@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import UpfrontCosts from '../components/UpfrontCosts';
+import UpfrontCosts from '../components/UpfrontCosts(new)';
 import PropertyDetailsNew from '../components/PropertyDetails(new)';
 
 export default function Page() {

@@ -51,11 +51,11 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
       case 1:
         return (
           <div className="h-full flex flex-col justify-center items-center bg-base-100">
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto pr-2">
                 <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
                 What is the property&apos;s price?
               </h2>
-              <p className=" md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
+              <p className=" md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto ">
                 This will help us calculate your stamp duty and other costs
               </p>
               <div className="max-w-md mx-auto relative pr-8">
@@ -83,7 +83,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
       case 2:
         return (
           <div className="h-full flex flex-col justify-center items-center bg-base-100">
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto pr-2">
               <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
                 What&apos;s the property address?
               </h2>
@@ -105,7 +105,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
 
       case 3:
         return (
-          <div className="flex flex-col mt-12">
+          <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Which state is the property in?
             </h2>
@@ -120,7 +120,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
                     onClick={() => updateFormData('selectedState', state)}
                     className={`px-3 py-2 text-base font-medium rounded-lg border-2 transition-all duration-200 text-center hover:scale-105 ${
                       formData.selectedState === state
-                        ? 'border-gray-800 bg-gray-800 text-white shadow-lg'
+                        ? 'border-gray-800 bg-secondary text-white shadow-lg'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
@@ -134,7 +134,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
 
       case 4:
         return (
-          <div className="flex flex-col mt-12">
+          <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
               What type of property is it?
             </h2>
@@ -153,7 +153,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
                   onClick={() => updateFormData('propertyCategory', option.value)}
                   className={`py-1 px-3 rounded-lg border-2 transition-all duration-200 flex justify-center w-32 hover:scale-105 ${
                     formData.propertyCategory === option.value
-                      ? 'border-gray-800 bg-gray-800 text-white shadow-lg'
+                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
@@ -166,7 +166,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
 
       case 5:
         return (
-          <div className="flex flex-col mt-12">
+          <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Is this a new or existing property?
             </h2>
@@ -184,12 +184,12 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
                   onClick={() => updateFormData('propertyType', option.value)}
                   className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
                     formData.propertyType === option.value
-                      ? 'border-gray-800 bg-gray-800 text-white shadow-lg'
+                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  <div className="text-base font-medium mb-2">{option.label}</div>
-                  <div className="text-xs text-gray-500">{option.description}</div>
+                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
                 </button>
               ))}
             </div>
@@ -254,9 +254,9 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className={`flex-1 ml-4 px-6 py-3 rounded-full border transition-all duration-300 ease-in-out text-base font-medium ${
+                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border transition-all duration-300 ease-in-out text-base font-medium ${
                   !isCurrentStepValid()
-                    ? 'border-primary text-gray-300 cursor-not-allowed bg-gray-50'
+                    ? 'border-primary text-base-100 cursor-not-allowed bg-gray-50'
                     : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm'
                 }`}
               >
