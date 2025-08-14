@@ -105,7 +105,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
 
       case 3:
         return (
-          <div className="flex flex-col">
+          <div className="flex flex-col mt-12">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Which state is the property in?
             </h2>
@@ -113,7 +113,7 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
               Different states have different stamp duty rates and concessions
             </p>
             <div className="max-w-md relative pr-8">
-              <div className="grid grid-cols-2 gap-3 max-w-md">
+              <div className="grid grid-cols-4 gap-3 max-w-md">
                 {['NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT'].map((state) => (
                   <button
                     key={state}
@@ -134,68 +134,64 @@ export default function PropertyDetailsNew({ formData, updateFormData }) {
 
       case 4:
         return (
-          <div className="h-full flex flex-col justify-center items-center bg-base-100">
-            <div className="max-w-2xl mx-auto">
-              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
-                What type of property is it?
-              </h2>
-              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
-                This affects your stamp duty concessions and ongoing costs
-              </p>
-              <div className="grid grid-cols-2 gap-6 max-w-3xl mx-auto">
-                {[
-                  { value: 'house', label: 'House' },
-                  { value: 'apartment', label: 'Apartment' },
-                  { value: 'townhouse', label: 'Townhouse' },
-                  { value: 'land', label: 'Land' }
-                ].map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => updateFormData('propertyCategory', option.value)}
-                    className={`p-8 rounded-lg border-2 transition-all duration-200 text-center flex items-center justify-center hover:scale-105 ${
-                      formData.propertyCategory === option.value
-                        ? 'border-gray-800 bg-gray-800 text-white shadow-lg'
-                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    <div className="text-2xl font-medium text-center">{option.label}</div>
-                  </button>
-                ))}
-              </div>
+          <div className="flex flex-col mt-12">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              What type of property is it?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              This affects your stamp duty concessions and ongoing costs
+            </p>
+            <div className="grid grid-cols-2 gap-2 max-w-3xl">
+              {[
+                { value: 'house', label: 'House' },
+                { value: 'apartment', label: 'Apartment' },
+                { value: 'townhouse', label: 'Townhouse' },
+                { value: 'land', label: 'Land' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => updateFormData('propertyCategory', option.value)}
+                  className={`py-1 px-3 rounded-lg border-2 transition-all duration-200 flex justify-center w-32 hover:scale-105 ${
+                    formData.propertyCategory === option.value
+                      ? 'border-gray-800 bg-gray-800 text-white shadow-lg'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="text-base font-medium text-center">{option.label}</div>
+                </button>
+              ))}
             </div>
           </div>
         );
 
       case 5:
         return (
-          <div className="h-full flex flex-col justify-center items-center bg-base-100">
-            <div className="max-w-2xl mx-auto">
-              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
-                Is this a new or existing property?
-              </h2>
-              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
-                New properties may have different concessions and costs
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                {[
-                  { value: 'existing', label: 'Existing Property', description: 'Already built and lived in' },
-                  { value: 'new', label: 'New Property', description: 'Recently built, never lived in' },
-                  { value: 'off-the-plan', label: 'Off-the-Plan', description: 'Buying before construction' }
-                ].map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => updateFormData('propertyType', option.value)}
-                    className={`p-6 rounded-lg border-2 transition-all duration-200 text-center hover:scale-105 ${
-                      formData.propertyType === option.value
-                        ? 'border-gray-800 bg-gray-800 text-white shadow-lg'
-                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    <div className="text-xl font-medium mb-2">{option.label}</div>
-                    <div className="text-base text-gray-500">{option.description}</div>
-                  </button>
-                ))}
-              </div>
+          <div className="flex flex-col mt-12">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              Is this a new or existing property?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              New properties may have different concessions and costs
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 max-w-4xl">
+              {[
+                { value: 'existing', label: 'Existing Property', description: 'Already built and lived in' },
+                { value: 'new', label: 'New Property', description: 'Recently built, never lived in' },
+                { value: 'off-the-plan', label: 'Off-the-Plan', description: 'Buying before construction' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => updateFormData('propertyType', option.value)}
+                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                    formData.propertyType === option.value
+                      ? 'border-gray-800 bg-gray-800 text-white shadow-lg'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="text-base font-medium mb-2">{option.label}</div>
+                  <div className="text-xs text-gray-500">{option.description}</div>
+                </button>
+              ))}
             </div>
           </div>
         );
