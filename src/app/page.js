@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from 'react';
-import UpfrontCosts from '../components/UpfrontCosts(new)';
-import PropertyDetailsNew from '../components/PropertyDetails(new)';
+import UpfrontCosts from '../components/UpfrontCosts';
+import PropertyDetails from '../components/PropertyDetails';
+import BuyerDetails from '../components/BuyerDetails';
 
 export default function Page() {
     const [formData, setFormData] = useState({
@@ -10,7 +11,9 @@ export default function Page() {
         propertyAddress: '',
         selectedState: '',
         propertyType: '',
-        propertyCategory: ''
+        propertyCategory: '',
+        buyerType: '',
+        propertyDetailsComplete: false
     });
 
     const updateFormData = (field, value) => {
@@ -24,11 +27,18 @@ export default function Page() {
         <div className="min-h-screen bg-base-200">
             <main className="container mx-auto px-4 py-4 max-w-4xl">
                 <div className="space-y-6">
-                    <UpfrontCosts />
-                    <PropertyDetailsNew 
-                        formData={formData}
-                        updateFormData={updateFormData}
-                    />
+                    <UpfrontCosts formData={formData} />
+                    {!formData.propertyDetailsComplete ? (
+                        <PropertyDetails 
+                            formData={formData}
+                            updateFormData={updateFormData}
+                        />
+                    ) : (
+                        <BuyerDetails 
+                            formData={formData}
+                            updateFormData={updateFormData}
+                        />
+                    )}
                 </div>
             </main>
         </div>

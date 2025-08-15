@@ -1,420 +1,354 @@
-import React, { useState } from 'react';
-import { MapPin, Search, TrendingUp, Loader2, Building, ChevronDown, ChevronUp } from 'lucide-react';
-import { STATE_OPTIONS } from '../data/constants.js';
-import { formatCurrency } from '../utils/calculations.js';
+import { useState, useEffect } from 'react';
+import { formatCurrency } from '../states/shared/baseCalculations.js';
+import { useStateSelector } from '../states/useStateSelector.js';
 
-export default function PropertyDetails({ 
-  propertyData, 
-  setPropertyData, 
-  loanDetails, 
-  setLoanDetails,
-  useEstimatedPrice,
-  setUseEstimatedPrice,
-  isSearching,
-  searchError,
-  onAddressSearch,
-  isInvestor,
-  isForeignBuyer,
-  isFirstHomeBuyer,
-  needsLoan,
-  savingsAmount
-}) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const isOffThePlan = propertyData.propertyType === 'off-the-plan';
-  const isExistingProperty = propertyData.propertyType === 'existing';
-  
-  // Check if all buyer details questions have been answered
-  const allBuyerDetailsAnswered = isInvestor !== null && 
-                                 isForeignBuyer !== null && 
-                                 isFirstHomeBuyer !== null && 
-                                 needsLoan !== null &&
-                                 (needsLoan === false || (needsLoan === true && savingsAmount > 0));
+export default function PropertyDetails({ formData, updateFormData }) {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [direction, setDirection] = useState('forward'); // 'forward' or 'backward'
+  const [isComplete, setIsComplete] = useState(false);
+    const totalSteps = 5;
+   
+  // Get state-specific functions when state is selected
+  const { stateFunctions } = useStateSelector(formData.selectedState || 'NSW');
 
-  // Reset useEstimatedPrice when switching to off-the-plan
-  const handlePropertyTypeChange = (newType) => {
-    setPropertyData(prev => ({ ...prev, propertyType: newType }));
-    if (newType === 'off-the-plan') {
-      setUseEstimatedPrice(false); // Force manual entry for off-the-plan
+  // Watch for propertyDetailsCurrentStep flag from BuyerDetails
+  useEffect(() => {
+    if (formData.propertyDetailsCurrentStep) {
+      setCurrentStep(formData.propertyDetailsCurrentStep);
+      setIsComplete(false);
+      // Reset the flag
+      updateFormData('propertyDetailsCurrentStep', null);
+    }
+  }, [formData.propertyDetailsCurrentStep, updateFormData]);
+
+
+
+  const nextStep = () => {
+    if (currentStep < totalSteps) {
+      setDirection('forward');
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentStep(currentStep + 1);
+        setIsTransitioning(false);
+      }, 150);
+    } else {
+      // Form is complete - calculate and log stamp duty
+      calculateAndLogStampDuty();
+      setIsComplete(true);
+    }
+  };
+
+  const goToBuyerDetails = () => {
+    // Move to buyer details when user presses next
+    updateFormData('propertyDetailsComplete', true);
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setDirection('backward');
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentStep(currentStep - 1);
+        setIsTransitioning(false);
+      }, 150);
+    }
+  };
+
+  // Calculate and log stamp duty when form is complete
+  const calculateAndLogStampDuty = () => {
+    if (!stateFunctions) {
+      console.log('State functions not loaded yet');
+      return;
+    }
+    
+    console.log('=== DEBUGGING STAMP DUTY ===');
+    console.log('formData:', formData);
+    console.log('formData.propertyPrice:', formData.propertyPrice);
+    console.log('formData.selectedState:', formData.selectedState);
+    console.log('typeof formData.propertyPrice:', typeof formData.propertyPrice);
+    console.log('parseInt(formData.propertyPrice):', parseInt(formData.propertyPrice));
+    
+    const stampDuty = stateFunctions.calculateStampDuty(formData.propertyPrice, formData.selectedState);
+    console.log('calculateStampDuty result:', stampDuty);
+    
+    console.log('=== STAMP DUTY CALCULATION ===');
+    console.log('Form Data:', formData);
+    console.log('Stamp Duty Amount:', formatCurrency(stampDuty));
+    console.log('==============================');
+  };
+
+  // Check if current step is valid
+  const isCurrentStepValid = () => {
+    switch (currentStep) {
+      case 1:
+        return formData.propertyPrice && formData.propertyPrice.trim() !== '';
+      case 2:
+        return formData.propertyAddress && formData.propertyAddress.trim() !== '';
+      case 3:
+        return formData.selectedState && formData.selectedState.trim() !== '';
+      case 4:
+        return formData.propertyCategory && formData.propertyCategory.trim() !== '';
+      case 5:
+        return formData.propertyType && formData.propertyType.trim() !== '';
+      default:
+        return false;
+    }
+  };
+
+    const renderStep = () => {
+    // Show completion message if form is complete
+    if (isComplete) {
+      return (
+        <div className="flex flex-col mt-12 pr-2">
+          <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+            Basic Property Details Complete
+          </h2>
+          <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+            Now a few questions about you...
+          </p>
+        </div>
+      );
+    }
+
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto pr-2">
+                <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+                What is the property&apos;s price?
+              </h2>
+              <p className=" md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto ">
+                This will help us calculate your stamp duty and other costs
+              </p>
+              <div className="max-w-md mx-auto relative pr-8">
+                <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                  formData.propertyPrice ? 'text-gray-800' : 'text-gray-400'
+                }`}>
+                  $
+                </div>
+                <input
+                  type="tel"
+                  placeholder="0"
+                  value={formData.propertyPrice ? formatCurrency(parseInt(formData.propertyPrice)).replace('$', '') : ''}
+                  onChange={(e) => {
+                    // Remove all non-digit characters and update form data
+                    const numericValue = e.target.value.replace(/[^\d]/g, '');
+                    updateFormData('propertyPrice', numericValue);
+                  }}
+                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+                What&apos;s the property address?
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
+                This helps us determine the state and provide more accurate calculations
+              </p>
+              <div className="max-w-md mx-auto relative pr-8">
+                <input
+                  type="text"
+                  placeholder="Enter street address"
+                  value={formData.propertyAddress || ''}
+                  onChange={(e) => updateFormData('propertyAddress', e.target.value)}
+                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="flex flex-col mt-12 pr-2">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              Which state is the property in?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              Different states have different stamp duty rates and concessions
+            </p>
+            <div className="max-w-md relative pr-8">
+              <div className="grid grid-cols-4 gap-3 max-w-md">
+                {['NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT'].map((state) => (
+                  <button
+                    key={state}
+                    onClick={() => updateFormData('selectedState', state)}
+                    className={`px-3 py-2 text-base font-medium rounded-lg border-2 transition-all duration-200 text-center hover:scale-105 ${
+                      formData.selectedState === state
+                        ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    {state}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="flex flex-col mt-12 pr-2">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              What type of property is it?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              This affects your stamp duty concessions and ongoing costs
+            </p>
+            <div className="grid grid-cols-2 gap-2 max-w-3xl">
+              {[
+                { value: 'house', label: 'House' },
+                { value: 'apartment', label: 'Apartment' },
+                { value: 'townhouse', label: 'Townhouse' },
+                { value: 'land', label: 'Land' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => updateFormData('propertyCategory', option.value)}
+                  className={`py-1 px-3 rounded-lg border-2 transition-all duration-200 flex justify-center w-32 hover:scale-105 ${
+                    formData.propertyCategory === option.value
+                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="text-base font-medium text-center">{option.label}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="flex flex-col mt-12 pr-2">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              Is this a new or existing property?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              New properties may have different concessions and costs
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 max-w-4xl mb-8">
+              {[
+                { value: 'existing', label: 'Existing Property', description: 'Already built and lived in' },
+                { value: 'new', label: 'New Property', description: 'Recently built, never lived in' },
+                { value: 'off-the-plan', label: 'Off-the-Plan', description: 'Buying before construction' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => updateFormData('propertyType', option.value)}
+                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                    formData.propertyType === option.value
+                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+
+
+      default:
+        return null;
     }
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-3">
-          <MapPin className="w-5 h-5 text-blue-600" />
-          <h2 className="text-xl font-semibold text-gray-900">Property Details</h2>
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-25">
+             <div className="flex">
+         <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}>{isComplete ? '5' : currentStep} <span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
+        <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
+          {/* Step Content */}
+          <div className="h-80">
+            {renderStep()}
+          </div>
         </div>
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={`p-2 rounded-lg transition-colors ${
-            allBuyerDetailsAnswered 
-              ? 'hover:bg-gray-100' 
-              : 'opacity-50 cursor-not-allowed'
-          }`}
-          disabled={isSearching || !allBuyerDetailsAnswered}
-        >
-          {isExpanded ? (
-            <ChevronUp className="w-5 h-5 text-gray-600" />
-          ) : (
-            <ChevronDown className="w-5 h-5 text-gray-600" />
-          )}
-        </button>
       </div>
 
-
-      {isExpanded && (
-        <div className="space-y-6">
-          {/* Property Type Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Property Type
-            </label>
-            <div className="flex space-x-6">
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="existing"
-                  name="propertyType"
-                  value="existing"
-                  checked={isExistingProperty}
-                  onChange={(e) => handlePropertyTypeChange(e.target.value)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching}
-                />
-                <label htmlFor="existing" className="ml-2 text-sm text-gray-700">
-                  Existing Property
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="off-the-plan"
-                  name="propertyType"
-                  value="off-the-plan"
-                  checked={isOffThePlan}
-                  onChange={(e) => handlePropertyTypeChange(e.target.value)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching}
-                />
-                <label htmlFor="off-the-plan" className="ml-2 text-sm text-gray-700">
-                  New Home / Off-the-Plan
-                </label>
-              </div>
-            </div>
-            
-            {/* Foreign Buyer Alert for Existing Property */}
-            {isForeignBuyer && isExistingProperty && (
-              <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <div className="flex items-start space-x-2">
-                  <div className="flex-shrink-0">
-                    <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="text-sm text-yellow-800">
-                    <p className="font-medium">Foreign buyer restriction</p>
-                    <p>Foreign buyers can only purchase established dwellings in limited circumstances.</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Property Address and State */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Property Address
-                {isExistingProperty && <span className="text-red-500 ml-1">*</span>}
-              </label>
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  value={propertyData.address}
-                  onChange={(e) => setPropertyData(prev => ({ ...prev, address: e.target.value }))}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="Enter property address..."
-                  disabled={isSearching}
-                  required={isExistingProperty}
-                />
-                <button
-                  onClick={onAddressSearch}
-                  disabled={isSearching || !propertyData.address.trim()}
-                  className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                >
-                  {isSearching ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Search className="w-4 h-4" />
-                  )}
-                </button>
-              </div>
-              {searchError && (
-                <p className="text-red-600 text-sm mt-2">{searchError}</p>
-              )}
-              {isSearching && (
-                <p className="text-blue-600 text-sm mt-2">Searching for property data...</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                State/Territory <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={propertyData.state}
-                onChange={(e) => setPropertyData(prev => ({ ...prev, state: e.target.value }))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                disabled={isSearching}
-                required
+      {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
+      <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8">
+        {/* Progress Bar - Now IS the top border */}
+        <div className="w-full bg-gray-100 h-1">
+          <div 
+            className="bg-primary h-1 transition-all duration-300"
+            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+          ></div>
+        </div>
+        
+        <div className="flex justify-between max-w-4xl mx-auto mt-4">
+          {isComplete ? (
+            // Completion state: Back and Next buttons
+            <>
+              <button
+                onClick={() => setIsComplete(false)}
+                className="bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0"
               >
-                <option value="">Select</option>
-                {STATE_OPTIONS.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-              {/* Property Category Dropdown */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Property Category <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={propertyData.propertyCategory || ''}
-                  onChange={(e) => setPropertyData(prev => ({ ...prev, propertyCategory: e.target.value }))}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white border-gray-300
-                  `}
-                  disabled={isSearching}
-                  required
-                >
-                  <option value="">Select property category...</option>
-                  <option value="house">House</option>
-                  <option value="townhouse">Townhouse</option>
-                  <option value="apartment">Apartment/Unit</option>
-                  <option value="land">Land</option>
-                </select>
-              </div>
-
-          {/* Property Price */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
-                {propertyData.propertyCategory === 'land' ? 'Land Price' : 'Property Price'}
-                <span className="text-red-500 ml-1">*</span>
-              </label>
-              {isExistingProperty && (
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="useEstimate"
-                    checked={useEstimatedPrice}
-                    onChange={(e) => setUseEstimatedPrice(e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    disabled={isSearching}
-                  />
-                  <label htmlFor="useEstimate" className="text-sm text-gray-600">
-                    Use estimate
-                  </label>
-                </div>
-              )}
-            </div>
-            {useEstimatedPrice && isExistingProperty ? (
-              <div className="px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <TrendingUp className="w-4 h-4 text-green-600" />
-                  <span className="text-green-800 font-medium">
-                    Estimated: {formatCurrency(propertyData.estimatedPrice || 0)}
-                  </span>
-                </div>
-                <p className="text-xs text-green-600 mt-1">Based on local comparables</p>
-              </div>
-            ) : (
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={propertyData.price || ''}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, '');
-                  setPropertyData(prev => ({ ...prev, price: value ? Number(value) : 0 }));
-                }}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="Enter property price..."
-                disabled={isSearching}
-                required
-              />
-            )}
-          </div>
-
-
-          {/* Estimated Build Cost - Only show for land */}
-          {propertyData.propertyCategory === 'land' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Estimated Build Cost
-                <span className="text-red-500 ml-1">*</span>
-              </label>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={propertyData.estimatedBuildCost !== undefined && propertyData.estimatedBuildCost !== null ? propertyData.estimatedBuildCost : ''}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, '');
-                  setPropertyData(prev => ({ ...prev, estimatedBuildCost: value ? Number(value) : null }));
-                }}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="Enter estimated build cost..."
-                disabled={isSearching}
-              />
-            </div>
-          )}
-
-          {/* Vacant Land Concession Checkbox - Only show for QLD land with build cost */}
-          {propertyData.state === 'QLD' && propertyData.propertyCategory === 'land' && (
-            <div>
-              <div className="flex items-center space-x-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <input
-                  type="checkbox"
-                  id="claimVacantLandConcession"
-                  checked={propertyData.claimVacantLandConcession || false}
-                  onChange={(e) => setPropertyData(prev => ({ ...prev, claimVacantLandConcession: e.target.checked }))}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
-                  disabled={isSearching}
-                />
-                <div>
-                  <label htmlFor="claimVacantLandConcession" className="text-sm font-medium text-blue-900">
-                    Claim Vacant Land Concession
-                  </label>
-                  <p className="text-xs text-blue-700 mt-1">
-                    If checked, stamp duty will be $0 with no price caps for Queensland vacant land purchases
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-
-
-          {/* Western Australia Metro Region - Only show for WA established homes (affects first home buyer stamp duty) */}
-          {propertyData.state === 'WA' && isFirstHomeBuyer && isExistingProperty && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                WA Metro Region <span className="text-red-500">*</span>
-                <span className="text-xs text-gray-500 ml-2">(Affects stamp duty concessions)</span>
-              </label>
-              <div className="flex space-x-6">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="wa-metro"
-                    name="waMetroRegion"
-                    value="metropolitan"
-                    checked={propertyData.waMetroRegion === 'metropolitan'}
-                    onChange={(e) => setPropertyData(prev => ({ ...prev, waMetroRegion: e.target.value }))}
-                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                    disabled={isSearching}
-                    required
-                  />
-                  <label htmlFor="wa-metro" className="ml-2 text-sm text-gray-700">
-                    Metro (Perth/Peel)
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="wa-nonmetro"
-                    name="waMetroRegion"
-                    value="non-metropolitan"
-                    checked={propertyData.waMetroRegion === 'non-metropolitan'}
-                    onChange={(e) => setPropertyData(prev => ({ ...prev, waMetroRegion: e.target.value }))}
-                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                    disabled={isSearching}
-                    required
-                  />
-                  <label htmlFor="wa-nonmetro" className="ml-2 text-sm text-gray-700">
-                    Non-Metro
-                  </label>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Western Australia Region - Only show for WA new homes (affects First Home Owners Grant) */}
-          {propertyData.state === 'WA' && isOffThePlan && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Western Australia Region <span className="text-red-500">*</span>
-                <span className="text-xs text-gray-500 ml-2">(Affects FHOG amount)</span>
-              </label>
-              <div className="flex space-x-6">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="wa-north"
-                    name="waRegion"
-                    value="north"
-                    checked={propertyData.waRegion === 'north'}
-                    onChange={(e) => setPropertyData(prev => ({ ...prev, waRegion: e.target.value }))}
-                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                    disabled={isSearching}
-                    required
-                  />
-                  <label htmlFor="wa-north" className="ml-2 text-sm text-gray-700">
-                    North
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="wa-south"
-                    name="waRegion"
-                    value="south"
-                    checked={propertyData.waRegion === 'south'}
-                    onChange={(e) => setPropertyData(prev => ({ ...prev, waRegion: e.target.value }))}
-                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                    disabled={isSearching}
-                    required
-                  />
-                  <label htmlFor="wa-south" className="ml-2 text-sm text-gray-700">
-                    South
-                  </label>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Off-the-Plan Specific Fields */}
-          {isOffThePlan && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Development Name
-              </label>
-              <div className="relative">
-                <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={propertyData.developerName || ''}
-                  onChange={(e) => setPropertyData(prev => ({ ...prev, developerName: e.target.value }))}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="e.g., ABC Developments"
-                  disabled={isSearching}
-                />
-              </div>
-            </div>
+                &lt;
+              </button>
+              
+              <button
+                onClick={goToBuyerDetails}
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm transition-all duration-300 ease-in-out text-base font-medium"
+              >
+                Next
+              </button>
+            </>
+          ) : currentStep === 1 ? (
+            // Step 1: Full width OK button
+            <button
+              onClick={nextStep}
+              disabled={!isCurrentStepValid()}
+              className={`w-full px-6 py-3 rounded-full border transition-all duration-300 ease-in-out text-base font-medium ${
+                !isCurrentStepValid()
+                  ? 'border-primary text-base-100 cursor-not-allowed bg-primary'
+                  : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm'
+              }`}
+            >
+              OK
+            </button>
+          ) : (
+            // Step 2 onwards: Back and Next buttons with smooth transition
+            <>
+              <button
+                onClick={prevStep}
+                className={`bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0 ${
+                  isTransitioning && direction === 'backward' ? 'transform translate-x-4 opacity-0' : 
+                  isTransitioning && direction === 'forward' ? 'transform -translate-x-4 opacity-0' : 
+                  'transform translate-x-0 opacity-100'
+                }`}
+              >
+                &lt;
+              </button>
+              
+              <button
+                onClick={nextStep}
+                disabled={!isCurrentStepValid()}
+                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border transition-all duration-300 ease-in-out text-base font-medium ${
+                  !isCurrentStepValid()
+                    ? 'border-primary text-base-100 cursor-not-allowed bg-gray-50'
+                    : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm'
+                }`}
+              >
+                {currentStep === totalSteps ? 'Complete' : 'OK'}
+              </button>
+            </>
           )}
         </div>
-      )}
-      
-      {!allBuyerDetailsAnswered && (
-        <div className="text-sm text-gray-600 mt-4">
-          Complete buyer details first
-        </div>
-      )}
+      </div>
     </div>
   );
-} 
+}

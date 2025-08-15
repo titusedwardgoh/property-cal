@@ -1,277 +1,290 @@
-import React, { useState } from 'react';
-import { User, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 
-export default function BuyerDetails({
-  needsLoan,
-  setNeedsLoan,
-  isForeignBuyer,
-  setIsForeignBuyer,
-  isFirstHomeBuyer,
-  setIsFirstHomeBuyer,
-  isInvestor,
-  setIsInvestor,
-  isPPR,
-  setIsPPR,
-  isSearching,
-  propertyPrice,
-  savingsAmount,
-  setSavingsAmount
-}) {
-  const [isExpanded, setIsExpanded] = useState(true);
+export default function BuyerDetails({ formData, updateFormData }) {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [direction, setDirection] = useState('forward'); // 'forward' or 'backward'
+  const totalSteps = 5;
+
+  const nextStep = () => {
+    if (currentStep < totalSteps) {
+      setDirection('forward');
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentStep(currentStep + 1);
+        setIsTransitioning(false);
+      }, 150);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setDirection('backward');
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentStep(currentStep - 1);
+        setIsTransitioning(false);
+      }, 150);
+    }
+  };
+
+  const handleBack = () => {
+    // Go back to PropertyDetails question 5
+    updateFormData('propertyDetailsComplete', false);
+    // Set PropertyDetails to show question 5
+    updateFormData('propertyDetailsCurrentStep', 5);
+  };
+
+  // Check if current step is valid
+  const isCurrentStepValid = () => {
+    switch (currentStep) {
+      case 1:
+        return formData.buyerType && formData.buyerType.trim() !== '';
+      case 2:
+        return true; // Placeholder question
+      case 3:
+        return true; // Placeholder question
+      case 4:
+        return true; // Placeholder question
+      case 5:
+        return true; // Placeholder question
+      default:
+        return false;
+    }
+  };
+
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="flex flex-col mt-12 pr-2">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              Are you an Owner or Investor?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              This affects your eligibility for concessions and grants
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+              {[
+                { value: 'owner-occupier', label: 'Owner-Occupier', description: 'You will live in this property' },
+                { value: 'investor', label: 'Investor', description: 'You will rent this property out' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => updateFormData('buyerType', option.value)}
+                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                    formData.buyerType === option.value
+                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="flex flex-col mt-12 pr-2">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              Are you a human?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              Placeholder question for now
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+              {[
+                { value: 'yes', label: 'Yes', description: 'I am a human' },
+                { value: 'no', label: 'No', description: 'I am not a human' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => updateFormData('buyerQuestion2', option.value)}
+                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                    formData.buyerQuestion2 === option.value
+                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="flex flex-col mt-12 pr-2">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              Are you a human?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              Placeholder question for now
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+              {[
+                { value: 'yes', label: 'Yes', description: 'I am a human' },
+                { value: 'no', label: 'No', description: 'I am not a human' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => updateFormData('buyerQuestion3', option.value)}
+                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                    formData.buyerQuestion3 === option.value
+                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="flex flex-col mt-12 pr-2">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              Are you a human?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              Placeholder question for now
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+              {[
+                { value: 'yes', label: 'Yes', description: 'I am a human' },
+                { value: 'no', label: 'No', description: 'I am not a human' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => updateFormData('buyerQuestion4', option.value)}
+                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                    formData.buyerQuestion4 === option.value
+                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="flex flex-col mt-12 pr-2">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              Are you a human?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              Placeholder question for now
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+              {[
+                { value: 'yes', label: 'Yes', description: 'I am a human' },
+                { value: 'no', label: 'No', description: 'I am not a human' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => updateFormData('buyerQuestion5', option.value)}
+                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                    formData.buyerQuestion5 === option.value
+                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-3">
-          <User className="w-5 h-5 text-purple-600" />
-          <h2 className="text-xl font-semibold text-gray-900 capitalize">First some questions about you</h2>
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-25">
+      <div className="flex">
+        <span className="text-primary text-xs font-extrabold mr-2 pt-14 whitespace-nowrap">{currentStep + 5} <span className="text-xs">→</span></span>
+        <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
+          {/* Step Content */}
+          <div className="h-80">
+            {renderStep()}
+          </div>
         </div>
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          disabled={isSearching}
-        >
-          {isExpanded ? (
-            <ChevronUp className="w-5 h-5 text-gray-600" />
-          ) : (
-            <ChevronDown className="w-5 h-5 text-gray-600" />
-          )}
-        </button>
       </div>
 
-      {isExpanded && (
-        <div className="space-y-6">
-          {/* Property Purpose */}
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-3">What is your purpose for buying this property?</h3>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id="ownerOccupier"
-                  name="propertyPurpose"
-                  value="owner-occupier"
-                  checked={isInvestor === false}
-                  onChange={() => setIsInvestor(false)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching}
-                />
-                <label htmlFor="ownerOccupier" className="text-sm text-gray-700">
-                  Owner-occupier
-                </label>
-              </div>
+      {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
+      <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8">
+        {/* Progress Bar - Now IS the top border */}
+        <div className="w-full bg-gray-100 h-1">
+          <div 
+            className="bg-primary h-1 transition-all duration-300"
+            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+          ></div>
+        </div>
+        
+        <div className="flex justify-between max-w-4xl mx-auto mt-4">
+          {currentStep === 1 ? (
+            // Step 1: Back to PropertyDetails and Next buttons
+            <>
+              <button
+                onClick={handleBack}
+                className="bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0"
+              >
+                &lt;
+              </button>
               
-              <div className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id="investor"
-                  name="propertyPurpose"
-                  value="investor"
-                  checked={isInvestor === true}
-                  onChange={() => {
-                    setIsInvestor(true);
-                    setIsPPR(false); // Investors cannot have PPR
-                  }}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching}
-                />
-                <label htmlFor="investor" className="text-sm text-gray-700">
-                  Investor
-                </label>
-              </div>
-            </div>
-          </div>
-
-          {/* Principal Place of Residence */}
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Will this be your principal place of residence (PPR)?</h3>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id="pprYes"
-                  name="pprStatus"
-                  value="yes"
-                  checked={isPPR === true}
-                  onChange={() => setIsPPR(true)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching || isInvestor}
-                />
-                <label htmlFor="pprYes" className={`text-sm ${isInvestor ? 'text-gray-400' : 'text-gray-700'}`}>
-                  Yes
-                </label>
-              </div>
+              <button
+                onClick={nextStep}
+                disabled={!isCurrentStepValid()}
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm transition-all duration-300 ease-in-out text-base font-medium"
+              >
+                OK
+              </button>
+            </>
+          ) : (
+            // Step 2 onwards: Back and Next buttons with smooth transition
+            <>
+              <button
+                onClick={prevStep}
+                className={`bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0 ${
+                  isTransitioning && direction === 'backward' ? 'transform translate-x-4 opacity-0' : 
+                  isTransitioning && direction === 'forward' ? 'transform -translate-x-4 opacity-0' : 
+                  'transform translate-x-0 opacity-100'
+                }`}
+              >
+                &lt;
+              </button>
               
-              <div className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id="pprNo"
-                  name="pprStatus"
-                  value="no"
-                  checked={isPPR === false}
-                  onChange={() => setIsPPR(false)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching || isInvestor}
-                />
-                <label htmlFor="pprNo" className={`text-sm ${isInvestor ? 'text-gray-400' : 'text-gray-700'}`}>
-                  No
-                </label>
-              </div>
-            </div>
-            {isInvestor && (
-              <p className="text-sm text-gray-500 mt-2">
-                (Investors cannot claim a property as their principal place of residence)
-              </p>
-            )}
-          </div>
-
-          {/* Citizenship Status */}
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Are you an Australian citizen or permanent resident?</h3>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id="australianCitizen"
-                  name="citizenshipStatus"
-                  value="australian"
-                  checked={isForeignBuyer === false}
-                  onChange={() => setIsForeignBuyer(false)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching}
-                />
-                <label htmlFor="australianCitizen" className="text-sm text-gray-700">
-                  Yes
-                </label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id="foreignBuyer"
-                  name="citizenshipStatus"
-                  value="foreign"
-                  checked={isForeignBuyer === true}
-                  onChange={() => {
-                    setIsForeignBuyer(true);
-                    setIsFirstHomeBuyer(false); // Foreign buyers can't be first home buyers
-                  }}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching}
-                />
-                <label htmlFor="foreignBuyer" className="text-sm text-gray-700">
-                  No, I reside overseas
-                </label>
-              </div>
-            </div>
-          </div>
-
-          {/* First Home Buyer Status */}
-          <div>
-            <div className="flex items-center gap-2">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Are you a first home buyer?</h3>
-            {isForeignBuyer && (
-              <p className="text-sm mb-3">
-                (Foreign buyers are not eligible for the first home owners grant)
-              </p>
-            )}
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id="firstHomeBuyerYes"
-                  name="firstHomeBuyerStatus"
-                  value="yes"
-                  checked={isFirstHomeBuyer === true}
-                  onChange={() => setIsFirstHomeBuyer(true)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching || isForeignBuyer}
-                />
-                <label htmlFor="firstHomeBuyerYes" className={`text-sm ${isForeignBuyer ? 'text-gray-400' : 'text-gray-700'}`}>
-                  Yes
-                </label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id="firstHomeBuyerNo"
-                  name="firstHomeBuyerStatus"
-                  value="no"
-                  checked={isFirstHomeBuyer === false}
-                  onChange={() => setIsFirstHomeBuyer(false)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching || isForeignBuyer}
-                />
-                <label htmlFor="firstHomeBuyerNo" className={`text-sm ${isForeignBuyer ? 'text-gray-400' : 'text-gray-700'}`}>
-                  No
-                </label>
-              </div>
-            </div>
-          </div>
-
-          {/* Loan Requirement */}
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Do you need a loan?</h3>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id="needsLoanYes"
-                  name="loanRequirement"
-                  value="yes"
-                  checked={needsLoan === true}
-                  onChange={() => setNeedsLoan(true)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching}
-                />
-                <label htmlFor="needsLoanYes" className="text-sm text-gray-700">
-                  Yes
-                </label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id="needsLoanNo"
-                  name="loanRequirement"
-                  value="no"
-                  checked={needsLoan === false}
-                  onChange={() => setNeedsLoan(false)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  disabled={isSearching}
-                />
-                <label htmlFor="needsLoanNo" className="text-sm text-gray-700">
-                  No
-                </label>
-              </div>
-            </div>
-          </div>
-
-          {/* Savings Amount - Only show if loan is needed */}
-          {needsLoan && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                How much savings do you have? <span className="text-red-500">*</span>
-              </label>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">$</span>
-                <input
-                  type="number"
-                  value={savingsAmount || ''}
-                  onChange={(e) => setSavingsAmount(Number(e.target.value) || 0)}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="Enter your savings amount..."
-                  required
-                  min="0"
-                  disabled={isSearching}
-                />
-              </div>
-            </div>
+              <button
+                onClick={nextStep}
+                disabled={!isCurrentStepValid()}
+                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border transition-all duration-300 ease-in-out text-base font-medium ${
+                  !isCurrentStepValid()
+                    ? 'border-primary text-base-100 cursor-not-allowed bg-gray-50'
+                    : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm'
+                }`}
+              >
+                {currentStep === totalSteps ? 'Complete' : 'OK'}
+              </button>
+            </>
           )}
         </div>
-      )}
+      </div>
     </div>
   );
-} 
+}
