@@ -36,6 +36,8 @@ export default function PropertyDetails({ formData, updateFormData }) {
       // Form is complete - calculate and log stamp duty
       calculateAndLogStampDuty();
       setIsComplete(true);
+      // Set a separate flag for UpfrontCosts (not the main navigation flag)
+      updateFormData('propertyDetailsFormComplete', true);
     }
   };
 
@@ -55,27 +57,14 @@ export default function PropertyDetails({ formData, updateFormData }) {
     }
   };
 
-  // Calculate and log stamp duty when form is complete
+  // Calculate stamp duty when form is complete (no logging)
   const calculateAndLogStampDuty = () => {
     if (!stateFunctions) {
-      console.log('State functions not loaded yet');
       return;
     }
     
-    console.log('=== DEBUGGING STAMP DUTY ===');
-    console.log('formData:', formData);
-    console.log('formData.propertyPrice:', formData.propertyPrice);
-    console.log('formData.selectedState:', formData.selectedState);
-    console.log('typeof formData.propertyPrice:', typeof formData.propertyPrice);
-    console.log('parseInt(formData.propertyPrice):', parseInt(formData.propertyPrice));
-    
-    const stampDuty = stateFunctions.calculateStampDuty(formData.propertyPrice, formData.selectedState);
-    console.log('calculateStampDuty result:', stampDuty);
-    
-    console.log('=== STAMP DUTY CALCULATION ===');
-    console.log('Form Data:', formData);
-    console.log('Stamp Duty Amount:', formatCurrency(stampDuty));
-    console.log('==============================');
+    // Calculate stamp duty but don't log it
+    stateFunctions.calculateStampDuty(formData.propertyPrice, formData.selectedState);
   };
 
   // Check if current step is valid
@@ -294,7 +283,10 @@ export default function PropertyDetails({ formData, updateFormData }) {
             // Completion state: Back and Next buttons
             <>
               <button
-                onClick={() => setIsComplete(false)}
+                onClick={() => {
+                  setIsComplete(false);
+                  updateFormData('propertyDetailsFormComplete', false);
+                }}
                 className="bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0"
               >
                 &lt;

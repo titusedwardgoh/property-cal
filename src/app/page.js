@@ -13,7 +13,8 @@ export default function Page() {
         propertyType: '',
         propertyCategory: '',
         buyerType: '',
-        propertyDetailsComplete: false
+        propertyDetailsComplete: false,
+        propertyDetailsFormComplete: false
     });
 
     const updateFormData = (field, value) => {
