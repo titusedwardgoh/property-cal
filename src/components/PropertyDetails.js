@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { formatCurrency } from '../states/shared/baseCalculations.js';
 import { useStateSelector } from '../states/useStateSelector.js';
+import useFormNavigation from './shared/FormNavigation.js';
 
 export default function PropertyDetails({ formData, updateFormData }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [direction, setDirection] = useState('forward'); // 'forward' or 'backward'
   const [isComplete, setIsComplete] = useState(false);
-    const totalSteps = 5;
+  const totalSteps = 5;
    
   // Get state-specific functions when state is selected
   const { stateFunctions } = useStateSelector(formData.selectedState || 'NSW');
@@ -21,8 +22,6 @@ export default function PropertyDetails({ formData, updateFormData }) {
       updateFormData('propertyDetailsCurrentStep', null);
     }
   }, [formData.propertyDetailsCurrentStep, updateFormData]);
-
-
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
@@ -85,7 +84,19 @@ export default function PropertyDetails({ formData, updateFormData }) {
     }
   };
 
-    const renderStep = () => {
+  // Use shared navigation hook
+  useFormNavigation({
+    currentStep,
+    totalSteps,
+    isCurrentStepValid,
+    onNext: nextStep,
+    onPrev: prevStep,
+    onComplete: goToBuyerDetails,
+    onBack: null, // No back action for PropertyDetails
+    isComplete
+  });
+
+  const renderStep = () => {
     // Show completion message if form is complete
     if (isComplete) {
       return (
@@ -242,7 +253,11 @@ export default function PropertyDetails({ formData, updateFormData }) {
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                  <div className={`text-xs leading-none ${
+                    formData.propertyType === option.value
+                      ? 'text-gray-400'
+                      : 'text-gray-500'
+                  }`}>{option.description}</div>
                 </button>
               ))}
             </div>

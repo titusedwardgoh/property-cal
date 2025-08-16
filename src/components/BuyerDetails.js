@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import useFormNavigation from './shared/FormNavigation.js';
 
 export default function BuyerDetails({ formData, updateFormData }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -41,6 +42,21 @@ export default function BuyerDetails({ formData, updateFormData }) {
     }
   };
 
+  // Use shared navigation hook
+  useFormNavigation({
+    currentStep,
+    totalSteps,
+    isCurrentStepValid,
+    onNext: nextStep,
+    onPrev: prevStep,
+    onComplete: () => {
+      // Handle form completion
+      updateFormData('buyerDetailsComplete', true);
+    },
+    onBack: handleBack,
+    isComplete: false
+  });
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -67,7 +83,15 @@ export default function BuyerDetails({ formData, updateFormData }) {
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                  <div className={`text-xs leading-none ${
+                    formData.buyerType === option.value || 
+                    formData.isPPR === option.value || 
+                    formData.isAustralianResident === option.value || 
+                    formData.isFirstHomeBuyer === option.value || 
+                    formData.needsLoan === option.value
+                      ? 'text-gray-400'
+                      : 'text-gray-500'
+                  }`}>{option.description}</div>
                 </button>
               ))}
             </div>
@@ -98,7 +122,15 @@ export default function BuyerDetails({ formData, updateFormData }) {
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                  <div className={`text-xs leading-none ${
+                    formData.buyerType === option.value || 
+                    formData.isPPR === option.value || 
+                    formData.isAustralianResident === option.value || 
+                    formData.isFirstHomeBuyer === option.value || 
+                    formData.needsLoan === option.value
+                      ? 'text-gray-400'
+                      : 'text-gray-500'
+                  }`}>{option.description}</div>
                 </button>
               ))}
             </div>
@@ -129,7 +161,15 @@ export default function BuyerDetails({ formData, updateFormData }) {
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                  <div className={`text-xs leading-none ${
+                    formData.buyerType === option.value || 
+                    formData.isPPR === option.value || 
+                    formData.isAustralianResident === option.value || 
+                    formData.isFirstHomeBuyer === option.value || 
+                    formData.needsLoan === option.value
+                      ? 'text-gray-400'
+                      : 'text-gray-500'
+                  }`}>{option.description}</div>
                 </button>
               ))}
             </div>
@@ -160,7 +200,15 @@ export default function BuyerDetails({ formData, updateFormData }) {
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                  <div className={`text-xs leading-none ${
+                    formData.buyerType === option.value || 
+                    formData.isPPR === option.value || 
+                    formData.isAustralianResident === option.value || 
+                    formData.isFirstHomeBuyer === option.value || 
+                    formData.needsLoan === option.value
+                      ? 'text-gray-400'
+                      : 'text-gray-500'
+                  }`}>{option.description}</div>
                 </button>
               ))}
             </div>
@@ -191,7 +239,15 @@ export default function BuyerDetails({ formData, updateFormData }) {
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className="text-xs text-gray-500 leading-none">{option.description}</div>
+                  <div className={`text-xs leading-none ${
+                    formData.buyerType === option.value || 
+                    formData.isPPR === option.value || 
+                    formData.isAustralianResident === option.value || 
+                    formData.isFirstHomeBuyer === option.value || 
+                    formData.needsLoan === option.value
+                      ? 'text-gray-400'
+                      : 'text-gray-500'
+                  }`}>{option.description}</div>
                 </button>
               ))}
             </div>
