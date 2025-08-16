@@ -243,7 +243,7 @@ export default function BuyerDetails({ formData, updateFormData }) {
             <>
               <button
                 onClick={handleBack}
-                className="bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0"
+                className="bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
@@ -251,7 +251,7 @@ export default function BuyerDetails({ formData, updateFormData }) {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm transition-all duration-300 ease-in-out text-base font-medium"
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm transition-all duration-300 ease-in-out text-base font-medium cursor-pointer"
               >
                 OK
               </button>
@@ -261,7 +261,7 @@ export default function BuyerDetails({ formData, updateFormData }) {
             <>
               <button
                 onClick={prevStep}
-                className={`bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0 ${
+                className={`bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0 cursor-pointer ${
                   isTransitioning && direction === 'backward' ? 'transform translate-x-4 opacity-0' : 
                   isTransitioning && direction === 'forward' ? 'transform -translate-x-4 opacity-0' : 
                   'transform translate-x-0 opacity-100'
@@ -276,7 +276,7 @@ export default function BuyerDetails({ formData, updateFormData }) {
                 className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border transition-all duration-300 ease-in-out text-base font-medium ${
                   !isCurrentStepValid()
                     ? 'border-primary text-base-100 cursor-not-allowed bg-gray-50'
-                    : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm'
+                    : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
                 }`}
               >
                 {currentStep === totalSteps ? 'Complete' : 'OK'}
