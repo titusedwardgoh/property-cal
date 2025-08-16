@@ -77,7 +77,7 @@ export default function BuyerDetails({ formData, updateFormData }) {
             Buyer Details Complete
           </h2>
           <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-            Now let's calculate your costs...
+            Now let&apos;s calculate your costs...
           </p>
         </div>
       );

@@ -37,7 +37,7 @@ export default function useFormNavigation({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentStep, isComplete, isCurrentStepValid, onNext, onPrev, onComplete, onBack]);
+  }, [currentStep, isComplete, isCurrentStepValid, onNext, onPrev, onComplete, onBack, handleKeyDown]);
 
   return null; // This is a hook, not a component
 }
