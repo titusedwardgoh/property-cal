@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStateSelector } from '../states/useStateSelector.js';
 import { formatCurrency } from '../states/shared/baseCalculations.js';
 
@@ -10,6 +10,11 @@ export default function UpfrontCosts({ formData }) {
 
   // Get state-specific functions when state is selected
   const { stateFunctions } = useStateSelector(formData.selectedState || 'NSW');
+
+  // Close expanded state when formData changes (navigation occurs)
+  useEffect(() => {
+    setIsExpanded(false);
+  }, [formData]);
 
   const toggleExpanded = () => {
     if (isPropertyComplete) {
@@ -31,16 +36,6 @@ export default function UpfrontCosts({ formData }) {
     const concession = -2; // Stamp duty concession
     return stampDuty + concession;
   };
-
-  // Debug logging
-  console.log('UpfrontCosts Debug:', {
-    isPropertyComplete,
-    isExpanded,
-    propertyPrice: formData.propertyPrice,
-    selectedState: formData.selectedState,
-    propertyType: formData.propertyType,
-    stampDuty: calculateStampDuty()
-  });
 
   return (
     <div className="relative">

@@ -29,14 +29,7 @@ export const calculateNSWStampDuty = (propertyPrice, selectedState) => {
   // Calculate stamp duty: (price - min) * rate + fixed fee
   const stampDuty = (price - applicableRate.min) * applicableRate.rate + applicableRate.fixedFee;
 
-  // Log the calculation details
-  console.log('=== NSW STAMP DUTY CALCULATION ===');
-  console.log('Property Price:', price);
-  console.log('Selected State:', selectedState);
-  console.log('Applicable Rate Bracket:', applicableRate);
-  console.log('Calculation:', `(${price} - ${applicableRate.min}) × ${applicableRate.rate} + ${applicableRate.fixedFee}`);
-  console.log('Stamp Duty Amount:', stampDuty);
-  console.log('=====================================');
+
 
   return stampDuty;
 };

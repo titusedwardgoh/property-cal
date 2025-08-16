@@ -1,12 +1,12 @@
 // ACT-specific constants and rates
 export const ACT_STAMP_DUTY_RATES = [
-  { min: 0, max: 200000, rate: 0, fixedFee: 0 }, // $0 for properties up to $200,000
-  { min: 200000, max: 300000, rate: 0.015, fixedFee: 0 }, // $1.50 per $100 = 1.5%
-  { min: 300000, max: 500000, rate: 0.02, fixedFee: 1500 }, // $1,500 + $2.00 per $100 over $300,000
-  { min: 500000, max: 750000, rate: 0.03, fixedFee: 5500 }, // $5,500 + $3.00 per $100 over $500,000
-  { min: 750000, max: 1000000, rate: 0.04, fixedFee: 13000 }, // $13,000 + $4.00 per $100 over $750,000
-  { min: 1000000, max: 1455000, rate: 0.05, fixedFee: 23000 }, // $23,000 + $5.00 per $100 over $1,000,000
-  { min: 1455000, max: Infinity, rate: 0.055, fixedFee: 45500 } // $45,500 + $5.50 per $100 over $1,455,000
+  { min: 0, max: 200000, rate: 0.012, fixedFee: 0 }, // $1.20 per $100 = 1.2% up to $200,000
+  { min: 200000, max: 300000, rate: 0.022, fixedFee: 2400 }, // $2,400 + $2.20 per $100 over $200,000
+  { min: 300000, max: 500000, rate: 0.034, fixedFee: 4600 }, // $4,600 + $3.40 per $100 over $300,000
+  { min: 500000, max: 750000, rate: 0.0432, fixedFee: 11400 }, // $11,400 + $4.32 per $100 over $500,000
+  { min: 750000, max: 1000000, rate: 0.059, fixedFee: 22200 }, // $22,200 + $5.90 per $100 over $750,000
+  { min: 1000000, max: 1455000, rate: 0.064, fixedFee: 36950 }, // $36,950 + $6.40 per $100 over $1,000,000
+  { min: 1455000, max: Infinity, rate: 0.0454, fixedFee: 0 } // Flat rate of $4.54 per $100 for total transaction value
 ];
 
 // ACT first home buyer concession brackets

@@ -29,13 +29,13 @@ export default function BuyerDetails({ formData, updateFormData }) {
       case 1:
         return formData.buyerType && formData.buyerType.trim() !== '';
       case 2:
-        return true; // Placeholder question
+        return formData.isPPR && formData.isPPR.trim() !== '';
       case 3:
-        return true; // Placeholder question
+        return formData.isAustralianResident && formData.isAustralianResident.trim() !== '';
       case 4:
-        return true; // Placeholder question
+        return formData.isFirstHomeBuyer && formData.isFirstHomeBuyer.trim() !== '';
       case 5:
-        return true; // Placeholder question
+        return formData.needsLoan && formData.needsLoan.trim() !== '';
       default:
         return false;
     }
@@ -78,21 +78,21 @@ export default function BuyerDetails({ formData, updateFormData }) {
         return (
           <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Are you a human?
+              Will you live in this property?
             </h2>
             <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+              This affects your eligibility for principal place of residence (PPR) concessions
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
               {[
-                { value: 'yes', label: 'Yes', description: 'I am a human' },
-                { value: 'no', label: 'No', description: 'I am not a human' }
+                { value: 'yes', label: 'Yes', description: 'This will be my main home' },
+                { value: 'no', label: 'No', description: 'This will not be my main home' }
               ].map((option) => (
                 <button
                   key={option.value}
-                  onClick={() => updateFormData('buyerQuestion2', option.value)}
+                  onClick={() => updateFormData('isPPR', option.value)}
                   className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.buyerQuestion2 === option.value
+                    formData.isPPR === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                   }`}
@@ -109,21 +109,21 @@ export default function BuyerDetails({ formData, updateFormData }) {
         return (
           <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Are you a human?
+              Australian citizen or permanent resident?
             </h2>
             <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+              Residents may have additional concessions and foreigners additional duties
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
               {[
-                { value: 'yes', label: 'Yes', description: 'I am a human' },
-                { value: 'no', label: 'No', description: 'I am not a human' }
+                { value: 'yes', label: 'Yes', description: 'Australian citizen or permanent resident' },
+                { value: 'no', label: 'No, I reside overseas', description: 'Foreign buyer' }
               ].map((option) => (
                 <button
                   key={option.value}
-                  onClick={() => updateFormData('buyerQuestion3', option.value)}
+                  onClick={() => updateFormData('isAustralianResident', option.value)}
                   className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.buyerQuestion3 === option.value
+                    formData.isAustralianResident === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                   }`}
@@ -140,21 +140,21 @@ export default function BuyerDetails({ formData, updateFormData }) {
         return (
           <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Are you a human?
+              Is this your first home purchase?
             </h2>
             <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+              First home buyers may have additional concessions and grants.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
               {[
-                { value: 'yes', label: 'Yes', description: 'I am a human' },
-                { value: 'no', label: 'No', description: 'I am not a human' }
+                { value: 'yes', label: 'Yes', description: 'This is my first home purchase' },
+                { value: 'no', label: 'No', description: 'I have owned property before' }
               ].map((option) => (
                 <button
                   key={option.value}
-                  onClick={() => updateFormData('buyerQuestion4', option.value)}
+                  onClick={() => updateFormData('isFirstHomeBuyer', option.value)}
                   className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.buyerQuestion4 === option.value
+                    formData.isFirstHomeBuyer === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                   }`}
@@ -171,21 +171,21 @@ export default function BuyerDetails({ formData, updateFormData }) {
         return (
           <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Are you a human?
+              Do you need a loan to purchase?
             </h2>
             <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+              This affects your loan calculations and costs.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
               {[
-                { value: 'yes', label: 'Yes', description: 'I am a human' },
-                { value: 'no', label: 'No', description: 'I am not a human' }
+                { value: 'yes', label: 'Yes', description: 'I need a loan to purchase' },
+                { value: 'no', label: 'No', description: 'I will pay cash' }
               ].map((option) => (
                 <button
                   key={option.value}
-                  onClick={() => updateFormData('buyerQuestion5', option.value)}
+                  onClick={() => updateFormData('needsLoan', option.value)}
                   className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.buyerQuestion5 === option.value
+                    formData.needsLoan === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                   }`}
@@ -206,7 +206,7 @@ export default function BuyerDetails({ formData, updateFormData }) {
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
       <div className="flex">
-        <span className="text-primary text-xs font-extrabold mr-2 pt-14 whitespace-nowrap">{currentStep + 5} <span className="text-xs">→</span></span>
+        <span className="text-primary text-xs font-extrabold mr-2 pt-14 whitespace-nowrap">{currentStep <5 ? <span className="text-xs text-base-100">1</span> : null}{currentStep + 5} <span className="text-xs">→</span></span>
         <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
           {/* Step Content */}
           <div className="h-80">

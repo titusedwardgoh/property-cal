@@ -94,7 +94,7 @@ export default function PropertyDetails({ formData, updateFormData }) {
             Basic Property Details Complete
           </h2>
           <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-            Now a few questions about you...
+            Now a few questions about you... 
           </p>
         </div>
       );
@@ -204,7 +204,7 @@ export default function PropertyDetails({ formData, updateFormData }) {
                 <button
                   key={option.value}
                   onClick={() => updateFormData('propertyCategory', option.value)}
-                  className={`py-1 px-3 rounded-lg border-2 transition-all duration-200 flex justify-center w-32 hover:scale-105 ${
+                  className={`py-3 px-3 rounded-lg border-2 transition-all duration-200 flex justify-center w-32 hover:scale-105 ${
                     formData.propertyCategory === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
@@ -259,7 +259,7 @@ export default function PropertyDetails({ formData, updateFormData }) {
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
              <div className="flex">
-         <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}>{isComplete ? '5' : currentStep} <span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
+         <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}><span className="text-xs text-base-100">1</span>{isComplete ? '5' : currentStep} <span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
         <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
           {/* Step Content */}
           <div className="h-80">

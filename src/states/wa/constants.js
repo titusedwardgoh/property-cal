@@ -1,11 +1,10 @@
 // WA-specific constants and rates
 export const WA_STAMP_DUTY_RATES = [
-  { min: 0, max: 120000, rate: 0, fixedFee: 0 }, // $0 for properties up to $120,000
-  { min: 120000, max: 150000, rate: 0.01, fixedFee: 0 }, // $1.00 per $100 = 1%
-  { min: 150000, max: 360000, rate: 0.02, fixedFee: 300 }, // $300 + $2.00 per $100 over $150,000
-  { min: 360000, max: 725000, rate: 0.035, fixedFee: 4500 }, // $4,500 + $3.50 per $100 over $360,000
-  { min: 725000, max: 1000000, rate: 0.045, fixedFee: 17275 }, // $17,275 + $4.50 per $100 over $725,000
-  { min: 1000000, max: Infinity, rate: 0.055, fixedFee: 29500 } // $29,500 + $5.50 per $100 over $1,000,000
+  { min: 0, max: 120000, rate: 0.019, fixedFee: 0 }, // $1.90 per $100 = 1.9%
+  { min: 120000, max: 150000, rate: 0.0285, fixedFee: 2280 }, // $2,280 + $2.85 per $100 over $120,000
+  { min: 150000, max: 360000, rate: 0.038, fixedFee: 3135 }, // $3,135 + $3.80 per $100 over $150,000
+  { min: 360000, max: 725000, rate: 0.0475, fixedFee: 11115 }, // $11,115 + $4.75 per $100 over $360,000
+  { min: 725000, max: Infinity, rate: 0.0515, fixedFee: 28453 } // $28,453 + $5.15 per $100 over $725,000
 ];
 
 // WA first home buyer concession brackets (contracts signed on or after 1 July 2024)

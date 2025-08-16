@@ -1,10 +1,19 @@
 // NT-specific constants and rates
+// NT uses a formula-based calculation for properties up to $525,000: (0.06571441 x V²) + 15V where V = 1/1000 of property value
+// For properties over $525,000, standard percentage rates apply
+export const NT_STAMP_DUTY_FORMULA = {
+  COEFFICIENT: 0.06571441, // Coefficient for V² term
+  LINEAR_TERM: 15, // Coefficient for V term
+  V_DIVISOR: 1000, // Divisor to convert property value to V
+  MAX_FORMULA_VALUE: 525000 // Maximum value for formula calculation
+};
+
+// NT stamp duty rates - formula for properties up to $525,000, then percentage rates
 export const NT_STAMP_DUTY_RATES = [
-  { min: 0, max: 260000, rate: 0, fixedFee: 0 }, // $0 for properties up to $260,000
-  { min: 260000, max: 500000, rate: 0.015, fixedFee: 0 }, // $1.50 per $100 = 1.5%
-  { min: 500000, max: 1000000, rate: 0.025, fixedFee: 3600 }, // $3,600 + $2.50 per $100 over $500,000
-  { min: 1000000, max: 2000000, rate: 0.035, fixedFee: 16100 }, // $16,100 + $3.50 per $100 over $1,000,000
-  { min: 2000000, max: Infinity, rate: 0.045, fixedFee: 51100 } // $51,100 + $4.50 per $100 over $2,000,000
+  { min: 0, max: 525000, rate: 'formula', description: 'Formula-based calculation: (0.06571441 × V²) + 15V' },
+  { min: 525000, max: 3000000, rate: 0.0495, fixedFee: 0, description: '4.95% of dutiable value' },
+  { min: 3000000, max: 5000000, rate: 0.0575, fixedFee: 0, description: '5.75% of dutiable value' },
+  { min: 5000000, max: Infinity, rate: 0.0595, fixedFee: 0, description: '5.95% of dutiable value' }
 ];
 
 // NT first home buyer concession brackets

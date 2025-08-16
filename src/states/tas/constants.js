@@ -1,12 +1,12 @@
 // TAS-specific constants and rates
 export const TAS_STAMP_DUTY_RATES = [
-  { min: 0, max: 3000, rate: 0, fixedFee: 0 }, // $0 for properties up to $3,000
-  { min: 3000, max: 25000, rate: 0.01, fixedFee: 0 }, // $1.00 per $100 = 1%
-  { min: 25000, max: 75000, rate: 0.02, fixedFee: 220 }, // $220 + $2.00 per $100 over $25,000
-  { min: 75000, max: 200000, rate: 0.03, fixedFee: 1220 }, // $1,220 + $3.00 per $100 over $75,000
-  { min: 200000, max: 375000, rate: 0.04, fixedFee: 4970 }, // $4,970 + $4.00 per $100 over $200,000
-  { min: 375000, max: 725000, rate: 0.045, fixedFee: 11970 }, // $11,970 + $4.50 per $100 over $375,000
-  { min: 725000, max: Infinity, rate: 0.05, fixedFee: 27720 } // $27,720 + $5.00 per $100 over $725,000
+  { min: 0, max: 3000, rate: 0, fixedFee: 50 }, // $50 for properties up to $3,000
+  { min: 3000, max: 25000, rate: 0.0175, fixedFee: 50 }, // $50 + $1.75 for every $100 over $3,000
+  { min: 25000, max: 75000, rate: 0.0225, fixedFee: 435 }, // $435 + $2.25 for every $100 over $25,000
+  { min: 75000, max: 200000, rate: 0.035, fixedFee: 1560 }, // $1,560 + $3.50 for every $100 over $75,000
+  { min: 200000, max: 375000, rate: 0.04, fixedFee: 5935 }, // $5,935 + $4.00 for every $100 over $200,000
+  { min: 375000, max: 725000, rate: 0.0425, fixedFee: 12935 }, // $12,935 + $4.25 for every $100 over $375,000
+  { min: 725000, max: Infinity, rate: 0.045, fixedFee: 27810 } // $27,810 + $4.50 for every $100 over $725,000
 ];
 
 // TAS first home buyer concession brackets (contracts signed on or after 1 July 2024)

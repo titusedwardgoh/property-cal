@@ -1,6 +1,16 @@
 // QLD-specific constants and rates
 export const QLD_STAMP_DUTY_RATES = [
-  { min: 0, max: 350000, rate: 0.01, fixedFee: 0 }, // $1.00 per $100 = 1%
+  { min: 0, max: 5000, rate: 0, fixedFee: 0 }, // Not more than $5,000 - Nil
+  { min: 5000, max: 75000, rate: 0.015, fixedFee: 0 }, // $1.50 for each $100 over $5,000 = 1.5%
+  { min: 75000, max: 540000, rate: 0.035, fixedFee: 1050 }, // $1,050 + $3.50 for each $100 over $75,000
+  { min: 540000, max: 1000000, rate: 0.045, fixedFee: 17325 }, // $17,325 + $4.50 for each $100 over $540,000
+  { min: 1000000, max: Infinity, rate: 0.0575, fixedFee: 38025 } // $38,025 + $5.75 for each $100 over $1,000,000
+];
+
+// QLD Home Concession rates (reduced rates for homes)
+// Based on: https://qro.qld.gov.au/duties/transfer-duty/concessions/homes/home-concession/
+export const QLD_HOME_CONCESSION_RATES = [
+  { min: 0, max: 350000, rate: 0.01, fixedFee: 0 }, // $1.00 per $100 = 1% on first $350,000
   { min: 350000, max: 540000, rate: 0.035, fixedFee: 3500 }, // $3,500 + $3.50 per $100 over $350,000
   { min: 540000, max: 1000000, rate: 0.045, fixedFee: 10150 }, // $10,150 + $4.50 per $100 over $540,000
   { min: 1000000, max: Infinity, rate: 0.0575, fixedFee: 30850 } // $30,850 + $5.75 per $100 over $1,000,000

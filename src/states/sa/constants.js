@@ -1,14 +1,14 @@
 // SA-specific constants and rates
 export const SA_STAMP_DUTY_RATES = [
-  { min: 0, max: 12000, rate: 0, fixedFee: 0 }, // $0 for properties up to $12,000
-  { min: 12000, max: 30000, rate: 0.01, fixedFee: 0 }, // $1.00 per $100 = 1%
-  { min: 30000, max: 50000, rate: 0.02, fixedFee: 300 }, // $300 + $2.00 per $100 over $30,000
-  { min: 50000, max: 100000, rate: 0.03, fixedFee: 700 }, // $700 + $3.00 per $100 over $50,000
-  { min: 100000, max: 200000, rate: 0.035, fixedFee: 2200 }, // $2,200 + $3.50 per $100 over $100,000
-  { min: 200000, max: 250000, rate: 0.04, fixedFee: 5700 }, // $5,700 + $4.00 per $100 over $200,000
-  { min: 250000, max: 300000, rate: 0.045, fixedFee: 7700 }, // $7,700 + $4.50 per $100 over $250,000
-  { min: 300000, max: 500000, rate: 0.05, fixedFee: 9950 }, // $9,950 + $5.00 per $100 over $300,000
-  { min: 500000, max: Infinity, rate: 0.055, fixedFee: 19950 } // $19,950 + $5.50 per $100 over $500,000
+  { min: 0, max: 12000, rate: 0.01, fixedFee: 0 }, // $1.00 for every $100 = 1%
+  { min: 12000, max: 30000, rate: 0.02, fixedFee: 120 }, // $120 + $2.00 for every $100 over $12,000
+  { min: 30000, max: 50000, rate: 0.03, fixedFee: 480 }, // $480 + $3.00 for every $100 over $30,000
+  { min: 50000, max: 100000, rate: 0.035, fixedFee: 1080 }, // $1,080 + $3.50 for every $100 over $50,000
+  { min: 100000, max: 200000, rate: 0.04, fixedFee: 2830 }, // $2,830 + $4.00 for every $100 over $100,000
+  { min: 200000, max: 250000, rate: 0.0425, fixedFee: 6830 }, // $6,830 + $4.25 for every $100 over $200,000
+  { min: 250000, max: 300000, rate: 0.0475, fixedFee: 8955 }, // $8,955 + $4.75 for every $100 over $250,000
+  { min: 300000, max: 500000, rate: 0.05, fixedFee: 11330 }, // $11,330 + $5.00 for every $100 over $300,000
+  { min: 500000, max: Infinity, rate: 0.055, fixedFee: 21330 } // $21,330 + $5.50 for every $100 over $500,000
 ];
 
 // SA first home buyer concession brackets (contracts signed on or after 15 June 2024)
