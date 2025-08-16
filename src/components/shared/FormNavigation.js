@@ -16,11 +16,8 @@ export default function useFormNavigation({
       if (isComplete) {
         onComplete?.();
       } else if (isCurrentStepValid()) {
-        if (currentStep === totalSteps) {
-          onComplete?.();
-        } else {
-          onNext?.();
-        }
+        // Always call onNext, let the form handle completion logic
+        onNext?.();
       }
     } else if (event.key === 'Escape') {
       event.preventDefault();

@@ -70,15 +70,15 @@ export default function PropertyDetails({ formData, updateFormData }) {
   const isCurrentStepValid = () => {
     switch (currentStep) {
       case 1:
-        return formData.propertyPrice && formData.propertyPrice.trim() !== '';
-      case 2:
         return formData.propertyAddress && formData.propertyAddress.trim() !== '';
-      case 3:
+      case 2:
         return formData.selectedState && formData.selectedState.trim() !== '';
-      case 4:
+      case 3:
         return formData.propertyCategory && formData.propertyCategory.trim() !== '';
-      case 5:
+      case 4:
         return formData.propertyType && formData.propertyType.trim() !== '';
+      case 5:
+        return formData.propertyPrice && formData.propertyPrice.trim() !== '';
       default:
         return false;
     }
@@ -114,60 +114,26 @@ export default function PropertyDetails({ formData, updateFormData }) {
     switch (currentStep) {
       case 1:
         return (
-          <div className="h-full flex flex-col justify-center items-center bg-base-100">
-            <div className="max-w-2xl mx-auto pr-2">
-                <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
-                What is the property&apos;s price?
-              </h2>
-              <p className=" md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto ">
-                This will help us calculate your stamp duty and other costs
-              </p>
-              <div className="max-w-md mx-auto relative pr-8">
-                <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
-                  formData.propertyPrice ? 'text-gray-800' : 'text-gray-400'
-                }`}>
-                  $
-                </div>
-                <input
-                  type="tel"
-                  placeholder="0"
-                  value={formData.propertyPrice ? formatCurrency(parseInt(formData.propertyPrice)).replace('$', '') : ''}
-                  onChange={(e) => {
-                    // Remove all non-digit characters and update form data
-                    const numericValue = e.target.value.replace(/[^\d]/g, '');
-                    updateFormData('propertyPrice', numericValue);
-                  }}
-                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
-                />
-              </div>
+          <div className="flex flex-col mt-12 pr-2">
+            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              What&apos;s the property address?
+            </h2>
+            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              This helps us determine the state and provide more accurate calculations
+            </p>
+            <div className="max-w-md mx-auto relative pr-8">
+              <input
+                type="text"
+                placeholder="Enter street address"
+                value={formData.propertyAddress || ''}
+                onChange={(e) => updateFormData('propertyAddress', e.target.value)}
+                className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+              />
             </div>
           </div>
         );
 
       case 2:
-        return (
-          <div className="h-full flex flex-col justify-center items-center bg-base-100">
-            <div className="max-w-2xl mx-auto pr-2">
-              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
-                What&apos;s the property address?
-              </h2>
-              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
-                This helps us determine the state and provide more accurate calculations
-              </p>
-              <div className="max-w-md mx-auto relative pr-8">
-                <input
-                  type="text"
-                  placeholder="Enter street address"
-                  value={formData.propertyAddress || ''}
-                  onChange={(e) => updateFormData('propertyAddress', e.target.value)}
-                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
-                />
-              </div>
-            </div>
-          </div>
-        );
-
-      case 3:
         return (
           <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
@@ -196,7 +162,7 @@ export default function PropertyDetails({ formData, updateFormData }) {
           </div>
         );
 
-      case 4:
+      case 3:
         return (
           <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
@@ -228,7 +194,7 @@ export default function PropertyDetails({ formData, updateFormData }) {
           </div>
         );
 
-      case 5:
+      case 4:
         return (
           <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
@@ -264,7 +230,37 @@ export default function PropertyDetails({ formData, updateFormData }) {
           </div>
         );
 
-
+      case 5:
+        return (
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto pr-2">
+                <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+                What is the property&apos;s price?
+              </h2>
+              <p className=" md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto ">
+                This will help us calculate your stamp duty and other costs
+              </p>
+              <div className="max-w-md mx-auto relative pr-8">
+                <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                  formData.propertyPrice ? 'text-gray-800' : 'text-gray-400'
+                }`}>
+                  $
+                </div>
+                <input
+                  type="tel"
+                  placeholder="0"
+                  value={formData.propertyPrice ? formatCurrency(parseInt(formData.propertyPrice)).replace('$', '') : ''}
+                  onChange={(e) => {
+                    // Remove all non-digit characters and update form data
+                    const numericValue = e.target.value.replace(/[^\d]/g, '');
+                    updateFormData('propertyPrice', numericValue);
+                  }}
+                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300"
+                />
+              </div>
+            </div>
+          </div>
+        );
 
       default:
         return null;
