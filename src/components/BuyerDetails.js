@@ -2,29 +2,17 @@ import { useState } from 'react';
 
 export default function BuyerDetails({ formData, updateFormData }) {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [direction, setDirection] = useState('forward'); // 'forward' or 'backward'
   const totalSteps = 5;
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
-      setDirection('forward');
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentStep(currentStep + 1);
-        setIsTransitioning(false);
-      }, 150);
+      setCurrentStep(currentStep + 1);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setDirection('backward');
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentStep(currentStep - 1);
-        setIsTransitioning(false);
-      }, 150);
+      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -232,7 +220,7 @@ export default function BuyerDetails({ formData, updateFormData }) {
         {/* Progress Bar - Now IS the top border */}
         <div className="w-full bg-gray-100 h-1">
           <div 
-            className="bg-primary h-1 transition-all duration-300"
+            className="bg-primary h-1"
             style={{ width: `${(currentStep / totalSteps) * 100}%` }}
           ></div>
         </div>
@@ -243,7 +231,7 @@ export default function BuyerDetails({ formData, updateFormData }) {
             <>
               <button
                 onClick={handleBack}
-                className="bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
+                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
@@ -251,21 +239,17 @@ export default function BuyerDetails({ formData, updateFormData }) {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm transition-all duration-300 ease-in-out text-base font-medium cursor-pointer"
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm text-base font-medium cursor-pointer"
               >
                 OK
               </button>
             </>
           ) : (
-            // Step 2 onwards: Back and Next buttons with smooth transition
+            // Step 2 onwards: Back and Next buttons
             <>
               <button
                 onClick={prevStep}
-                className={`bg-primary px-6 py-3 rounded-full border border-primary transition-all duration-300 ease-in-out text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0 cursor-pointer ${
-                  isTransitioning && direction === 'backward' ? 'transform translate-x-4 opacity-0' : 
-                  isTransitioning && direction === 'forward' ? 'transform -translate-x-4 opacity-0' : 
-                  'transform translate-x-0 opacity-100'
-                }`}
+                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
@@ -273,7 +257,7 @@ export default function BuyerDetails({ formData, updateFormData }) {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border transition-all duration-300 ease-in-out text-base font-medium ${
+                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border text-base font-medium ${
                   !isCurrentStepValid()
                     ? 'border-primary text-base-100 cursor-not-allowed bg-gray-50'
                     : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
