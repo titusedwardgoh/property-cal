@@ -257,7 +257,7 @@ export default function PropertyDetails({ formData, updateFormData }) {
   };
 
   return (
-    <div className="bg-base-100 rounded-lg overflow-hidden mt-25">
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
              <div className="flex">
          <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}>{isComplete ? '5' : currentStep} <span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
         <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">

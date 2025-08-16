@@ -216,7 +216,7 @@ export default function BuyerDetails({ formData, updateFormData }) {
   };
 
   return (
-    <div className="bg-base-100 rounded-lg overflow-hidden mt-25">
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
       <div className="flex">
         <span className="text-primary text-xs font-extrabold mr-2 pt-14 whitespace-nowrap">{currentStep + 5} <span className="text-xs">→</span></span>
         <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
