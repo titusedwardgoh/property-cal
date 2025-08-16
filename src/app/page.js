@@ -13,8 +13,14 @@ export default function Page() {
         propertyType: '',
         propertyCategory: '',
         buyerType: '',
+        isPPR: '',
+        isAustralianResident: '',
+        isFirstHomeBuyer: '',
+        needsLoan: '',
+        savingsAmount: '',
         propertyDetailsComplete: false,
-        propertyDetailsFormComplete: false
+        propertyDetailsFormComplete: false,
+        buyerDetailsComplete: false
     });
 
     const updateFormData = (field, value) => {

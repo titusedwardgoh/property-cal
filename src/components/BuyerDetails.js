@@ -1,13 +1,22 @@
 import { useState, useEffect } from 'react';
 import useFormNavigation from './shared/FormNavigation.js';
+import { formatCurrency } from '../states/shared/baseCalculations.js';
 
 export default function BuyerDetails({ formData, updateFormData }) {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
+      // If moving from question 5 (loan need) and no loan is needed, skip to completion
+      if (currentStep === 5 && formData.needsLoan === 'no') {
+        updateFormData('buyerDetailsComplete', true);
+        return;
+      }
       setCurrentStep(currentStep + 1);
+    } else if (currentStep === totalSteps) {
+      // Form is complete
+      updateFormData('buyerDetailsComplete', true);
     }
   };
 
@@ -37,6 +46,8 @@ export default function BuyerDetails({ formData, updateFormData }) {
         return formData.isFirstHomeBuyer && formData.isFirstHomeBuyer.trim() !== '';
       case 5:
         return formData.needsLoan && formData.needsLoan.trim() !== '';
+      case 6:
+        return formData.needsLoan === 'yes' ? (formData.savingsAmount && formData.savingsAmount.trim() !== '') : true;
       default:
         return false;
     }
@@ -58,6 +69,20 @@ export default function BuyerDetails({ formData, updateFormData }) {
   });
 
   const renderStep = () => {
+    // Show completion message if form is complete
+    if (formData.buyerDetailsComplete) {
+      return (
+        <div className="flex flex-col mt-12 pr-2">
+          <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+            Buyer Details Complete
+          </h2>
+          <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+            Now let's calculate your costs...
+          </p>
+        </div>
+      );
+    }
+
     switch (currentStep) {
       case 1:
         return (
@@ -89,7 +114,7 @@ export default function BuyerDetails({ formData, updateFormData }) {
                     formData.isAustralianResident === option.value || 
                     formData.isFirstHomeBuyer === option.value || 
                     formData.needsLoan === option.value
-                      ? 'text-gray-400'
+                      ? 'text-gray-300'
                       : 'text-gray-500'
                   }`}>{option.description}</div>
                 </button>
@@ -254,6 +279,38 @@ export default function BuyerDetails({ formData, updateFormData }) {
           </div>
         );
 
+      case 6:
+        return (
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+                How much savings do you have?
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
+                This helps us calculate your loan amount and upfront costs
+              </p>
+              <div className="max-w-md mx-auto relative pr-8">
+                <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                  formData.savingsAmount ? 'text-gray-800' : 'text-gray-400'
+                }`}>
+                  $
+                </div>
+                <input
+                  type="tel"
+                  placeholder="0"
+                  value={formData.savingsAmount ? formatCurrency(parseInt(formData.savingsAmount)).replace('$', '') : ''}
+                  onChange={(e) => {
+                    // Remove all non-digit characters and update form data
+                    const numericValue = e.target.value.replace(/[^\d]/g, '');
+                    updateFormData('savingsAmount', numericValue);
+                  }}
+                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+                />
+              </div>
+            </div>
+          </div>
+        );
+
       default:
         return null;
     }
@@ -262,7 +319,13 @@ export default function BuyerDetails({ formData, updateFormData }) {
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
       <div className="flex">
-        <span className="text-primary text-xs font-extrabold mr-2 pt-14 whitespace-nowrap">{currentStep <5 ? <span className="text-xs text-base-100">1</span> : null}{currentStep + 5} <span className="text-xs">→</span></span>
+        <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${
+          formData.buyerDetailsComplete ? 'text-base-100' : 'text-primary'
+        }`}>
+          <span className="text-xs text-base-100">1</span>
+          {formData.buyerDetailsComplete ? '6' : currentStep + 5} 
+          <span className={`text-xs ${formData.buyerDetailsComplete ? 'text-primary' : ''}`}>→</span>
+        </span>
         <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
           {/* Step Content */}
           <div className="h-80">
@@ -282,7 +345,35 @@ export default function BuyerDetails({ formData, updateFormData }) {
         </div>
         
         <div className="flex justify-between max-w-4xl mx-auto mt-4">
-          {currentStep === 1 ? (
+          {formData.buyerDetailsComplete ? (
+            // Completion state: Back and Next buttons
+            <>
+              <button
+                onClick={() => {
+                  updateFormData('buyerDetailsComplete', false);
+                  // Go back to the last question and reset completion state
+                  if (formData.needsLoan === 'yes') {
+                    setCurrentStep(6); // Go back to savings question
+                  } else {
+                    setCurrentStep(5); // Go back to loan question
+                  }
+                }}
+                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
+              >
+                &lt;
+              </button>
+              
+              <button
+                onClick={() => {
+                  // Move to next section or complete the entire form
+                  updateFormData('allFormsComplete', true);
+                }}
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm text-base font-medium cursor-pointer"
+              >
+                Next
+              </button>
+            </>
+          ) : currentStep === 1 ? (
             // Step 1: Back to PropertyDetails and Next buttons
             <>
               <button

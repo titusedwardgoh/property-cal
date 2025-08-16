@@ -34,7 +34,9 @@ export default function UpfrontCosts({ formData }) {
   const calculateTotalCosts = () => {
     const stampDuty = calculateStampDuty();
     const concession = -2; // Stamp duty concession
-    return stampDuty + concession;
+    // Only include Property Price if BuyerDetails is complete and no loan is needed
+    const propertyPrice = (formData.buyerDetailsComplete && formData.needsLoan === 'no') ? parseInt(formData.propertyPrice) || 0 : 0;
+    return stampDuty + concession + propertyPrice;
   };
 
   return (
@@ -59,6 +61,15 @@ export default function UpfrontCosts({ formData }) {
       {isExpanded && isPropertyComplete && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-10">
           <div className="space-y-3">
+            {/* Show Property Price first if BuyerDetails complete and no loan needed */}
+            {formData.buyerDetailsComplete && formData.needsLoan === 'no' && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-800 text-lg">Property Price</span>
+                <span className="text-gray-800 text-lg font-semibold">
+                  {formatCurrency(parseInt(formData.propertyPrice) || 0)}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between items-center">
               <span className="text-gray-800 text-lg">Stamp Duty</span>
               <span className="text-gray-800 text-lg font-semibold">
