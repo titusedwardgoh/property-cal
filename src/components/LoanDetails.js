@@ -100,7 +100,7 @@ export default function LoanDetails() {
             Loan Details Complete
           </h2>
           <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-            Now let's ask a few questions about the seller...
+            Now let&apos;s ask a few questions about the seller...
           </p>
         </div>
       );
