@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import useFormNavigation from './shared/FormNavigation.js';
+import { useFormStore } from '../stores/formStore';
 
-export default function LoanDetails({ formData, updateFormData }) {
+export default function LoanDetails() {
+  const formData = useFormStore();
+  const updateFormData = useFormStore(state => state.updateFormData);
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 7;
 
@@ -21,8 +24,13 @@ export default function LoanDetails({ formData, updateFormData }) {
   };
 
   const handleBack = () => {
-    // Go back to BuyerDetails
+    // Go back to BuyerDetails last question
     updateFormData('buyerDetailsComplete', false);
+    // Reset the navigation flags to ensure proper flow
+    updateFormData('showLoanDetails', false);
+    updateFormData('showSellerQuestions', false);
+    // Set BuyerDetails to show the last question
+    updateFormData('buyerDetailsCurrentStep', 6);
   };
 
   // Check if current step is valid
@@ -59,8 +67,24 @@ export default function LoanDetails({ formData, updateFormData }) {
       updateFormData('loanDetailsComplete', true);
     },
     onBack: handleBack,
-    isComplete: false
+    isComplete: formData.loanDetailsComplete
   });
+
+  // Watch for loanDetailsCurrentStep flag from SellerQuestions
+  useEffect(() => {
+    if (formData.loanDetailsCurrentStep) {
+      setCurrentStep(formData.loanDetailsCurrentStep);
+      // Reset the flag
+      updateFormData('loanDetailsCurrentStep', null);
+      // Ensure we're not in completion state when going back to a specific question
+      if (formData.loanDetailsComplete) {
+        updateFormData('loanDetailsComplete', false);
+      }
+      // Don't reset showLoanDetails - we want to stay on this component
+      // Only reset showSellerQuestions to ensure proper flow
+      updateFormData('showSellerQuestions', false);
+    }
+  }, [formData.loanDetailsCurrentStep, updateFormData, formData.loanDetailsComplete]);
 
   const renderStep = () => {
     // Show completion message if form is complete
@@ -71,7 +95,7 @@ export default function LoanDetails({ formData, updateFormData }) {
             Loan Details Complete
           </h2>
           <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-            Now let&apos;s look at seller questions...
+            Now let's ask a few questions about the seller...
           </p>
         </div>
       );
@@ -331,11 +355,9 @@ export default function LoanDetails({ formData, updateFormData }) {
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
       <div className="flex">
-        <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${
-          formData.loanDetailsComplete ? 'text-base-100' : 'text-primary'
-        }`}>
-          <span className="text-xs text-base-100">1</span>
-          {formData.loanDetailsComplete ? '7' : currentStep + 6} 
+        <span className="text-xs font-extrabold mr-2 pt-14 whitespace-nowrap text-primary">
+          <span className="text-xs text-base-100">3</span>
+          {formData.loanDetailsComplete ? '18' : currentStep + 11} 
           <span className={`text-xs ${formData.loanDetailsComplete ? 'text-primary' : ''}`}>→</span>
         </span>
         <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
@@ -358,28 +380,24 @@ export default function LoanDetails({ formData, updateFormData }) {
         
         <div className="flex justify-between max-w-4xl mx-auto mt-4">
           {formData.loanDetailsComplete ? (
-            // Completion state: Back and Next buttons
+            // Completion state: Back to Q7 and Next to SellerQuestions
             <>
               <button
                 onClick={() => {
                   updateFormData('loanDetailsComplete', false);
-                  // Go back to the last question
                   setCurrentStep(7);
                 }}
-                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
+                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
               
-               <button
-                 onClick={() => {
-                   // Move to next section
-                   updateFormData('sellerQuestionsComplete', false);
-                 }}
-                 className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm text-base font-medium cursor-pointer"
-               >
-                 Next
-               </button>
+              <button
+                onClick={() => updateFormData('showSellerQuestions', true)}
+                className="flex-1 ml-4 px-6 py-3 bg-primary rounded-full border border-primary text-base font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer"
+              >
+                Next
+              </button>
             </>
           ) : currentStep === 1 ? (
             // Step 1: Back to BuyerDetails and Next buttons

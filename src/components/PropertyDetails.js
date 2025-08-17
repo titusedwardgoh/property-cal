@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import { formatCurrency } from '../states/shared/baseCalculations.js';
 import { useStateSelector } from '../states/useStateSelector.js';
 import useFormNavigation from './shared/FormNavigation.js';
+import { useFormStore } from '../stores/formStore';
 
-export default function PropertyDetails({ formData, updateFormData }) {
+export default function PropertyDetails() {
+  const formData = useFormStore();
+  const updateFormData = useFormStore(state => state.updateFormData);
   const [currentStep, setCurrentStep] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [direction, setDirection] = useState('forward'); // 'forward' or 'backward'
@@ -24,6 +27,15 @@ export default function PropertyDetails({ formData, updateFormData }) {
   }, [formData.propertyDetailsCurrentStep, updateFormData]);
 
   const nextStep = () => {
+    console.log('✅ PropertyDetails - OK/Next Pressed:', {
+      currentStep,
+      propertyAddress: formData.propertyAddress,
+      selectedState: formData.selectedState,
+      propertyCategory: formData.propertyCategory,
+      propertyType: formData.propertyType,
+      propertyPrice: formData.propertyPrice
+    });
+    
     if (currentStep < totalSteps) {
       setDirection('forward');
       setIsTransitioning(true);
@@ -83,6 +95,8 @@ export default function PropertyDetails({ formData, updateFormData }) {
         return false;
     }
   };
+
+
 
   // Use shared navigation hook
   useFormNavigation({

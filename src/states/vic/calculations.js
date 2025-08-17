@@ -26,8 +26,8 @@ export const calculateVICStampDuty = (propertyPrice, selectedState) => {
     return 0;
   }
 
-  // Calculate stamp duty: (price - min) * rate + fixed fee
-  const stampDuty = (price - applicableRate.min) * applicableRate.rate + applicableRate.fixedFee;
+  // Calculate stamp duty: price * rate + fixed fee
+  const stampDuty = price * applicableRate.rate + applicableRate.fixedFee;
 
-  return stampDuty;
+  return Math.round(stampDuty * 100) / 100; // Round to 2 decimal places
 };

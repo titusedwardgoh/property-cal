@@ -2,21 +2,57 @@ import { useState, useEffect } from 'react';
 import useFormNavigation from './shared/FormNavigation.js';
 import { formatCurrency } from '../states/shared/baseCalculations.js';
 
-export default function BuyerDetails({ formData, updateFormData }) {
+import { useFormStore } from '../stores/formStore';
+
+export default function BuyerDetails() {
+    const formData = useFormStore();
+    const updateFormData = useFormStore(state => state.updateFormData);
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 6;
 
+  // Watch for buyerDetailsCurrentStep flag from SellerQuestions or LoanDetails
+  useEffect(() => {
+    if (formData.buyerDetailsCurrentStep) {
+      setCurrentStep(formData.buyerDetailsCurrentStep);
+      // Reset the flag
+      updateFormData('buyerDetailsCurrentStep', null);
+      // Ensure we're not in completion state when going back to a specific question
+      if (formData.buyerDetailsComplete) {
+        updateFormData('buyerDetailsComplete', false);
+      }
+      // Reset navigation flags to ensure proper flow
+      updateFormData('showLoanDetails', false);
+      updateFormData('showSellerQuestions', false);
+    }
+  }, [formData.buyerDetailsCurrentStep, updateFormData, formData.buyerDetailsComplete]);
+
   const nextStep = () => {
+    console.log('✅ BuyerDetails - OK/Next Pressed:', {
+      currentStep,
+      buyerType: formData.buyerType,
+      isPPR: formData.isPPR,
+      isAustralianResident: formData.isAustralianResident,
+      isFirstHomeBuyer: formData.isFirstHomeBuyer,
+      needsLoan: formData.needsLoan,
+      savingsAmount: formData.savingsAmount
+    });
+    
     if (currentStep < totalSteps) {
       // If moving from question 5 (loan need) and no loan is needed, skip to completion
       if (currentStep === 5 && formData.needsLoan === 'no') {
         updateFormData('buyerDetailsComplete', true);
+        // Reset the navigation flags to ensure proper flow
+        updateFormData('showLoanDetails', false);
+        updateFormData('showSellerQuestions', false);
         return;
       }
       setCurrentStep(currentStep + 1);
     } else if (currentStep === totalSteps) {
       // Form is complete
       updateFormData('buyerDetailsComplete', true);
+      // Reset the navigation flags to ensure proper flow
+      updateFormData('showLoanDetails', false);
+      updateFormData('showSellerQuestions', false);
     }
   };
 
@@ -68,6 +104,8 @@ export default function BuyerDetails({ formData, updateFormData }) {
     isComplete: false
   });
 
+
+
   const renderStep = () => {
     // Show completion message if form is complete
     if (formData.buyerDetailsComplete) {
@@ -77,8 +115,12 @@ export default function BuyerDetails({ formData, updateFormData }) {
             Buyer Details Complete
           </h2>
           <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-            Now let&apos;s calculate your costs...
+            {formData.needsLoan === 'yes' 
+              ? 'Now let\'s get some details about your loan...'
+              : 'Now let\'s ask a few questions about the seller...'
+            }
           </p>
+
         </div>
       );
     }
@@ -365,8 +407,14 @@ export default function BuyerDetails({ formData, updateFormData }) {
               
               <button
                 onClick={() => {
-                  // Move to next section or complete the entire form
-                  updateFormData('allFormsComplete', true);
+                  // Move to next section based on loan need
+                  if (formData.needsLoan === 'yes') {
+                    // Go to loan details - set a flag to show it
+                    updateFormData('showLoanDetails', true);
+                  } else {
+                    // Go to seller questions - set a flag to show it
+                    updateFormData('showSellerQuestions', true);
+                  }
                 }}
                 className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm text-base font-medium cursor-pointer"
               >

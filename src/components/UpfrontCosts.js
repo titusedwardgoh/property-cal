@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { useStateSelector } from '../states/useStateSelector.js';
 import { formatCurrency } from '../states/shared/baseCalculations.js';
 
-export default function UpfrontCosts({ formData }) {
+import { useFormStore } from '../stores/formStore';
+
+export default function UpfrontCosts() {
+    const formData = useFormStore();
   const [isExpanded, setIsExpanded] = useState(false);
   
   // Check if PropertyDetails form is actually complete (after pressing Complete button)
@@ -27,7 +30,9 @@ export default function UpfrontCosts({ formData }) {
     if (!stateFunctions || !formData.propertyPrice || !formData.selectedState || !formData.propertyType) {
       return 0;
     }
-    return stateFunctions.calculateStampDuty(formData.propertyPrice, formData.selectedState);
+    
+    const stampDuty = stateFunctions.calculateStampDuty(formData.propertyPrice, formData.selectedState);
+    return stampDuty;
   };
 
   // Calculate total upfront costs
