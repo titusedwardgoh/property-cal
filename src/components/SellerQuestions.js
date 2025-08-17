@@ -6,6 +6,7 @@ export default function SellerQuestions() {
   const formData = useFormStore();
   const updateFormData = useFormStore(state => state.updateFormData);
   const [currentStep, setCurrentStep] = useState(1);
+  const [localCompletionState, setLocalCompletionState] = useState(false);
   const totalSteps = 7;
 
   const nextStep = () => {
@@ -14,6 +15,7 @@ export default function SellerQuestions() {
     } else if (currentStep === totalSteps) {
       // Form is complete
       updateFormData('sellerQuestionsComplete', true);
+      setLocalCompletionState(true);
     }
   };
 
@@ -73,16 +75,37 @@ export default function SellerQuestions() {
     onNext: nextStep,
     onPrev: prevStep,
     onComplete: () => {
-      // Handle form completion
-      updateFormData('sellerQuestionsComplete', true);
+      if (localCompletionState) {
+        // We're on the completion page, move to final completion
+        updateFormData('allFormsComplete', true);
+      } else {
+        // Handle form completion
+        updateFormData('sellerQuestionsComplete', true);
+        setLocalCompletionState(true);
+      }
     },
-    onBack: handleBack,
-    isComplete: formData.sellerQuestionsComplete
+    onBack: () => {
+      console.log('onBack called, localCompletionState:', localCompletionState);
+      if (localCompletionState) {
+        // We're on the completion page, go back to the last question
+        console.log('Going back from completion page to Q7');
+        updateFormData('sellerQuestionsComplete', false);
+        setLocalCompletionState(false);
+        setCurrentStep(7);
+      } else {
+        // We're on a question, use the normal back logic
+        console.log('Using normal back logic');
+        handleBack();
+      }
+    },
+    isComplete: localCompletionState
   });
 
   const renderStep = () => {
+    console.log('renderStep called, localCompletionState:', localCompletionState, 'currentStep:', currentStep);
     // Show completion message if form is complete
-    if (formData.sellerQuestionsComplete) {
+    if (localCompletionState) {
+      console.log('Rendering completion message');
       return (
         <div className="flex flex-col mt-12 pr-2">
           <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
@@ -95,6 +118,7 @@ export default function SellerQuestions() {
       );
     }
 
+    console.log('Rendering question for step:', currentStep);
     switch (currentStep) {
       case 1:
         return (
@@ -374,32 +398,33 @@ export default function SellerQuestions() {
           ></div>
         </div>
         
-        <div className="flex justify-between max-w-4xl mx-auto mt-4">
-          {formData.sellerQuestionsComplete ? (
-            // Completion state: Back and Next buttons
-            <>
-              <button
-                onClick={() => {
-                  updateFormData('sellerQuestionsComplete', false);
-                  // Go back to the last question
-                  setCurrentStep(7);
-                }}
-                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
-              >
-                &lt;
-              </button>
-              
-              <button
-                onClick={() => {
-                  // Move to final completion
-                  updateFormData('allFormsComplete', true);
-                }}
-                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm text-base font-medium cursor-pointer"
-              >
-                Complete
-              </button>
-            </>
-          ) : currentStep === 1 ? (
+                 <div className="flex justify-between max-w-4xl mx-auto mt-4">
+           {localCompletionState ? (
+             // Completion state: Back to last question and Next to final completion
+             <>
+               <button
+                 onClick={() => {
+                   console.log('Back button clicked from completion page');
+                   setLocalCompletionState(false);
+                   setCurrentStep(7);
+                   updateFormData('sellerQuestionsComplete', false);
+                 }}
+                 className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
+               >
+                 &lt;
+               </button>
+               
+               <button
+                 onClick={() => {
+                   console.log('Next button clicked from completion page');
+                   updateFormData('allFormsComplete', true);
+                 }}
+                 className="flex-1 ml-4 px-6 py-3 bg-primary rounded-full border border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm text-base font-medium cursor-pointer"
+               >
+                 Complete
+               </button>
+             </>
+           ) : currentStep === 1 ? (
             // Step 1: Back to BuyerDetails and Next buttons
             <>
               <button

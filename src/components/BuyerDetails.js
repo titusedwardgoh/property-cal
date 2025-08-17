@@ -97,11 +97,20 @@ export default function BuyerDetails() {
     onNext: nextStep,
     onPrev: prevStep,
     onComplete: () => {
-      // Handle form completion
-      updateFormData('buyerDetailsComplete', true);
+      if (formData.buyerDetailsComplete) {
+        // We're on the completion page, move to next section
+        if (formData.needsLoan === 'yes') {
+          updateFormData('showLoanDetails', true);
+        } else {
+          updateFormData('showSellerQuestions', true);
+        }
+      } else {
+        // Handle form completion
+        updateFormData('buyerDetailsComplete', true);
+      }
     },
     onBack: handleBack,
-    isComplete: false
+    isComplete: formData.buyerDetailsComplete
   });
 
 

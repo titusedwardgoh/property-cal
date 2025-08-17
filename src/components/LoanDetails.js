@@ -63,8 +63,13 @@ export default function LoanDetails() {
     onNext: nextStep,
     onPrev: prevStep,
     onComplete: () => {
-      // Handle form completion
-      updateFormData('loanDetailsComplete', true);
+      if (formData.loanDetailsComplete) {
+        // We're on the completion page, move to next section
+        updateFormData('showSellerQuestions', true);
+      } else {
+        // Handle form completion
+        updateFormData('loanDetailsComplete', true);
+      }
     },
     onBack: handleBack,
     isComplete: formData.loanDetailsComplete

@@ -33,6 +33,8 @@ export default function Page() {
                         <LoanDetails />
                     ) : buyerDetailsComplete && showSellerQuestions && !sellerQuestionsComplete ? (
                         <SellerQuestions />
+                    ) : buyerDetailsComplete && sellerQuestionsComplete && !allFormsComplete ? (
+                        <SellerQuestions />
                     ) : buyerDetailsComplete && !showLoanDetails && !showSellerQuestions && !formData.buyerDetailsCurrentStep ? (
                         <BuyerDetails /> // This ensures BuyerDetails completion page remains visible
                     ) : formData.buyerDetailsCurrentStep ? (
