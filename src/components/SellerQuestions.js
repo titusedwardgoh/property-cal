@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import useFormNavigation from './shared/FormNavigation.js';
 import { useFormStore } from '../stores/formStore';
 
@@ -9,7 +9,7 @@ export default function SellerQuestions() {
   const [localCompletionState, setLocalCompletionState] = useState(false);
   const totalSteps = 7;
 
-  const nextStep = () => {
+  const nextStep = useCallback(() => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else if (currentStep === totalSteps) {
@@ -17,15 +17,15 @@ export default function SellerQuestions() {
       updateFormData('sellerQuestionsComplete', true);
       setLocalCompletionState(true);
     }
-  };
+  }, [currentStep, totalSteps, updateFormData]);
 
-  const prevStep = () => {
+  const prevStep = useCallback(() => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
-  };
+  }, [currentStep]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     // Reset the current section completion and visibility
     updateFormData('sellerQuestionsComplete', false);
     updateFormData('showSellerQuestions', false);
@@ -43,10 +43,10 @@ export default function SellerQuestions() {
       updateFormData('showLoanDetails', false);
       updateFormData('buyerDetailsCurrentStep', 5);
     }
-  };
+  }, [formData.needsLoan, updateFormData]);
 
   // Check if current step is valid
-  const isCurrentStepValid = () => {
+  const isCurrentStepValid = useCallback(() => {
     switch (currentStep) {
       case 1:
         return formData.sellerQuestion1 && formData.sellerQuestion1.trim() !== '';
@@ -65,7 +65,7 @@ export default function SellerQuestions() {
       default:
         return false;
     }
-  };
+  }, [currentStep, formData.sellerQuestion1, formData.sellerQuestion2, formData.sellerQuestion3, formData.sellerQuestion4, formData.sellerQuestion5, formData.sellerQuestion6, formData.sellerQuestion7]);
 
   // Use shared navigation hook
   useFormNavigation({
@@ -74,7 +74,7 @@ export default function SellerQuestions() {
     isCurrentStepValid,
     onNext: nextStep,
     onPrev: prevStep,
-    onComplete: () => {
+    onComplete: useCallback(() => {
       if (localCompletionState) {
         // We're on the completion page, move to final completion
         updateFormData('allFormsComplete', true);
@@ -83,8 +83,8 @@ export default function SellerQuestions() {
         updateFormData('sellerQuestionsComplete', true);
         setLocalCompletionState(true);
       }
-    },
-    onBack: () => {
+    }, [localCompletionState, updateFormData]),
+    onBack: useCallback(() => {
       console.log('onBack called, localCompletionState:', localCompletionState);
       if (localCompletionState) {
         // We're on the completion page, go back to the last question
@@ -97,7 +97,7 @@ export default function SellerQuestions() {
         console.log('Using normal back logic');
         handleBack();
       }
-    },
+    }, [localCompletionState, updateFormData, handleBack]),
     isComplete: localCompletionState
   });
 
