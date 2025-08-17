@@ -373,7 +373,7 @@ export default function BuyerDetails() {
         <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${
           formData.buyerDetailsComplete ? 'text-base-100' : 'text-primary'
         }`}>
-          <span className="text-xs text-base-100">1</span>
+          {currentStep <5 ? <span className="text-xs text-base-100">1</span> : null}
           {formData.buyerDetailsComplete ? '6' : currentStep + 5} 
           <span className={`text-xs ${formData.buyerDetailsComplete ? 'text-primary' : ''}`}>→</span>
         </span>

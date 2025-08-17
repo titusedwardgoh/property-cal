@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import useFormNavigation from './shared/FormNavigation.js';
 import { useFormStore } from '../stores/formStore';
+import { formatCurrency } from '../states/shared/baseCalculations.js';
 
 export default function LoanDetails() {
   const formData = useFormStore();
@@ -37,19 +38,19 @@ export default function LoanDetails() {
   const isCurrentStepValid = () => {
     switch (currentStep) {
       case 1:
-        return formData.loanQuestion1 && formData.loanQuestion1.trim() !== '';
+        return formData.loanQuestion1 && parseInt(formData.loanQuestion1) > 0;
       case 2:
         return formData.loanQuestion2 && formData.loanQuestion2.trim() !== '';
       case 3:
-        return formData.loanQuestion3 && formData.loanQuestion3.trim() !== '';
+        return formData.loanQuestion3 && parseInt(formData.loanQuestion3) >= 1 && parseInt(formData.loanQuestion3) <= 30;
       case 4:
-        return formData.loanQuestion4 && formData.loanQuestion4.trim() !== '';
+        return formData.loanQuestion4 && parseFloat(formData.loanQuestion4) >= 0.01 && parseFloat(formData.loanQuestion4) <= 20;
       case 5:
         return formData.loanQuestion5 && formData.loanQuestion5.trim() !== '';
       case 6:
-        return formData.loanQuestion6 && formData.loanQuestion6.trim() !== '';
+        return formData.loanQuestion6 && parseFloat(formData.loanQuestion6) >= 0;
       case 7:
-        return formData.loanQuestion7 && formData.loanQuestion7.trim() !== '';
+        return formData.loanQuestion7 && parseFloat(formData.loanQuestion7) >= 0;
       default:
         return false;
     }
@@ -100,7 +101,7 @@ export default function LoanDetails() {
             Loan Details Complete
           </h2>
           <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-            Now let&apos;s ask a few questions about the seller...
+            Now let&apos;s ask a few additional questions which you can get ask the seller...
           </p>
         </div>
       );
@@ -109,35 +110,32 @@ export default function LoanDetails() {
     switch (currentStep) {
       case 1:
         return (
-          <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Loan Question 1
-            </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('loanQuestion1', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.loanQuestion1 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.loanQuestion1 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+                What is your deposit amount?
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
+                This will help us calculate your loan amount and LMI requirements
+              </p>
+              <div className="max-w-md mx-auto relative pr-8">
+                <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                  formData.loanQuestion1 ? 'text-gray-800' : 'text-gray-400'
+                }`}>
+                  $
+                </div>
+                <input
+                  type="tel"
+                  placeholder="0"
+                  value={formData.loanQuestion1 ? formatCurrency(parseInt(formData.loanQuestion1)).replace('$', '') : ''}
+                  onChange={(e) => {
+                    // Remove all non-digit characters and update form data
+                    const numericValue = e.target.value.replace(/[^\d]/g, '');
+                    updateFormData('loanQuestion1', numericValue);
+                  }}
+                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300"
+                />
+              </div>
             </div>
           </div>
         );
@@ -146,15 +144,15 @@ export default function LoanDetails() {
         return (
           <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Loan Question 2
+              What type of loan do you need?
             </h2>
             <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+              This affects your monthly payments and loan structure
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
               {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
+                { value: 'principal-and-interest', label: 'Principal and Interest', description: 'Pay both principal and interest each month' },
+                { value: 'interest-only', label: 'Interest Only', description: 'Pay only interest for a set period' }
               ].map((option) => (
                 <button
                   key={option.value}
@@ -179,70 +177,72 @@ export default function LoanDetails() {
 
       case 3:
         return (
-          <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Loan Question 3
-            </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('loanQuestion3', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.loanQuestion3 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.loanQuestion3 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+                How long do you want your mortgage for?
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
+                Enter the number of years for your loan (1-30 years)
+              </p>
+              <div className="max-w-md mx-auto relative">
+                <input
+                  type="number"
+                  min="1"
+                  max="30"
+                  step="1"
+                  placeholder="30"
+                  value={formData.loanQuestion3 || ''}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
+                    if (value >= 1 && value <= 30) {
+                      updateFormData('loanQuestion3', value.toString());
+                    } else if (e.target.value === '') {
+                      updateFormData('loanQuestion3', '');
+                    }
+                  }}
+                  className="w-full px-6 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300 text-center"
+                />
+                <div className="absolute right-0 top-1/2 transform -translate-y-1/2 text-lg text-gray-500 pointer-events-none">
+                  years
+                </div>
+              </div>
             </div>
           </div>
         );
 
       case 4:
         return (
-          <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Loan Question 4
-            </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('loanQuestion4', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.loanQuestion4 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.loanQuestion4 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+                What interest rate is your bank offering you?
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
+                Enter the annual interest rate percentage for your loan
+              </p>
+              <div className="max-w-md mx-auto relative">
+                <input
+                  type="number"
+                  min="0.01"
+                  max="20"
+                  step="0.01"
+                  placeholder="6"
+                  value={formData.loanQuestion4 || ''}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    if (value >= 0.01 && value <= 20) {
+                      updateFormData('loanQuestion4', value.toString());
+                    } else if (e.target.value === '') {
+                      updateFormData('loanQuestion4', '');
+                    }
+                  }}
+                  className="w-full px-6 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300 text-center"
+                />
+                <div className="absolute right-0 top-1/2 transform -translate-y-1/2 text-lg text-gray-500 pointer-events-none">
+                  %
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -251,15 +251,15 @@ export default function LoanDetails() {
         return (
           <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Loan Question 5
+              Do you need Lenders Mortgage Insurance?
             </h2>
             <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+              LMI is typically required when your deposit is less than 20% of the property value
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
               {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
+                { value: 'yes', label: 'Yes', description: 'I need LMI coverage' },
+                { value: 'no', label: 'No', description: 'I don\'t need LMI coverage' }
               ].map((option) => (
                 <button
                   key={option.value}
@@ -284,70 +284,74 @@ export default function LoanDetails() {
 
       case 6:
         return (
-          <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Loan Question 6
-            </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('loanQuestion6', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.loanQuestion6 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.loanQuestion6 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+                Bank usually charge a Settlement Fee
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
+                Fee charged by the bank for settlement processing
+              </p>
+              <div className="max-w-md mx-auto relative pr-8">
+                <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                  formData.loanQuestion6 ? 'text-gray-800' : 'text-gray-400'
+                }`}>
+                  $
+                </div>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="200"
+                  value={formData.loanQuestion6 || ''}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    if (value >= 0) {
+                      updateFormData('loanQuestion6', value.toString());
+                    } else if (e.target.value === '') {
+                      updateFormData('loanQuestion6', '');
+                    }
+                  }}
+                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300"
+                />
+              </div>
             </div>
           </div>
         );
 
       case 7:
         return (
-          <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Loan Question 7
-            </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('loanQuestion7', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.loanQuestion7 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.loanQuestion7 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+          <div className="h-full flex flex-col justify-center items-center bg-base-100">
+            <div className="max-w-2xl mx-auto pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+                Loan Establishment Fee
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
+                Fee charged by the bank for setting up your loan
+              </p>
+              <div className="max-w-md mx-auto relative pr-8">
+                <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                  formData.loanQuestion7 ? 'text-gray-800' : 'text-gray-400'
+                }`}>
+                  $
+                </div>
+                                 <input
+                   type="number"
+                   min="0"
+                   step="0.01"
+                   placeholder="600"
+                   value={formData.loanQuestion7 || ''}
+                   onChange={(e) => {
+                     const value = parseFloat(e.target.value);
+                     if (value >= 0) {
+                       updateFormData('loanQuestion7', value.toString());
+                     } else if (e.target.value === '') {
+                       updateFormData('loanQuestion7', '');
+                     }
+                   }}
+                   className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300"
+                 />
+              </div>
             </div>
           </div>
         );
@@ -361,7 +365,6 @@ export default function LoanDetails() {
     <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
       <div className="flex">
         <span className="text-xs font-extrabold mr-2 pt-14 whitespace-nowrap text-primary">
-          <span className="text-xs text-base-100">3</span>
           {formData.loanDetailsComplete ? '18' : currentStep + 11} 
           <span className={`text-xs ${formData.loanDetailsComplete ? 'text-primary' : ''}`}>→</span>
         </span>
