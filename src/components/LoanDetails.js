@@ -341,7 +341,7 @@ export default function LoanDetails() {
           <div className="h-full flex flex-col justify-center items-center bg-base-100">
             <div className="max-w-2xl mx-auto pr-2">
               <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
-                Loan Establishment Fee
+              Bank usually charge a Loan Establishment Fee
               </h2>
               <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
                 Fee charged by the bank for setting up your loan
