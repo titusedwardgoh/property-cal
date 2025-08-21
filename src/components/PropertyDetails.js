@@ -411,7 +411,7 @@ export default function PropertyDetails() {
         <div className="w-full bg-gray-100 h-1">
           <div 
             className="bg-primary h-1 transition-all duration-300"
-            style={{ width: `${(getDisplayStep() / getDisplayTotalSteps()) * 100}%` }}
+            style={{ width: `${isComplete ? 100 : ((getDisplayStep() - 1) / getDisplayTotalSteps()) * 100}%` }}
           ></div>
         </div>
         

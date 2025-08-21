@@ -399,7 +399,7 @@ export default function LoanDetails() {
         <div className="w-full bg-gray-100 h-1">
           <div 
             className="bg-primary h-1 transition-all duration-300"
-            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+            style={{ width: `${formData.loanDetailsComplete ? 100 : ((currentStep - 1) / totalSteps) * 100}%` }}
           ></div>
         </div>
         
