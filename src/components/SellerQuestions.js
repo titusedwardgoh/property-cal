@@ -9,6 +9,39 @@ export default function SellerQuestions() {
   const [localCompletionState, setLocalCompletionState] = useState(false);
   const totalSteps = 7;
 
+  // Calculate the starting step number based on WA, ACT selection and loan need
+  const getStartingStepNumber = () => {
+    const isWA = formData.selectedState === 'WA';
+    const isACT = formData.selectedState === 'ACT';
+    const needsLoan = formData.needsLoan === 'yes';
+    
+    if (needsLoan) {
+      // Loan path: PropertyDetails + BuyerDetails + LoanDetails
+      if (isWA) {
+        // WA: PropertyDetails (6) + BuyerDetails starts at (7) + 7 steps + LoanDetails (7) = 20
+        return 21;
+      } else if (isACT) {
+        // ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 8 steps + LoanDetails (7) = 20
+        return 21;
+      } else {
+        // Non-WA/ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 7 steps + LoanDetails (7) = 19
+        return 20;
+      }
+    } else {
+      // No loan path: PropertyDetails + BuyerDetails
+      if (isWA) {
+        // WA: PropertyDetails (6) + BuyerDetails starts at (7) + 7 steps = 13
+        return 13;
+      } else if (isACT) {
+        // ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 8 steps = 13
+        return 13;
+      } else {
+        // Non-WA/ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 7 steps = 12
+        return 12;
+      }
+    }
+  };
+
   const nextStep = useCallback(() => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
@@ -37,11 +70,13 @@ export default function SellerQuestions() {
       updateFormData('loanDetailsCurrentStep', 7);
       // Reset the showSellerQuestions flag to ensure proper flow
       updateFormData('showSellerQuestions', false);
-    } else {
-      // Go back to BuyerDetails Q5 (no loan path - "Do you need a loan?" question)
+             } else {
+      // Go back to BuyerDetails (no loan path - "Do you need a loan?" question)
       updateFormData('buyerDetailsComplete', false);
       updateFormData('showLoanDetails', false);
-      updateFormData('buyerDetailsCurrentStep', 5);
+      // For ACT, the loan question is step 7, for others it's step 6
+      const loanQuestionStep = formData.selectedState === 'ACT' ? 7 : 6;
+      updateFormData('buyerDetailsCurrentStep', loanQuestionStep);
     }
   }, [formData.needsLoan, updateFormData]);
 
@@ -377,7 +412,7 @@ export default function SellerQuestions() {
           formData.sellerQuestionsComplete ? 'text-base-100' : 'text-primary'
         }`}>
                      <span className="text-xs text-base-100">{formData.needsLoan === 'yes' ? '3' : '2'}</span>
-           {formData.sellerQuestionsComplete ? (formData.needsLoan === 'yes' ? '25' : '17') : (currentStep + (formData.needsLoan === 'yes' ? 18 : 10))} 
+           {formData.sellerQuestionsComplete ? (getStartingStepNumber() + totalSteps - 1) : (currentStep + getStartingStepNumber() - 1)} 
            <span className={`text-xs ${formData.sellerQuestionsComplete ? 'text-primary' : ''}`}>→</span>
         </span>
         <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">

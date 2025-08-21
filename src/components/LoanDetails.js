@@ -9,6 +9,23 @@ export default function LoanDetails() {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 7;
 
+  // Calculate the starting step number based on WA and ACT selection
+  const getStartingStepNumber = () => {
+    const isWA = formData.selectedState === 'WA';
+    const isACT = formData.selectedState === 'ACT';
+    
+    if (isWA) {
+      // WA: PropertyDetails (6) + BuyerDetails starts at (7) + 7 steps = 14
+      return 14;
+    } else if (isACT) {
+      // ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 8 steps = 14
+      return 14;
+    } else {
+      // Non-WA/ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 7 steps = 13
+      return 13;
+    }
+  };
+
   const nextStep = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
@@ -30,8 +47,8 @@ export default function LoanDetails() {
     // Reset the navigation flags to ensure proper flow
     updateFormData('showLoanDetails', false);
     updateFormData('showSellerQuestions', false);
-    // Set BuyerDetails to show the last question
-    updateFormData('buyerDetailsCurrentStep', 6);
+    // Set BuyerDetails to show the last question (step 7, which is question 12)
+    updateFormData('buyerDetailsCurrentStep', 7);
   };
 
   // Check if current step is valid
@@ -364,8 +381,8 @@ export default function LoanDetails() {
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
       <div className="flex">
-        <span className="text-xs font-extrabold mr-2 pt-14 whitespace-nowrap text-primary">
-          {formData.loanDetailsComplete ? '18' : currentStep + 11} 
+        <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${formData.loanDetailsComplete ? 'text-base-100' : 'text-primary'}`}>
+          <span className="text-xs text-base-100">{formData.needsLoan === 'yes' ? '3' : '2'}</span>{formData.loanDetailsComplete ? (getStartingStepNumber() + totalSteps - 1) : (currentStep + getStartingStepNumber() - 1)} 
           <span className={`text-xs ${formData.loanDetailsComplete ? 'text-primary' : ''}`}>→</span>
         </span>
         <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">

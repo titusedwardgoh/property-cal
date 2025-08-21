@@ -11,7 +11,25 @@ export default function PropertyDetails() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [direction, setDirection] = useState('forward'); // 'forward' or 'backward'
   const [isComplete, setIsComplete] = useState(false);
-  const totalSteps = 5;
+  const totalSteps = 6; // Always 6 internal steps, but step 3 is skipped for non-WA
+  
+  // Calculate the display step number (what the user sees)
+  const getDisplayStep = () => {
+    if (formData.selectedState === 'WA') {
+      return currentStep;
+    } else {
+      // For non-WA states, adjust step numbers to show sequentially
+      if (currentStep >= 4) {
+        return currentStep - 1; // Show 3, 4, 5 instead of 4, 5, 6
+      }
+      return currentStep;
+    }
+  };
+
+  // Get the actual total steps for display (what user sees)
+  const getDisplayTotalSteps = () => {
+    return formData.selectedState === 'WA' ? 6 : 5;
+  };
    
   // Get state-specific functions when state is selected
   const { stateFunctions } = useStateSelector(formData.selectedState || 'NSW');
@@ -26,6 +44,20 @@ export default function PropertyDetails() {
     }
   }, [formData.propertyDetailsCurrentStep, updateFormData]);
 
+  // Watch for state changes and reset WA field if needed
+  useEffect(() => {
+    if (formData.selectedState !== 'WA' && formData.isWA) {
+      updateFormData('isWA', '');
+    }
+  }, [formData.selectedState, formData.isWA, updateFormData]);
+
+  // Watch for state changes and reset ACT field if needed
+  useEffect(() => {
+    if (formData.selectedState !== 'ACT' && formData.isACT) {
+      updateFormData('isACT', false);
+    }
+  }, [formData.selectedState, formData.isACT, updateFormData]);
+
   const nextStep = () => {
     console.log('✅ PropertyDetails - OK/Next Pressed:', {
       currentStep,
@@ -36,11 +68,21 @@ export default function PropertyDetails() {
       propertyPrice: formData.propertyPrice
     });
     
-    if (currentStep < totalSteps) {
+    // Check if we're at the last step for the current state
+    const isLastStep = currentStep === 6; // Both WA and non-WA end at internal step 6
+    
+    if (!isLastStep) {
       setDirection('forward');
       setIsTransitioning(true);
       setTimeout(() => {
-        setCurrentStep(currentStep + 1);
+        let nextStepNumber = currentStep + 1;
+        
+        // Skip WA question step if state is not WA
+        if (currentStep === 2 && formData.selectedState !== 'WA') {
+          nextStepNumber = 4; // Skip to property category step
+        }
+        
+        setCurrentStep(nextStepNumber);
         setIsTransitioning(false);
       }, 150);
     } else {
@@ -62,7 +104,28 @@ export default function PropertyDetails() {
       setDirection('backward');
       setIsTransitioning(true);
       setTimeout(() => {
-        setCurrentStep(currentStep - 1);
+        let prevStepNumber = currentStep - 1;
+        
+        // Handle back navigation for non-WA states
+        if (formData.selectedState !== 'WA') {
+          if (currentStep === 6) {
+            // From property price, go back to property type (step 5)
+            prevStepNumber = 5;
+          } else if (currentStep === 5) {
+            // From property type, go back to property category (step 4)
+            prevStepNumber = 4;
+          } else if (currentStep === 4) {
+            // From property category, go back to state selection (step 2)
+            prevStepNumber = 2;
+          }
+        } else {
+          // For WA states, normal back navigation
+          if (currentStep === 4 && formData.selectedState === 'WA') {
+            prevStepNumber = 3; // Go back to WA question
+          }
+        }
+        
+        setCurrentStep(prevStepNumber);
         setIsTransitioning(false);
       }, 150);
     }
@@ -86,10 +149,12 @@ export default function PropertyDetails() {
       case 2:
         return formData.selectedState && formData.selectedState.trim() !== '';
       case 3:
-        return formData.propertyCategory && formData.propertyCategory.trim() !== '';
+        return formData.selectedState === 'WA' ? (formData.isWA && formData.isWA.trim() !== '') : true;
       case 4:
-        return formData.propertyType && formData.propertyType.trim() !== '';
+        return formData.propertyCategory && formData.propertyCategory.trim() !== '';
       case 5:
+        return formData.propertyType && formData.propertyType.trim() !== '';
+      case 6:
         return formData.propertyPrice && formData.propertyPrice.trim() !== '';
       default:
         return false;
@@ -161,7 +226,15 @@ export default function PropertyDetails() {
                 {['NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT'].map((state) => (
                   <button
                     key={state}
-                    onClick={() => updateFormData('selectedState', state)}
+                    onClick={() => {
+                      updateFormData('selectedState', state);
+                      // Set isACT flag when ACT is selected
+                      if (state === 'ACT') {
+                        updateFormData('isACT', true);
+                      } else {
+                        updateFormData('isACT', false);
+                      }
+                    }}
                     className={`px-3 py-2 text-base font-medium rounded-lg border-2 transition-all duration-200 text-center hover:scale-105 ${
                       formData.selectedState === state
                         ? 'border-gray-800 bg-secondary text-white shadow-lg'
@@ -177,78 +250,117 @@ export default function PropertyDetails() {
         );
 
       case 3:
-        return (
-          <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              What type of property is it?
-            </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              This affects your stamp duty concessions and ongoing costs
-            </p>
-            <div className="grid grid-cols-2 gap-2 max-w-3xl">
-              {[
-                { value: 'house', label: 'House' },
-                { value: 'apartment', label: 'Apartment' },
-                { value: 'townhouse', label: 'Townhouse' },
-                { value: 'land', label: 'Land' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('propertyCategory', option.value)}
-                  className={`py-3 px-3 rounded-lg border-2 transition-all duration-200 flex justify-center w-32 hover:scale-105 ${
-                    formData.propertyCategory === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium text-center">{option.label}</div>
-                </button>
-              ))}
+        if (formData.selectedState === 'WA') {
+          return (
+            <div className="flex flex-col mt-12 pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+                Is the Property north or south?
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+                This affects stamp duty calculations for Western Australia
+              </p>
+              <div className="grid grid-cols-1 gap-2 max-w-4xl mb-8">
+                {[
+                  { value: 'north', label: 'North' },
+                  { value: 'south', label: 'South' }
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => updateFormData('isWA', option.value)}
+                    className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                      formData.isWA === option.value
+                        ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                    <div className={`text-xs leading-none ${
+                      formData.isWA === option.value
+                        ? 'text-gray-400'
+                        : 'text-gray-500'
+                    }`}>of the 26th parallel of South latitude.</div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        );
+          );
+        }
+        // If not WA, this step should not be reached, but handle gracefully
+        return null;
 
-      case 4:
-        return (
-          <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Is this a new or existing property?
-            </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              New properties may have different concessions and costs
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'existing', label: 'Existing Property', description: 'Already built and lived in' },
-                { value: 'new', label: 'New Property', description: 'Recently built, never lived in' },
-                { value: 'off-the-plan', label: 'Off-the-Plan', description: 'Buying before construction' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('propertyType', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.propertyType === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.propertyType === option.value
-                      ? 'text-gray-400'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+        case 4:
+          return (
+            <div className="flex flex-col mt-12 pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+                What type of property is it?
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+                This affects your stamp duty concessions and ongoing costs
+              </p>
+              <div className="grid grid-cols-2 gap-2 max-w-3xl">
+                {[
+                  { value: 'house', label: 'House' },
+                  { value: 'apartment', label: 'Apartment' },
+                  { value: 'townhouse', label: 'Townhouse' },
+                  { value: 'land', label: 'Vacant Land' }
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => updateFormData('propertyCategory', option.value)}
+                    className={`py-3 px-3 rounded-lg border-2 transition-all duration-200 flex justify-center w-32 hover:scale-105 ${
+                      formData.propertyCategory === option.value
+                        ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="text-base font-medium text-center">{option.label}</div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        );
+          );
 
-      case 5:
-        return (
-          <div className="h-full flex flex-col justify-center items-center bg-base-100">
-            <div className="max-w-2xl mx-auto pr-2">
-                <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+        case 5:
+          return (
+            <div className="flex flex-col mt-12 pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+                Is this a new or existing property?
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+                New properties may have different concessions and costs
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 max-w-4xl mb-8">
+                {[
+                  { value: 'existing', label: 'Existing Property', description: 'Already built and lived in' },
+                  { value: 'new', label: 'New Property', description: 'Recently built, never lived in' },
+                  { value: 'off-the-plan', label: 'Off-the-Plan', description: 'Buying before construction' }
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => updateFormData('propertyType', option.value)}
+                    className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                      formData.propertyType === option.value
+                        ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                    <div className={`text-xs leading-none ${
+                      formData.propertyType === option.value
+                        ? 'text-gray-400'
+                        : 'text-gray-500'
+                    }`}>{option.description}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+
+        case 6:
+          return (
+            <div className="h-full flex flex-col justify-center items-center bg-base-100">
+              <div className="max-w-2xl mx-auto pr-2">
+                  <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
                 What is the property&apos;s price?
               </h2>
               <p className=" md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto ">
@@ -284,7 +396,7 @@ export default function PropertyDetails() {
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
              <div className="flex">
-         <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}><span className="text-xs text-base-100">1</span>{isComplete ? '5' : currentStep} <span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
+         <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}><span className="text-xs text-base-100">1</span>{isComplete ? getDisplayTotalSteps() : getDisplayStep()} <span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
         <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
           {/* Step Content */}
           <div className="h-80">
@@ -299,7 +411,7 @@ export default function PropertyDetails() {
         <div className="w-full bg-gray-100 h-1">
           <div 
             className="bg-primary h-1 transition-all duration-300"
-            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+            style={{ width: `${(getDisplayStep() / getDisplayTotalSteps()) * 100}%` }}
           ></div>
         </div>
         
@@ -360,7 +472,7 @@ export default function PropertyDetails() {
                     : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
                 }`}
               >
-                {currentStep === totalSteps ? 'Calculate Stamp Duty' : 'OK'}
+                                 {getDisplayStep() === getDisplayTotalSteps() ? 'Calculate Stamp Duty' : 'OK'}
               </button>
             </>
           )}

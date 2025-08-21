@@ -8,7 +8,18 @@ export default function BuyerDetails() {
     const formData = useFormStore();
     const updateFormData = useFormStore(state => state.updateFormData);
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 6;
+  const totalSteps = formData.isACT ? 8 : 7; // Add extra step for ACT income question
+  
+  // Calculate the starting step number based on whether WA or ACT is selected
+  const getStartingStepNumber = () => {
+    if (formData.selectedState === 'WA') {
+      return 7;
+    } else if (formData.selectedState === 'ACT') {
+      return 6; // ACT starts at 6, despite having extra income question
+    } else {
+      return 6;
+    }
+  };
 
   // Watch for buyerDetailsCurrentStep flag from SellerQuestions or LoanDetails
   useEffect(() => {
@@ -33,13 +44,15 @@ export default function BuyerDetails() {
       isPPR: formData.isPPR,
       isAustralianResident: formData.isAustralianResident,
       isFirstHomeBuyer: formData.isFirstHomeBuyer,
+      hasPensionCard: formData.hasPensionCard,
       needsLoan: formData.needsLoan,
       savingsAmount: formData.savingsAmount
     });
     
     if (currentStep < totalSteps) {
-      // If moving from question 5 (loan need) and no loan is needed, skip to completion
-      if (currentStep === 5 && formData.needsLoan === 'no') {
+      // If moving from loan need question and no loan is needed, skip to completion
+      const loanQuestionStep = formData.isACT ? 7 : 6;
+      if (currentStep === loanQuestionStep && formData.needsLoan === 'no') {
         updateFormData('buyerDetailsComplete', true);
         // Reset the navigation flags to ensure proper flow
         updateFormData('showLoanDetails', false);
@@ -63,10 +76,11 @@ export default function BuyerDetails() {
   };
 
   const handleBack = () => {
-    // Go back to PropertyDetails question 5
+    // Go back to PropertyDetails
     updateFormData('propertyDetailsComplete', false);
-    // Set PropertyDetails to show question 5
-    updateFormData('propertyDetailsCurrentStep', 5);
+    // Set PropertyDetails to show the last step (property price step)
+    // For both WA and non-WA, the property price step is internal step 6
+    updateFormData('propertyDetailsCurrentStep', 6);
   };
 
   // Check if current step is valid
@@ -81,9 +95,13 @@ export default function BuyerDetails() {
       case 4:
         return formData.isFirstHomeBuyer && formData.isFirstHomeBuyer.trim() !== '';
       case 5:
-        return formData.needsLoan && formData.needsLoan.trim() !== '';
+        return formData.hasPensionCard && formData.hasPensionCard.trim() !== '';
       case 6:
-        return formData.needsLoan === 'yes' ? (formData.savingsAmount && formData.savingsAmount.trim() !== '') : true;
+        return formData.isACT ? (formData.income && formData.income.trim() !== '') : (formData.needsLoan && formData.needsLoan.trim() !== '');
+      case 7:
+        return formData.isACT ? (formData.needsLoan && formData.needsLoan.trim() !== '') : (formData.needsLoan === 'yes' ? (formData.savingsAmount && formData.savingsAmount.trim() !== '') : true);
+      case 8:
+        return formData.isACT && formData.needsLoan === 'yes' ? (formData.savingsAmount && formData.savingsAmount.trim() !== '') : true;
       default:
         return false;
     }
@@ -295,21 +313,21 @@ export default function BuyerDetails() {
         return (
           <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Do you need a loan to purchase?
+              Are you a holder of a pension or pensioner concession card?
             </h2>
             <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              This affects your loan calculations and costs.
+              This may affect your eligibility for additional concessions and grants.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
               {[
-                { value: 'yes', label: 'Yes', description: 'I need a loan to purchase' },
-                { value: 'no', label: 'No', description: 'I will pay cash' }
+                { value: 'yes', label: 'Yes', description: 'I have a pension or concession card' },
+                { value: 'no', label: 'No', description: 'I do not have a pension or concession card' }
               ].map((option) => (
                 <button
                   key={option.value}
-                  onClick={() => updateFormData('needsLoan', option.value)}
+                  onClick={() => updateFormData('hasPensionCard', option.value)}
                   className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.needsLoan === option.value
+                    formData.hasPensionCard === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                   }`}
@@ -320,7 +338,7 @@ export default function BuyerDetails() {
                     formData.isPPR === option.value || 
                     formData.isAustralianResident === option.value || 
                     formData.isFirstHomeBuyer === option.value || 
-                    formData.needsLoan === option.value
+                    formData.hasPensionCard === option.value
                       ? 'text-gray-400'
                       : 'text-gray-500'
                   }`}>{option.description}</div>
@@ -331,6 +349,140 @@ export default function BuyerDetails() {
         );
 
       case 6:
+        if (formData.isACT) {
+          return (
+            <div className="flex flex-col mt-12 pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+                What is your income?
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+                In ACT the Home Buyer Concession Scheme (HBCS) is income tested.
+              </p>
+              <div className="max-w-md relative pr-8">
+                <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                  formData.income ? 'text-gray-800' : 'text-gray-400'
+                }`}>
+                  $
+                </div>
+                <input
+                  type="tel"
+                  placeholder="0"
+                  value={formData.income || ''}
+                  onChange={(e) => updateFormData('income', e.target.value)}
+                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+                />
+              </div>
+            </div>
+          );
+        } else {
+          return (
+            <div className="flex flex-col mt-12 pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+                Do you need a loan to purchase?
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+                This affects your loan calculations and costs.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+                {[
+                  { value: 'yes', label: 'Yes', description: 'I need a loan to purchase' },
+                  { value: 'no', label: 'No', description: 'I will pay cash' }
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => updateFormData('needsLoan', option.value)}
+                    className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                      formData.needsLoan === option.value
+                        ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                    <div className={`text-xs leading-none ${
+                      formData.buyerType === option.value || 
+                      formData.isPPR === option.value || 
+                      formData.isAustralianResident === option.value || 
+                      formData.isFirstHomeBuyer === option.value || 
+                      formData.needsLoan === option.value
+                        ? 'text-gray-500'
+                        : 'text-gray-500'
+                    }`}>{option.description}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+      case 7:
+        if (formData.isACT) {
+          return (
+            <div className="flex flex-col mt-12 pr-2">
+              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+                Do you need a loan to purchase?
+              </h2>
+              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+                This affects your loan calculations and costs.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+                {[
+                  { value: 'yes', label: 'Yes', description: 'I need a loan to purchase' },
+                  { value: 'no', label: 'No', description: 'I will pay cash' }
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => updateFormData('needsLoan', option.value)}
+                    className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                      formData.needsLoan === option.value
+                        ? 'border-gray-800 bg-secondary text-white shadow-lg'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                  >
+                    <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                    <div className={`text-xs leading-none ${
+                      formData.buyerType === option.value || 
+                      formData.isPPR === option.value || 
+                      formData.isAustralianResident === option.value || 
+                      formData.isFirstHomeBuyer === option.value || 
+                      formData.needsLoan === option.value
+                        ? 'text-gray-400'
+                        : 'text-gray-500'
+                    }`}>{option.description}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        } else {
+          return (
+            <div className="h-full flex flex-col justify-center items-center bg-base-100">
+              <div className="max-w-2xl mx-auto pr-2">
+                <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+                  How much savings do you have?
+                </h2>
+                <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
+                  This helps us calculate your loan amount and upfront costs
+                </p>
+                <div className="max-w-md mx-auto relative pr-8">
+                  <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                    formData.savingsAmount ? 'text-gray-800' : 'text-gray-400'
+                  }`}>
+                    $
+                  </div>
+                  <input
+                    type="tel"
+                    placeholder="0"
+                    value={formData.savingsAmount || ''}
+                    onChange={(e) => updateFormData('savingsAmount', e.target.value)}
+                    className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300"
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+      case 8:
         return (
           <div className="h-full flex flex-col justify-center items-center bg-base-100">
             <div className="max-w-2xl mx-auto pr-2">
@@ -342,7 +494,7 @@ export default function BuyerDetails() {
               </p>
               <div className="max-w-md mx-auto relative pr-8">
                 <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
-                  formData.savingsAmount ? 'text-gray-800' : 'text-gray-400'
+                  formData.savingsAmount ? 'text-gray-800' : 'text-gray-800'
                 }`}>
                   $
                 </div>
@@ -373,8 +525,8 @@ export default function BuyerDetails() {
         <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${
           formData.buyerDetailsComplete ? 'text-base-100' : 'text-primary'
         }`}>
-          {currentStep <5 ? <span className="text-xs text-base-100">1</span> : null}
-          {formData.buyerDetailsComplete ? '6' : currentStep + 5} 
+          {currentStep < 5 ? <span className="text-xs text-base-100">1</span> : null}
+          {formData.buyerDetailsComplete ? getStartingStepNumber() : currentStep + getStartingStepNumber() - 1} 
           <span className={`text-xs ${formData.buyerDetailsComplete ? 'text-primary' : ''}`}>→</span>
         </span>
         <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
@@ -404,9 +556,9 @@ export default function BuyerDetails() {
                   updateFormData('buyerDetailsComplete', false);
                   // Go back to the last question and reset completion state
                   if (formData.needsLoan === 'yes') {
-                    setCurrentStep(6); // Go back to savings question
+                    setCurrentStep(7); // Go back to savings question
                   } else {
-                    setCurrentStep(5); // Go back to loan question
+                    setCurrentStep(6); // Go back to loan question
                   }
                 }}
                 className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
