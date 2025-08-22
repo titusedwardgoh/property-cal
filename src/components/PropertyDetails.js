@@ -396,7 +396,7 @@ export default function PropertyDetails() {
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
              <div className="flex">
-         <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}><span className="text-xs text-base-100">1</span>{isComplete ? getDisplayTotalSteps() : getDisplayStep()} <span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
+         <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}><span className="text-xs text-base-100">1</span>{isComplete ? getDisplayTotalSteps() : getDisplayStep()}<span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
         <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
           {/* Step Content */}
           <div className="h-80">

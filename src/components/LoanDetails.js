@@ -233,7 +233,7 @@ export default function LoanDetails() {
           <div className="h-full flex flex-col justify-center items-center bg-base-100">
             <div className="max-w-2xl mx-auto pr-2">
               <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
-                What interest rate is your bank offering you?
+                What is your interest rate are you paying?
               </h2>
               <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
                 Enter the annual interest rate percentage for your loan
@@ -304,7 +304,7 @@ export default function LoanDetails() {
           <div className="h-full flex flex-col justify-center items-center bg-base-100">
             <div className="max-w-2xl mx-auto pr-2">
               <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
-                Bank usually charge a Settlement Fee
+                Banks usually charge a Settlement Fee
               </h2>
               <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
                 Fee charged by the bank for settlement processing
@@ -341,7 +341,7 @@ export default function LoanDetails() {
           <div className="h-full flex flex-col justify-center items-center bg-base-100">
             <div className="max-w-2xl mx-auto pr-2">
               <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
-              Bank usually charge a Loan Establishment Fee
+              Banks usually charge an Establishment Fee
               </h2>
               <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
                 Fee charged by the bank for setting up your loan
