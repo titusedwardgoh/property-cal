@@ -27,8 +27,15 @@ export default function LoanDetails() {
   };
 
   const nextStep = () => {
+    // Initialize the store with current step if this is the first call
+    if (currentStep === 1) {
+      updateFormData('loanDetailsActiveStep', currentStep);
+    }
+    
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
+      // Update the store with current step for progress tracking
+      updateFormData('loanDetailsActiveStep', currentStep + 1);
     } else if (currentStep === totalSteps) {
       // Form is complete
       updateFormData('loanDetailsComplete', true);
@@ -38,6 +45,8 @@ export default function LoanDetails() {
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      // Update the store with current step for progress tracking
+      updateFormData('loanDetailsActiveStep', currentStep - 1);
     }
   };
 
@@ -108,6 +117,8 @@ export default function LoanDetails() {
       updateFormData('showSellerQuestions', false);
     }
   }, [formData.loanDetailsCurrentStep, updateFormData, formData.loanDetailsComplete]);
+
+
 
   const renderStep = () => {
     // Show completion message if form is complete
@@ -395,8 +406,8 @@ export default function LoanDetails() {
 
       {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
       <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8">
-        {/* Progress Bar - Now IS the top border */}
-        <div className="w-full bg-gray-100 h-1">
+        {/* Progress Bar - Now rendered on main page for medium+ screens */}
+        <div className="block md:hidden w-full bg-gray-100 h-1 mb-4">
           <div 
             className="bg-primary h-1 transition-all duration-300"
             style={{ width: `${formData.loanDetailsComplete ? 100 : ((currentStep - 1) / totalSteps) * 100}%` }}

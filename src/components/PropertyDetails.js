@@ -34,22 +34,87 @@ export default function PropertyDetails() {
   // Get state-specific functions when state is selected
   const { stateFunctions } = useStateSelector(formData.selectedState || 'NSW');
 
+  // Initialize step from store when component mounts or when coming back from other forms
+  useEffect(() => {
+    if (formData.propertyDetailsCurrentStep && formData.propertyDetailsCurrentStep !== currentStep) {
+      console.log('🔄 PropertyDetails - Syncing step from store:', formData.propertyDetailsCurrentStep);
+      
+      // Validate the step based on current state selection
+      let validStep = formData.propertyDetailsCurrentStep;
+      
+      // If coming back to a step that doesn't exist for current state, adjust it
+      if (formData.selectedState !== 'WA' && validStep === 3) {
+        // Non-WA states skip step 3, so if we're trying to go to step 3, go to step 4 instead
+        validStep = 4;
+        console.log('🔄 Adjusting step from 3 to 4 for non-WA state');
+      }
+      
+      setCurrentStep(validStep);
+      setIsComplete(false);
+      
+      // Update the store with the validated step
+      if (validStep !== formData.propertyDetailsCurrentStep) {
+        updateFormData('propertyDetailsCurrentStep', validStep);
+      }
+    }
+    
+    // Debug: Log current state when component mounts/updates
+    console.log('🔍 PropertyDetails - Component state:', {
+      currentStep,
+      storeStep: formData.propertyDetailsCurrentStep,
+      selectedState: formData.selectedState,
+      isComplete,
+      propertyDetailsComplete: formData.propertyDetailsComplete
+    });
+  }, [formData.propertyDetailsCurrentStep, currentStep, isComplete, formData.propertyDetailsComplete, formData.selectedState, updateFormData]);
+
   // Watch for propertyDetailsCurrentStep flag from BuyerDetails
   useEffect(() => {
-    if (formData.propertyDetailsCurrentStep) {
+    if (formData.propertyDetailsCurrentStep && formData.propertyDetailsCurrentStep !== currentStep) {
       setCurrentStep(formData.propertyDetailsCurrentStep);
-      setIsComplete(false);
-      // Reset the flag
+      // Update the active step for progress tracking
+      updateFormData('propertyDetailsActiveStep', formData.propertyDetailsCurrentStep);
+      // Reset the flag after using it
       updateFormData('propertyDetailsCurrentStep', null);
+      setIsComplete(false);
+      // Ensure we're not in completion state when going back to a specific question
+      if (formData.propertyDetailsComplete) {
+        updateFormData('propertyDetailsComplete', false);
+      }
+      // Also reset the form completion flag to ensure proper progress calculation
+      if (formData.propertyDetailsFormComplete) {
+        updateFormData('propertyDetailsFormComplete', false);
+      }
     }
-  }, [formData.propertyDetailsCurrentStep, updateFormData]);
+  }, [formData.propertyDetailsCurrentStep, updateFormData, currentStep, formData.propertyDetailsComplete]);
+
+
 
   // Watch for state changes and reset WA field if needed
   useEffect(() => {
     if (formData.selectedState !== 'WA' && formData.isWA) {
       updateFormData('isWA', '');
     }
-  }, [formData.selectedState, formData.isWA, updateFormData]);
+    
+    // If state changes, we may need to adjust the current step
+    if (formData.propertyDetailsCurrentStep) {
+      let adjustedStep = formData.propertyDetailsCurrentStep;
+      
+      if (formData.selectedState !== 'WA' && adjustedStep === 3) {
+        // Non-WA states can't be on step 3, move to step 4
+        adjustedStep = 4;
+        updateFormData('propertyDetailsCurrentStep', adjustedStep);
+        setCurrentStep(adjustedStep);
+        console.log('🔄 State changed to non-WA, adjusting step from 3 to 4');
+      } else if (formData.selectedState === 'WA' && adjustedStep === 4 && !formData.isWA) {
+        // WA states on step 4 without WA selection, move to step 3
+        adjustedStep = 3;
+        updateFormData('propertyDetailsCurrentStep', adjustedStep);
+        setCurrentStep(adjustedStep);
+        console.log('🔄 State changed to WA, adjusting step from 4 to 3');
+      }
+    }
+  }, [formData.selectedState, formData.isWA, formData.propertyDetailsCurrentStep, updateFormData]);
 
   // Watch for state changes and reset ACT field if needed
   useEffect(() => {
@@ -68,6 +133,12 @@ export default function PropertyDetails() {
       propertyPrice: formData.propertyPrice
     });
     
+    // Initialize the store with current step if this is the first call
+    if (currentStep === 1) {
+      console.log('🔧 Initializing propertyDetailsActiveStep to:', currentStep);
+      updateFormData('propertyDetailsActiveStep', currentStep);
+    }
+    
     // Check if we're at the last step for the current state
     const isLastStep = currentStep === 6; // Both WA and non-WA end at internal step 6
     
@@ -83,6 +154,9 @@ export default function PropertyDetails() {
         }
         
         setCurrentStep(nextStepNumber);
+        // Update the store with current step for progress tracking
+        console.log('🔧 Updating propertyDetailsActiveStep to:', nextStepNumber);
+        updateFormData('propertyDetailsActiveStep', nextStepNumber);
         setIsTransitioning(false);
       }, 150);
     } else {
@@ -126,6 +200,9 @@ export default function PropertyDetails() {
         }
         
         setCurrentStep(prevStepNumber);
+        // Update the store with current step for progress tracking
+        console.log('🔧 Updating propertyDetailsActiveStep to:', prevStepNumber);
+        updateFormData('propertyDetailsActiveStep', prevStepNumber);
         setIsTransitioning(false);
       }, 150);
     }
@@ -194,15 +271,15 @@ export default function PropertyDetails() {
       case 1:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+            <h2 className="text-3xl xl:text-4xl font-base text-gray-800 mb-4 leading-tight">
               What&apos;s the property address?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+            <p className="md:text-lg text-gray-500 leading-relaxed mb-8 max-w-lg">
               This helps us determine the state and provide more accurate calculations
             </p>
-            <div className="max-w-md mx-auto relative pr-8">
+            <div className="max-w-md  relative pr-8">
               <input
-                type="text"
+                type="tel"
                 placeholder="Enter street address"
                 value={formData.propertyAddress || ''}
                 onChange={(e) => updateFormData('propertyAddress', e.target.value)}
@@ -397,7 +474,7 @@ export default function PropertyDetails() {
     <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
              <div className="flex">
          <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}><span className="text-xs text-base-100">1</span>{isComplete ? getDisplayTotalSteps() : getDisplayStep()}<span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
-        <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
+        <div className="pb-6 pb-24 md:pb-8 flex">
           {/* Step Content */}
           <div className="h-80">
             {renderStep()}
@@ -407,8 +484,8 @@ export default function PropertyDetails() {
 
       {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
       <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8">
-        {/* Progress Bar - Now IS the top border */}
-        <div className="w-full bg-gray-100 h-1">
+        {/* Progress Bar - Now rendered on main page for medium+ screens */}
+        <div className="block md:hidden w-full bg-gray-100 h-1 mb-4">
           <div 
             className="bg-primary h-1 transition-all duration-300"
             style={{ width: `${isComplete ? 100 : ((getDisplayStep() - 1) / getDisplayTotalSteps()) * 100}%` }}

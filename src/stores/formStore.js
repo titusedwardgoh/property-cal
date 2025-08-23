@@ -11,6 +11,8 @@ export const useFormStore = create((set, get) => ({
   isACT: '', // New field for ACT
   propertyDetailsComplete: false,
   propertyDetailsFormComplete: false,
+  propertyDetailsCurrentStep: 1,
+  propertyDetailsActiveStep: 1,
   
   // Buyer Details
   buyerType: '',
@@ -22,6 +24,7 @@ export const useFormStore = create((set, get) => ({
   income: '', // New field for ACT income question
   buyerDetailsComplete: false,
   buyerDetailsCurrentStep: null,
+  buyerDetailsActiveStep: 1,
   
   // Navigation flags
   showLoanDetails: false,
@@ -37,6 +40,7 @@ export const useFormStore = create((set, get) => ({
   loanQuestion7: '',
   loanDetailsComplete: false,
   loanDetailsCurrentStep: null,
+  loanDetailsActiveStep: 1,
   
   // Seller Questions
   sellerQuestion1: '',
@@ -47,6 +51,7 @@ export const useFormStore = create((set, get) => ({
   sellerQuestion6: '',
   sellerQuestion7: '',
   sellerQuestionsComplete: false,
+  sellerQuestionsActiveStep: 1,
   
   // Final completion
   allFormsComplete: false,
@@ -75,8 +80,11 @@ export const useFormStore = create((set, get) => ({
     income: '', // New field for ACT income question
     propertyDetailsComplete: false,
     propertyDetailsFormComplete: false,
+    propertyDetailsCurrentStep: 1,
+    propertyDetailsActiveStep: 1,
     buyerDetailsComplete: false,
     buyerDetailsCurrentStep: null,
+    buyerDetailsActiveStep: 1,
     showLoanDetails: false,
     showSellerQuestions: false,
     loanQuestion1: '',
@@ -88,6 +96,7 @@ export const useFormStore = create((set, get) => ({
     loanQuestion7: '',
     loanDetailsComplete: false,
     loanDetailsCurrentStep: null,
+    loanDetailsActiveStep: 1,
     sellerQuestion1: '',
     sellerQuestion2: '',
     sellerQuestion3: '',
@@ -96,6 +105,7 @@ export const useFormStore = create((set, get) => ({
     sellerQuestion6: '',
     sellerQuestion7: '',
     sellerQuestionsComplete: false,
+    sellerQuestionsActiveStep: 1,
     allFormsComplete: false,
   }),
   

@@ -48,14 +48,14 @@ export default function UpfrontCosts() {
     <div className="relative">
       <div 
         onClick={toggleExpanded}
-        className={`bg-secondary rounded-lg shadow-lg px-6 py-4 md:p-8 ${isPropertyComplete ? 'cursor-pointer hover:shadow-xl transition-shadow duration-200' : ''}`}
+        className={`bg-secondary rounded-lg shadow-lg px-6 py-4 ${isPropertyComplete ? 'cursor-pointer hover:shadow-xl transition-shadow duration-200' : ''}`}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <h3 className="text-xl md:text-2xl font-medium text-base-100">Upfront Costs</h3>
+            <h3 className="text-xl font-medium text-base-100">Upfront Costs</h3>
           </div>
           <div className="text-right">
-            <div className="text-2xl md:text-4xl font-semibold text-base-100">
+            <div className="text-2xl font-semibold text-base-100">
               {isPropertyComplete ? formatCurrency(calculateTotalCosts()) : '$0'}
             </div>
           </div>
