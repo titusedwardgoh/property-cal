@@ -149,10 +149,10 @@ export default function BuyerDetails() {
     if (formData.buyerDetailsComplete) {
       return (
         <div className="flex flex-col mt-12 pr-2">
-          <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+          <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
             Buyer Details Complete
           </h2>
-          <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+          <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
             {formData.needsLoan === 'yes' 
               ? 'Now let\'s get some details about your loan...'
               : 'Now let\'s ask a few questions about the seller...'
@@ -167,10 +167,10 @@ export default function BuyerDetails() {
       case 1:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Are you an Owner or Investor?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
               This affects your eligibility for concessions and grants
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
@@ -206,10 +206,10 @@ export default function BuyerDetails() {
       case 2:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Will you live in this property?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
               This affects your eligibility for principal place of residence (PPR) concessions
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
@@ -245,13 +245,13 @@ export default function BuyerDetails() {
       case 3:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Australian citizen or permanent resident?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Residents may have additional concessions and foreigners additional duties
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              Residents may have additional concessions and foreigners extra duties
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:flex gap-2 max-w-4xl mb-8">
               {[
                 { value: 'yes', label: 'Yes', description: 'Australian citizen or permanent resident' },
                 { value: 'no', label: 'No, I reside overseas', description: 'Foreign buyer' }
@@ -259,14 +259,14 @@ export default function BuyerDetails() {
                 <button
                   key={option.value}
                   onClick={() => updateFormData('isAustralianResident', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                  className={`py-2 px-3 rounded-lg w-full md:w-[250px] border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
                     formData.isAustralianResident === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
+                  <div className={`text-xs leading-none text-left ${
                     formData.buyerType === option.value || 
                     formData.isPPR === option.value || 
                     formData.isAustralianResident === option.value || 
@@ -284,10 +284,10 @@ export default function BuyerDetails() {
       case 4:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Is this your first home purchase?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
               First home buyers may have additional concessions and grants.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
@@ -323,13 +323,13 @@ export default function BuyerDetails() {
       case 5:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Are you a holder of a pensioneer card?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
               This may affect your eligibility for additional concessions and grants.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:flex gap-2 max-w-4xl mb-8">
               {[
                 { value: 'yes', label: 'Yes', description: 'I have a pension or concession card' },
                 { value: 'no', label: 'No', description: 'I do not have a pension or concession card' }
@@ -337,14 +337,14 @@ export default function BuyerDetails() {
                 <button
                   key={option.value}
                   onClick={() => updateFormData('hasPensionCard', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                  className={`py-2 px-3 rounded-lg w-full md:w-[260px] border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
                     formData.hasPensionCard === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
+                  <div className={`text-xs leading-none text-left ${
                     formData.buyerType === option.value || 
                     formData.isPPR === option.value || 
                     formData.isAustralianResident === option.value || 
@@ -363,12 +363,12 @@ export default function BuyerDetails() {
         if (formData.isACT) {
           return (
             <div className="flex flex-col mt-12 pr-2">
-              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-                What is your income?
-              </h2>
-              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-                In ACT the Home Buyer Concession Scheme (HBCS) is income tested.
-              </p>
+                          <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              What is your income?
+            </h2>
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              In ACT the Home Buyer Concession Scheme (HBCS) is income tested.
+            </p>
               <div className="max-w-md relative pr-8">
                 <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                   formData.income ? 'text-gray-800' : 'text-gray-400'
@@ -392,10 +392,10 @@ export default function BuyerDetails() {
         } else {
           return (
             <div className="flex flex-col mt-12 pr-2">
-              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 Do you need a loan to purchase?
               </h2>
-              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
                 This affects your loan calculations and costs.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
@@ -433,10 +433,10 @@ export default function BuyerDetails() {
         if (formData.isACT) {
           return (
             <div className="flex flex-col mt-12 pr-2">
-              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 Do you need a loan to purchase?
               </h2>
-              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
                 This affects your loan calculations and costs.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
@@ -472,10 +472,10 @@ export default function BuyerDetails() {
           return (
             <div className="h-full flex flex-col justify-center items-center bg-base-100">
               <div className="max-w-2xl mx-auto pr-2">
-                <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+                <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
                   How much savings do you have?
                 </h2>
-                <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
+                <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px] mx-auto">
                   This helps us calculate your loan amount and upfront costs
                 </p>
                 <div className="max-w-md mx-auto relative pr-8">
@@ -505,10 +505,10 @@ export default function BuyerDetails() {
         return (
           <div className="h-full flex flex-col justify-center items-center bg-base-100">
             <div className="max-w-2xl mx-auto pr-2">
-              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
                 How much savings do you have?
               </h2>
-              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px] mx-auto">
                 This helps us calculate your loan amount and upfront costs
               </p>
               <div className="max-w-md mx-auto relative pr-8">
@@ -539,25 +539,25 @@ export default function BuyerDetails() {
   };
 
   return (
-    <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-15 md:max-w-[450px] lg:max-w-[650px] xl:max-w-[800px]">
       <div className="flex">
-        <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${
+        <span className={`flex items-center text-xs -mt-85 md:-mt-70 lg:-mt-68 lg:text-sm xl:text-xl lg:pt-15 xl:-mt-64 font-extrabold mr-2 pt-14 whitespace-nowrap ${
           formData.buyerDetailsComplete ? 'text-base-100' : 'text-primary'
         }`}>
           {(formData.buyerDetailsComplete ? getStartingStepNumber() : currentStep + getStartingStepNumber() - 1) < 10 ? <span className="text-xs text-base-100">*</span> : null}
           {formData.buyerDetailsComplete ? getStartingStepNumber() : currentStep + getStartingStepNumber() - 1} 
           <span className={`text-xs ${formData.buyerDetailsComplete ? 'text-primary' : ''}`}>→</span>
         </span>
-        <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
+        <div className="pb-6 pb-24 md:pb-8 flex">
           {/* Step Content */}
-          <div className="h-80">
+          <div className="h-80 max-w-[400px] lg:max-w-[650px] xl:max-w-[800px]">
             {renderStep()}
           </div>
         </div>
       </div>
 
       {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
-      <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8">
+      <div className="md:pl-8 md:max-w-[420px] lg:max-w-[500px] fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
         {/* Progress Bar - Now rendered on main page for medium+ screens */}
         <div className="block md:hidden w-full bg-gray-100 h-1 mb-4">
           <div 
@@ -566,7 +566,7 @@ export default function BuyerDetails() {
           ></div>
         </div>
         
-        <div className="flex justify-between max-w-4xl mx-auto mt-4">
+        <div className="flex justify-start max-w-4xl mx-auto mt-4">
           {formData.buyerDetailsComplete ? (
             // Completion state: Back and Next buttons
             <>
@@ -580,7 +580,7 @@ export default function BuyerDetails() {
                     setCurrentStep(6); // Go back to loan question
                   }
                 }}
-                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
+                className="bg-primary px-6 py-3 rounded-full border border-primary font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
@@ -596,7 +596,7 @@ export default function BuyerDetails() {
                     updateFormData('showSellerQuestions', true);
                   }
                 }}
-                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm text-base font-medium cursor-pointer"
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm font-medium cursor-pointer lg:max-w-[500px]"
               >
                 Next
               </button>
@@ -606,7 +606,7 @@ export default function BuyerDetails() {
             <>
               <button
                 onClick={handleBack}
-                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
+                className="bg-primary px-6 py-3 rounded-full border border-primary font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
@@ -614,7 +614,7 @@ export default function BuyerDetails() {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm text-base font-medium cursor-pointer"
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm font-medium cursor-pointer md:max-w-[400px]"
               >
                 OK
               </button>
@@ -624,7 +624,7 @@ export default function BuyerDetails() {
             <>
               <button
                 onClick={prevStep}
-                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0 cursor-pointer"
+                className="bg-primary px-6 py-3 rounded-full border border-primary font-medium hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
@@ -632,10 +632,10 @@ export default function BuyerDetails() {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border text-base font-medium ${
+                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border font-medium md:max-w-[400px] ${
                   !isCurrentStepValid()
-                    ? 'border-primary text-base-100 cursor-not-allowed bg-gray-50'
-                    : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
+                    ? 'border-primary-100 cursor-not-allowed bg-gray-50'
+                    : 'border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
                 }`}
               >
                 {currentStep === totalSteps ? 'Complete' : 'OK'}
