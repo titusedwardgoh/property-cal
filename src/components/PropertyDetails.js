@@ -257,10 +257,10 @@ export default function PropertyDetails() {
     if (isComplete) {
       return (
         <div className="flex flex-col mt-12 pr-2">
-          <h2 className="text-3xl lg:text-4xl font-base text-gray-800 mb-4 leading-tight">
+          <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
             Basic Property Details Complete
           </h2>
-          <p className="lg:text-lg text-gray-500 leading-relaxed mb-8 max-w-lg">
+          <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
             Now a few questions about you... 
           </p>
         </div>
