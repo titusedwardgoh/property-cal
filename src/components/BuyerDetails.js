@@ -324,7 +324,7 @@ export default function BuyerDetails() {
         return (
           <div className="flex flex-col mt-12 pr-2">
             <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Are you a holder of a pension or pensioner concession card?
+              Are you a holder of a pensioneer card?
             </h2>
             <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
               This may affect your eligibility for additional concessions and grants.
@@ -378,8 +378,12 @@ export default function BuyerDetails() {
                 <input
                   type="tel"
                   placeholder="0"
-                  value={formData.income || ''}
-                  onChange={(e) => updateFormData('income', e.target.value)}
+                  value={formData.income ? formatCurrency(parseInt(formData.income)).replace('$', '') : ''}
+                  onChange={(e) => {
+                    // Remove all non-digit characters and update form data
+                    const numericValue = e.target.value.replace(/[^\d]/g, '');
+                    updateFormData('income', numericValue);
+                  }}
                   className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
                 />
               </div>
@@ -483,8 +487,12 @@ export default function BuyerDetails() {
                   <input
                     type="tel"
                     placeholder="0"
-                    value={formData.savingsAmount || ''}
-                    onChange={(e) => updateFormData('savingsAmount', e.target.value)}
+                    value={formData.savingsAmount ? formatCurrency(parseInt(formData.savingsAmount)).replace('$', '') : ''}
+                    onChange={(e) => {
+                      // Remove all non-digit characters and update form data
+                      const numericValue = e.target.value.replace(/[^\d]/g, '');
+                      updateFormData('savingsAmount', numericValue);
+                    }}
                     className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300"
                   />
                 </div>
