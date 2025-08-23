@@ -257,10 +257,10 @@ export default function PropertyDetails() {
     if (isComplete) {
       return (
         <div className="flex flex-col mt-12 pr-2">
-          <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+          <h2 className="text-3xl lg:text-4xl font-base text-gray-800 mb-4 leading-tight">
             Basic Property Details Complete
           </h2>
-          <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+          <p className="lg:text-lg text-gray-500 leading-relaxed mb-8 max-w-lg">
             Now a few questions about you... 
           </p>
         </div>
@@ -271,11 +271,11 @@ export default function PropertyDetails() {
       case 1:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl xl:text-4xl font-base text-gray-800 mb-4 leading-tight">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               What&apos;s the property address?
             </h2>
-            <p className="md:text-lg text-gray-500 leading-relaxed mb-8 max-w-lg">
-              This helps us determine the state and provide more accurate calculations
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              This helps us determine the state and provide accurate calculations
             </p>
             <div className="max-w-md  relative pr-8">
               <input
@@ -292,10 +292,10 @@ export default function PropertyDetails() {
       case 2:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">  
               Which state is the property in?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
               Different states have different stamp duty rates and concessions
             </p>
             <div className="max-w-md relative pr-8">
@@ -330,13 +330,13 @@ export default function PropertyDetails() {
         if (formData.selectedState === 'WA') {
           return (
             <div className="flex flex-col mt-12 pr-2">
-              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 Is the Property north or south?
               </h2>
-              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              <p className="lg:text-lg xl:text-xl text-gray-500 lg:mb-20 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[900px]">
                 This affects stamp duty calculations for Western Australia
               </p>
-              <div className="grid grid-cols-1 gap-2 max-w-4xl mb-8">
+              <div className="grid grid-cols-1 gap-2 max-w-4xl mb-8 md:max-w-[250px] lg:grid-cols-2 lg:max-w-[800px]">
                 {[
                   { value: 'north', label: 'North' },
                   { value: 'south', label: 'South' }
@@ -368,13 +368,13 @@ export default function PropertyDetails() {
         case 4:
           return (
             <div className="flex flex-col mt-12 pr-2">
-              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 What type of property is it?
               </h2>
-              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg xl:max-w-[800px]">
                 This affects your stamp duty concessions and ongoing costs
               </p>
-              <div className="grid grid-cols-2 gap-2 max-w-3xl">
+              <div className="grid grid-cols-2 gap-2 max-w-3xl lg:grid-cols-4">
                 {[
                   { value: 'house', label: 'House' },
                   { value: 'apartment', label: 'Apartment' },
@@ -400,10 +400,10 @@ export default function PropertyDetails() {
         case 5:
           return (
             <div className="flex flex-col mt-12 pr-2">
-              <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 Is this a new or existing property?
               </h2>
-              <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl">
                 New properties may have different concessions and costs
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2 max-w-4xl mb-8">
@@ -435,15 +435,14 @@ export default function PropertyDetails() {
 
         case 6:
           return (
-            <div className="h-full flex flex-col justify-center items-center bg-base-100">
-              <div className="max-w-2xl mx-auto pr-2">
-                  <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+            <div className="flex flex-col mt-12 pr-2">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 What is the property&apos;s price?
               </h2>
-              <p className=" md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto ">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl">
                 This will help us calculate your stamp duty and other costs
               </p>
-              <div className="max-w-md mx-auto relative pr-8">
+              <div className="max-w-md relative pr-8">
                 <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                   formData.propertyPrice ? 'text-gray-800' : 'text-gray-400'
                 }`}>
@@ -462,8 +461,7 @@ export default function PropertyDetails() {
                 />
               </div>
             </div>
-          </div>
-        );
+          );
 
       default:
         return null;
@@ -471,28 +469,28 @@ export default function PropertyDetails() {
   };
 
   return (
-    <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
-             <div className="flex">
-         <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}><span className="text-xs text-base-100">1</span>{isComplete ? getDisplayTotalSteps() : getDisplayStep()}<span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-15 md:max-w-[450px] lg:max-w-[650px] xl:max-w-[800px]">
+        <div className="flex">
+         <span className={`flex items-center text-xs -mt-85 md:-mt-70 lg:-mt-68 lg:text-sm xl:text-xl lg:pt-15 xl:-mt-64 font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}><span className="text-xs text-base-100">1</span>{isComplete ? getDisplayTotalSteps() : getDisplayStep()}<span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
         <div className="pb-6 pb-24 md:pb-8 flex">
           {/* Step Content */}
-          <div className="h-80">
+          <div className="h-80 max-w-[400px] lg:max-w-[6500px] xl:max-w-[800px]">
             {renderStep()}
           </div>
         </div>
       </div>
 
       {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
-      <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8">
+      <div className="md:pl-8 md:max-w-[420px] xl:text-lg lg:max-w-[500px] fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
         {/* Progress Bar - Now rendered on main page for medium+ screens */}
-        <div className="block md:hidden w-full bg-gray-100 h-1 mb-4">
+        <div className="block md:hidden w-full bg-gray-100 h-1 mb-4 ">
           <div 
             className="bg-primary h-1 transition-all duration-300"
             style={{ width: `${isComplete ? 100 : ((getDisplayStep() - 1) / getDisplayTotalSteps()) * 100}%` }}
           ></div>
         </div>
         
-        <div className="flex justify-between max-w-4xl mx-auto mt-4">
+        <div className="flex justify-start max-w-4xl mx-auto mt-4">
           {isComplete ? (
             // Completion state: Back and Next buttons
             <>
@@ -501,14 +499,14 @@ export default function PropertyDetails() {
                   setIsComplete(false);
                   updateFormData('propertyDetailsFormComplete', false);
                 }}
-                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
+                className="bg-primary px-6 py-3 rounded-full border border-primary font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
               
               <button
                 onClick={goToBuyerDetails}
-                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm text-base font-medium cursor-pointer"
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm font-medium cursor-pointer lg:max-w-[500px]"
               >
                 Next
               </button>
@@ -518,10 +516,10 @@ export default function PropertyDetails() {
             <button
               onClick={nextStep}
               disabled={!isCurrentStepValid()}
-              className={`w-full px-6 py-3 rounded-full border text-base font-medium ${
+              className={`w-full px-6 py-3 md:max-w-[400px] lg:max-w-auto rounded-full border font-medium   ${
                 !isCurrentStepValid()
-                  ? 'border-primary text-base-100 cursor-not-allowed bg-primary'
-                  : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
+                  ? 'border-primary-100 cursor-not-allowed bg-primary'
+                  : 'border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
               }`}
             >
               OK
@@ -531,7 +529,7 @@ export default function PropertyDetails() {
             <>
               <button
                 onClick={prevStep}
-                className={`bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer ${
+                className={`bg-primary px-6 py-3 rounded-full border border-primary font-medium border-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer ${
                   isTransitioning && direction === 'backward' ? 'transform translate-x-4 opacity-0' : 
                   isTransitioning && direction === 'forward' ? 'transform -translate-x-4 opacity-0' : 
                   'transform translate-x-0 opacity-100'
@@ -543,10 +541,10 @@ export default function PropertyDetails() {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border text-base font-medium ${
+                className={`flex-1 ml-4 px-6 py-3 md:max-w-[400px] bg-primary rounded-full border font-medium ${
                   !isCurrentStepValid()
-                    ? 'border-primary text-base-100 cursor-not-allowed bg-gray-50'
-                    : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
+                    ? 'border-primary-100 cursor-not-allowed bg-gray-50'
+                    : 'border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
                 }`}
               >
                                  {getDisplayStep() === getDisplayTotalSteps() ? 'Calculate Stamp Duty' : 'OK'}
