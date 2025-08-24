@@ -497,15 +497,15 @@ export default function BuyerDetails() {
           );
         } else {
           return (
-            <div className="h-full flex flex-col justify-center items-center bg-base-100">
-              <div className="max-w-2xl mx-auto pr-2">
-                <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+            <div className="h-full flex flex-col justify-center items-start bg-base-100">
+              <div className="max-w-3xl pr-2">
+                <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight lg:-mt-1 xl:mt-4">
                   How much savings do you have?
                 </h2>
-                <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px] mx-auto">
+                <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
                   This helps us calculate your loan amount and upfront costs
                 </p>
-                <div className="max-w-md mx-auto relative pr-8">
+                <div className="max-w-md relative pr-8">
                   <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                     formData.savingsAmount ? 'text-gray-800' : 'text-gray-400'
                   }`}>
@@ -530,15 +530,15 @@ export default function BuyerDetails() {
 
       case 8:
         return (
-          <div className="h-full flex flex-col justify-center items-center bg-base-100">
-            <div className="max-w-2xl mx-auto pr-2">
-              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight flex items-center justify-center">
+          <div className="h-full flex flex-col justify-center items-start bg-base-100">
+            <div className="max-w-3xl pr-2">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight lg:-mt-1 xl:mt-4">
                 How much savings do you have?
               </h2>
-              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px] mx-auto">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
                 This helps us calculate your loan amount and upfront costs
               </p>
-              <div className="max-w-md mx-auto relative pr-8">
+              <div className="max-w-md relative pr-8">
                 <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                   formData.savingsAmount ? 'text-gray-800' : 'text-gray-800'
                 }`}>
