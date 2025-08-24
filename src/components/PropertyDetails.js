@@ -37,8 +37,6 @@ export default function PropertyDetails() {
   // Initialize step from store when component mounts or when coming back from other forms
   useEffect(() => {
     if (formData.propertyDetailsCurrentStep && formData.propertyDetailsCurrentStep !== currentStep) {
-      console.log('🔄 PropertyDetails - Syncing step from store:', formData.propertyDetailsCurrentStep);
-      
       // Validate the step based on current state selection
       let validStep = formData.propertyDetailsCurrentStep;
       
@@ -46,7 +44,6 @@ export default function PropertyDetails() {
       if (formData.selectedState !== 'WA' && validStep === 3) {
         // Non-WA states skip step 3, so if we're trying to go to step 3, go to step 4 instead
         validStep = 4;
-        console.log('🔄 Adjusting step from 3 to 4 for non-WA state');
       }
       
       setCurrentStep(validStep);
@@ -57,15 +54,6 @@ export default function PropertyDetails() {
         updateFormData('propertyDetailsCurrentStep', validStep);
       }
     }
-    
-    // Debug: Log current state when component mounts/updates
-    console.log('🔍 PropertyDetails - Component state:', {
-      currentStep,
-      storeStep: formData.propertyDetailsCurrentStep,
-      selectedState: formData.selectedState,
-      isComplete,
-      propertyDetailsComplete: formData.propertyDetailsComplete
-    });
   }, [formData.propertyDetailsCurrentStep, currentStep, isComplete, formData.propertyDetailsComplete, formData.selectedState, updateFormData]);
 
   // Watch for propertyDetailsCurrentStep flag from BuyerDetails
@@ -105,13 +93,11 @@ export default function PropertyDetails() {
         adjustedStep = 4;
         updateFormData('propertyDetailsCurrentStep', adjustedStep);
         setCurrentStep(adjustedStep);
-        console.log('🔄 State changed to non-WA, adjusting step from 3 to 4');
       } else if (formData.selectedState === 'WA' && adjustedStep === 4 && !formData.isWA) {
         // WA states on step 4 without WA selection, move to step 3
         adjustedStep = 3;
         updateFormData('propertyDetailsCurrentStep', adjustedStep);
         setCurrentStep(adjustedStep);
-        console.log('🔄 State changed to WA, adjusting step from 4 to 3');
       }
     }
   }, [formData.selectedState, formData.isWA, formData.propertyDetailsCurrentStep, updateFormData]);
@@ -124,18 +110,46 @@ export default function PropertyDetails() {
   }, [formData.selectedState, formData.isACT, updateFormData]);
 
   const nextStep = () => {
-    console.log('✅ PropertyDetails - OK/Next Pressed:', {
-      currentStep,
+    
+    // Log current form entries before proceeding
+    console.log('🚀 PropertyDetails - Next Button Pressed - Step:', currentStep);
+    console.log('📋 Current Form Entries:', {
+      // Property Details
       propertyAddress: formData.propertyAddress,
       selectedState: formData.selectedState,
+      isWA: formData.isWA,
       propertyCategory: formData.propertyCategory,
       propertyType: formData.propertyType,
-      propertyPrice: formData.propertyPrice
+      propertyPrice: formData.propertyPrice,
+      // Buyer Details
+      buyerType: formData.buyerType,
+      isPPR: formData.isPPR,
+      isAustralianResident: formData.isAustralianResident,
+      isFirstHomeBuyer: formData.isFirstHomeBuyer,
+      hasPensionCard: formData.hasPensionCard,
+      needsLoan: formData.needsLoan,
+      savingsAmount: formData.savingsAmount,
+      income: formData.income,
+      // Loan Details
+      loanDeposit: formData.loanDeposit,
+      loanType: formData.loanType,
+      loanTerm: formData.loanTerm,
+      loanRate: formData.loanRate,
+      loanLMI: formData.loanLMI,
+      loanSettlementFees: formData.loanSettlementFees,
+      loanEstablishmentFee: formData.loanEstablishmentFee,
+      // Seller Questions
+      councilRates: formData.councilRates,
+      waterRates: formData.waterRates,
+      bodyCorp: formData.bodyCorp,
+      landTransferFee: formData.landTransferFee,
+      legalFees: formData.legalFees,
+      buildingAndPestInspection: formData.buildingAndPestInspection,
+      sellerQuestion7: formData.sellerQuestion7
     });
     
     // Initialize the store with current step if this is the first call
     if (currentStep === 1) {
-      console.log('🔧 Initializing propertyDetailsActiveStep to:', currentStep);
       updateFormData('propertyDetailsActiveStep', currentStep);
     }
     
@@ -155,16 +169,52 @@ export default function PropertyDetails() {
         
         setCurrentStep(nextStepNumber);
         // Update the store with current step for progress tracking
-        console.log('🔧 Updating propertyDetailsActiveStep to:', nextStepNumber);
         updateFormData('propertyDetailsActiveStep', nextStepNumber);
         setIsTransitioning(false);
       }, 150);
     } else {
-      // Form is complete - calculate and log stamp duty
+      // Form is complete - calculate stamp duty
       calculateAndLogStampDuty();
       setIsComplete(true);
       // Set a separate flag for UpfrontCosts (not the main navigation flag)
       updateFormData('propertyDetailsFormComplete', true);
+      
+      // Log final form completion
+      console.log('🎉 Property Details Form Complete!');
+      console.log('📊 Final Form Summary:', {
+        // Property Details
+      propertyAddress: formData.propertyAddress,
+      selectedState: formData.selectedState,
+      isWA: formData.isWA,
+      propertyCategory: formData.propertyCategory,
+      propertyType: formData.propertyType,
+      propertyPrice: formData.propertyPrice,
+      // Buyer Details
+      buyerType: formData.buyerType,
+      isPPR: formData.isPPR,
+      isAustralianResident: formData.isAustralianResident,
+      isFirstHomeBuyer: formData.isFirstHomeBuyer,
+      hasPensionCard: formData.hasPensionCard,
+      needsLoan: formData.needsLoan,
+      savingsAmount: formData.savingsAmount,
+      income: formData.income,
+      // Loan Details
+      loanDeposit: formData.loanDeposit,
+      loanType: formData.loanType,
+      loanTerm: formData.loanTerm,
+      loanRate: formData.loanRate,
+      loanLMI: formData.loanLMI,
+      loanSettlementFees: formData.loanSettlementFees,
+      loanEstablishmentFee: formData.loanEstablishmentFee,
+      // Seller Questions
+      councilRates: formData.councilRates,
+      waterRates: formData.waterRates,
+      bodyCorp: formData.bodyCorp,
+      landTransferFee: formData.landTransferFee,
+      legalFees: formData.legalFees,
+      buildingAndPestInspection: formData.buildingAndPestInspection,
+      sellerQuestion7: formData.sellerQuestion7
+      });
     }
   };
 
@@ -201,20 +251,19 @@ export default function PropertyDetails() {
         
         setCurrentStep(prevStepNumber);
         // Update the store with current step for progress tracking
-        console.log('🔧 Updating propertyDetailsActiveStep to:', prevStepNumber);
         updateFormData('propertyDetailsActiveStep', prevStepNumber);
         setIsTransitioning(false);
       }, 150);
     }
   };
 
-  // Calculate stamp duty when form is complete (no logging)
+  // Calculate stamp duty when form is complete
   const calculateAndLogStampDuty = () => {
     if (!stateFunctions) {
       return;
     }
     
-    // Calculate stamp duty but don't log it
+    // Calculate stamp duty
     stateFunctions.calculateStampDuty(formData.propertyPrice, formData.selectedState);
   };
 
@@ -471,7 +520,7 @@ export default function PropertyDetails() {
   return (
     <div className="bg-base-100 rounded-lg overflow-hidden mt-15 md:max-w-[450px] lg:max-w-[650px] xl:max-w-[800px]">
         <div className="flex">
-         <span className={`flex items-center text-xs -mt-85 md:-mt-70 lg:-mt-68 lg:text-sm xl:text-xl lg:pt-15 xl:-mt-64 font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}><span className="text-xs text-base-100">1</span>{isComplete ? getDisplayTotalSteps() : getDisplayStep()}<span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
+         <span className={`flex items-center text-xs -mt-85 md:-mt-70 lg:-mt-68 lg:text-sm xl:text-xl lg:pt-15 xl:-mt-64 font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}><span className="text-xs text-base-100">&nbsp;&nbsp;&nbsp;</span>{isComplete ? getDisplayTotalSteps() : getDisplayStep()}<span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
         <div className="pb-6 pb-24 md:pb-8 flex">
           {/* Step Content */}
           <div className="h-80 max-w-[400px] lg:max-w-[6500px] xl:max-w-[800px]">

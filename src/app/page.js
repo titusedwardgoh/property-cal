@@ -28,29 +28,7 @@ export default function Page() {
     const loanDetailsActiveStep = formData.loanDetailsActiveStep;
     const sellerQuestionsActiveStep = formData.sellerQuestionsActiveStep;
     
-    // Debug logging for progress tracking
-    useEffect(() => {
-        console.log('Form Store Debug:', {
-            propertyDetailsCurrentStep: formData.propertyDetailsCurrentStep,
-            buyerDetailsActiveStep: formData.buyerDetailsActiveStep,
-            loanDetailsActiveStep: formData.loanDetailsActiveStep,
-            sellerQuestionsActiveStep: formData.sellerQuestionsActiveStep,
-            selectedState: formData.selectedState,
-            isACT: formData.isACT
-        });
-    }, [formData.propertyDetailsCurrentStep, formData.buyerDetailsActiveStep, formData.loanDetailsActiveStep, formData.sellerQuestionsActiveStep, formData.selectedState, formData.isACT]);
-    
-    // Additional debug logging for the destructured values
-    useEffect(() => {
-        console.log('Destructured Values Debug:', {
-            propertyDetailsCurrentStep,
-            buyerDetailsActiveStep,
-            loanDetailsActiveStep,
-            sellerQuestionsActiveStep,
-            selectedState,
-            isACT
-        });
-    }, [propertyDetailsCurrentStep, buyerDetailsActiveStep, loanDetailsActiveStep, sellerQuestionsActiveStep, selectedState, isACT]);
+
 
     return (
         <div className="min-h-screen bg-base-200">
@@ -141,7 +119,6 @@ export default function Page() {
                                             }
                                         }
                                         
-                                        console.log('Progress Debug:', progress);
                                         return progress;
                                     })()}%` }}
                                 ></div>

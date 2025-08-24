@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import useFormNavigation from './shared/FormNavigation.js';
 import { useFormStore } from '../stores/formStore';
+import { formatCurrency } from '../states/shared/baseCalculations.js';
 
 export default function SellerQuestions() {
   const formData = useFormStore();
@@ -43,6 +44,43 @@ export default function SellerQuestions() {
   };
 
   const nextStep = useCallback(() => {
+    // Log current form entries before proceeding
+    console.log('🚀 SellerQuestions - Next Button Pressed - Step:', currentStep);
+    console.log('📋 Current Form Entries:', {
+      // Property Details
+      propertyAddress: formData.propertyAddress,
+      selectedState: formData.selectedState,
+      isWA: formData.isWA,
+      propertyCategory: formData.propertyCategory,
+      propertyType: formData.propertyType,
+      propertyPrice: formData.propertyPrice,
+      // Buyer Details
+      buyerType: formData.buyerType,
+      isPPR: formData.isPPR,
+      isAustralianResident: formData.isAustralianResident,
+      isFirstHomeBuyer: formData.isFirstHomeBuyer,
+      hasPensionCard: formData.hasPensionCard,
+      needsLoan: formData.needsLoan,
+      savingsAmount: formData.savingsAmount,
+      income: formData.income,
+      // Loan Details (if applicable)
+      loanDeposit: formData.loanDeposit,
+      loanType: formData.loanType,
+      loanTerm: formData.loanTerm,
+      loanRate: formData.loanRate,
+      loanLMI: formData.loanLMI,
+      loanSettlementFees: formData.loanSettlementFees,
+      loanEstablishmentFee: formData.loanEstablishmentFee,
+      // Seller Questions
+      councilRates: formData.councilRates,
+      waterRates: formData.waterRates,
+      bodyCorp: formData.bodyCorp,
+      landTransferFee: formData.landTransferFee,
+      legalFees: formData.legalFees,
+      buildingAndPestInspection: formData.buildingAndPestInspection,
+      sellerQuestion7: formData.sellerQuestion7
+    });
+    
     // Initialize the store with current step if this is the first call
     if (currentStep === 1) {
       updateFormData('sellerQuestionsActiveStep', currentStep);
@@ -56,8 +94,45 @@ export default function SellerQuestions() {
       // Form is complete
       updateFormData('sellerQuestionsComplete', true);
       setLocalCompletionState(true);
+      
+      // Log final form completion
+      console.log('🎉 Seller Questions Form Complete!');
+      console.log('📊 Final Complete Form Summary:', {
+        // Property Details
+        propertyAddress: formData.propertyAddress,
+        selectedState: formData.selectedState,
+        isWA: formData.isWA,
+        propertyCategory: formData.propertyCategory,
+        propertyType: formData.propertyType,
+        propertyPrice: formData.propertyPrice,
+        // Buyer Details
+        buyerType: formData.buyerType,
+        isPPR: formData.isPPR,
+        isAustralianResident: formData.isAustralianResident,
+        isFirstHomeBuyer: formData.isFirstHomeBuyer,
+        hasPensionCard: formData.hasPensionCard,
+        needsLoan: formData.needsLoan,
+        savingsAmount: formData.savingsAmount,
+        income: formData.income,
+              // Loan Details (if applicable)
+      loanDeposit: formData.loanDeposit,
+      loanType: formData.loanType,
+      loanTerm: formData.loanTerm,
+      loanRate: formData.loanRate,
+      loanLMI: formData.loanLMI,
+      loanSettlementFees: formData.loanSettlementFees,
+      loanEstablishmentFee: formData.loanEstablishmentFee,
+        // Seller Questions
+        councilRates: formData.councilRates,
+        waterRates: formData.waterRates,
+        bodyCorp: formData.bodyCorp,
+        landTransferFee: formData.landTransferFee,
+        legalFees: formData.legalFees,
+        buildingAndPestInspection: formData.buildingAndPestInspection,
+        sellerQuestion7: formData.sellerQuestion7
+      });
     }
-  }, [currentStep, totalSteps, updateFormData]);
+  }, [currentStep, totalSteps, updateFormData, formData]);
 
   const prevStep = useCallback(() => {
     if (currentStep > 1) {
@@ -95,23 +170,23 @@ export default function SellerQuestions() {
   const isCurrentStepValid = useCallback(() => {
     switch (currentStep) {
       case 1:
-        return formData.sellerQuestion1 && formData.sellerQuestion1.trim() !== '';
+        return formData.councilRates && formData.councilRates.trim() !== '';
       case 2:
-        return formData.sellerQuestion2 && formData.sellerQuestion2.trim() !== '';
+        return formData.waterRates && formData.waterRates.trim() !== '';
       case 3:
-        return formData.sellerQuestion3 && formData.sellerQuestion3.trim() !== '';
+        return formData.bodyCorp && formData.bodyCorp.trim() !== '';
       case 4:
-        return formData.sellerQuestion4 && formData.sellerQuestion4.trim() !== '';
+        return formData.landTransferFee && formData.landTransferFee.trim() !== '';
       case 5:
-        return formData.sellerQuestion5 && formData.sellerQuestion5.trim() !== '';
+        return formData.legalFees && formData.legalFees.trim() !== '';
       case 6:
-        return formData.sellerQuestion6 && formData.sellerQuestion6.trim() !== '';
+        return formData.buildingAndPestInspection && formData.buildingAndPestInspection.trim() !== '';
       case 7:
         return formData.sellerQuestion7 && formData.sellerQuestion7.trim() !== '';
       default:
         return false;
     }
-  }, [currentStep, formData.sellerQuestion1, formData.sellerQuestion2, formData.sellerQuestion3, formData.sellerQuestion4, formData.sellerQuestion5, formData.sellerQuestion6, formData.sellerQuestion7]);
+  }, [currentStep, formData.councilRates, formData.waterRates, formData.bodyCorp, formData.landTransferFee, formData.legalFees, formData.buildingAndPestInspection, formData.sellerQuestion7]);
 
   // Use shared navigation hook
   useFormNavigation({
@@ -131,16 +206,13 @@ export default function SellerQuestions() {
       }
     }, [localCompletionState, updateFormData]),
     onBack: useCallback(() => {
-      console.log('onBack called, localCompletionState:', localCompletionState);
       if (localCompletionState) {
         // We're on the completion page, go back to the last question
-        console.log('Going back from completion page to Q7');
         updateFormData('sellerQuestionsComplete', false);
         setLocalCompletionState(false);
         setCurrentStep(7);
       } else {
         // We're on a question, use the normal back logic
-        console.log('Using normal back logic');
         handleBack();
       }
     }, [localCompletionState, updateFormData, handleBack]),
@@ -148,55 +220,46 @@ export default function SellerQuestions() {
   });
 
   const renderStep = () => {
-    console.log('renderStep called, localCompletionState:', localCompletionState, 'currentStep:', currentStep);
     // Show completion message if form is complete
     if (localCompletionState) {
-      console.log('Rendering completion message');
       return (
         <div className="flex flex-col mt-12 pr-2">
-          <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+          <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
             Seller Questions Complete
           </h2>
-          <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+          <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
             All forms are now complete!
           </p>
         </div>
       );
     }
-
-    console.log('Rendering question for step:', currentStep);
     switch (currentStep) {
       case 1:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Seller Question 1
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              Ask the seller: What are the annual council rates?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              This helps calculate ongoing property costs
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('sellerQuestion1', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.sellerQuestion1 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.sellerQuestion1 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+            <div className="max-w-md relative pr-8">
+              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                formData.councilRates ? 'text-gray-800' : 'text-gray-400'
+              }`}>
+                $
+              </div>
+              <input
+                type="tel"
+                placeholder="0"
+                value={formData.councilRates ? formatCurrency(parseInt(formData.councilRates)).replace('$', '') : ''}
+                onChange={(e) => {
+                  // Remove all non-digit characters and update form data
+                  const numericValue = e.target.value.replace(/[^\d]/g, '');
+                  updateFormData('councilRates', numericValue);
+                }}
+                className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+              />
             </div>
           </div>
         );
@@ -204,34 +267,29 @@ export default function SellerQuestions() {
       case 2:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Seller Question 2
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
+            Ask the seller: What are the annual water rates?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              Annual water rates and service charges
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('sellerQuestion2', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.sellerQuestion2 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.sellerQuestion2 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+            <div className="max-w-md relative pr-8">
+              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                formData.waterRates ? 'text-gray-800' : 'text-gray-400'
+              }`}>
+                $
+              </div>
+              <input
+                type="tel"
+                placeholder="0"
+                value={formData.waterRates ? formatCurrency(parseInt(formData.waterRates)).replace('$', '') : ''}
+                onChange={(e) => {
+                  // Remove all non-digit characters and update form data
+                  const numericValue = e.target.value.replace(/[^\d]/g, '');
+                  updateFormData('waterRates', numericValue);
+                }}
+                className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+              />
             </div>
           </div>
         );
@@ -239,34 +297,29 @@ export default function SellerQuestions() {
       case 3:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Seller Question 3
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              Ask the seller: Is there body corporate or strata fees?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              Annual body corporate or strata fees
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('sellerQuestion3', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.sellerQuestion3 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.sellerQuestion3 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+            <div className="max-w-md relative pr-8">
+              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                formData.bodyCorp ? 'text-gray-800' : 'text-gray-400'
+              }`}>
+                $
+              </div>
+              <input
+                type="tel"
+                placeholder="0"
+                value={formData.bodyCorp ? formatCurrency(parseInt(formData.bodyCorp)).replace('$', '') : ''}
+                onChange={(e) => {
+                  // Remove all non-digit characters and update form data
+                  const numericValue = e.target.value.replace(/[^\d]/g, '');
+                  updateFormData('bodyCorp', numericValue);
+                }}
+                className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+              />
             </div>
           </div>
         );
@@ -274,34 +327,29 @@ export default function SellerQuestions() {
       case 4:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Seller Question 4
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              What is the Land Transfer Fee?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              Official registration of property ownership
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('sellerQuestion4', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.sellerQuestion4 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.sellerQuestion4 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+            <div className="max-w-md relative pr-8">
+              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                formData.landTransferFee ? 'text-gray-800' : 'text-gray-400'
+              }`}>
+                $
+              </div>
+              <input
+                type="tel"
+                placeholder="0"
+                value={formData.landTransferFee ? formatCurrency(parseInt(formData.landTransferFee)).replace('$', '') : ''}
+                onChange={(e) => {
+                  // Remove all non-digit characters and update form data
+                  const numericValue = e.target.value.replace(/[^\d]/g, '');
+                  updateFormData('landTransferFee', numericValue);
+                }}
+                className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+              />
             </div>
           </div>
         );
@@ -309,34 +357,29 @@ export default function SellerQuestions() {
       case 5:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Seller Question 5
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              What is the cost for Legal & Conveyancing Services?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              Professional legal services for property transfer
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('sellerQuestion5', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.sellerQuestion5 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.sellerQuestion5 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+            <div className="max-w-md relative pr-8">
+              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                formData.legalFees ? 'text-gray-800' : 'text-gray-400'
+              }`}>
+                $
+              </div>
+              <input
+                type="tel"
+                placeholder="0"
+                value={formData.legalFees ? formatCurrency(parseInt(formData.legalFees)).replace('$', '') : ''}
+                onChange={(e) => {
+                  // Remove all non-digit characters and update form data
+                  const numericValue = e.target.value.replace(/[^\d]/g, '');
+                  updateFormData('legalFees', numericValue);
+                }}
+                className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+              />
             </div>
           </div>
         );
@@ -344,34 +387,29 @@ export default function SellerQuestions() {
       case 6:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Seller Question 6
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              What is the cost for Building and Pest Inspection?
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
-              Placeholder question for now
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              Professional inspection of property condition and pest assessment
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('sellerQuestion6', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.sellerQuestion6 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
-                    formData.sellerQuestion6 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
+            <div className="max-w-md relative pr-8">
+              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                formData.buildingAndPestInspection ? 'text-gray-800' : 'text-gray-400'
+              }`}>
+                $
+              </div>
+              <input
+                type="tel"
+                placeholder="0"
+                value={formData.buildingAndPestInspection ? formatCurrency(parseInt(formData.buildingAndPestInspection)).replace('$', '') : ''}
+                onChange={(e) => {
+                  // Remove all non-digit characters and update form data
+                  const numericValue = e.target.value.replace(/[^\d]/g, '');
+                  updateFormData('buildingAndPestInspection', numericValue);
+                }}
+                className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+              />
             </div>
           </div>
         );
@@ -379,10 +417,10 @@ export default function SellerQuestions() {
       case 7:
         return (
           <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl md:text-5xl font-base text-gray-800 mb-4 leading-tight">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Seller Question 7
             </h2>
-            <p className="md:text-2xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
               Placeholder question for now
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
@@ -400,7 +438,7 @@ export default function SellerQuestions() {
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
+                  <div className={`text-xs leading-none text-left ${
                     formData.sellerQuestion7 === option.value
                       ? 'text-gray-300'
                       : 'text-gray-500'
@@ -417,18 +455,18 @@ export default function SellerQuestions() {
   };
 
   return (
-    <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-15 md:max-w-[450px] lg:max-w-[650px] xl:max-w-[800px]">
       <div className="flex">
-        <span className={`text-xs font-extrabold mr-2 pt-14 whitespace-nowrap ${
+        <span className={`flex items-center text-xs -mt-85 md:-mt-70 lg:-mt-68 lg:text-sm xl:text-xl lg:pt-15 xl:-mt-64 font-extrabold mr-2 pt-14 whitespace-nowrap ${
           formData.sellerQuestionsComplete ? 'text-base-100' : 'text-primary'
         }`}>
-                     <span className="text-xs text-base-100">{formData.needsLoan === 'yes' ? '3' : '2'}</span>
-           {formData.sellerQuestionsComplete ? (getStartingStepNumber() + totalSteps - 1) : (currentStep + getStartingStepNumber() - 1)} 
-           <span className={`text-xs ${formData.sellerQuestionsComplete ? 'text-primary' : ''}`}>→</span>
+          <span className="text-xs text-base-100">{formData.needsLoan === 'yes' ? '3' : '2'}</span>
+          {formData.sellerQuestionsComplete ? (getStartingStepNumber() + totalSteps - 1) : (currentStep + getStartingStepNumber() - 1)} 
+          <span className={`text-xs ${formData.sellerQuestionsComplete ? 'text-primary' : ''}`}>→</span>
         </span>
-        <div className="pb-6 md:p-8 pb-24 md:pb-8 flex">
+        <div className="pb-6 pb-24 md:pb-8 flex">
           {/* Step Content */}
-          <div className="h-80">
+          <div className="h-80 max-w-[400px] lg:max-w-[650px] xl:max-w-[800px]">
             {renderStep()}
           </div>
         </div>
@@ -450,7 +488,6 @@ export default function SellerQuestions() {
              <>
                <button
                  onClick={() => {
-                   console.log('Back button clicked from completion page');
                    setLocalCompletionState(false);
                    setCurrentStep(7);
                    updateFormData('sellerQuestionsComplete', false);
@@ -462,7 +499,6 @@ export default function SellerQuestions() {
                
                <button
                  onClick={() => {
-                   console.log('Next button clicked from completion page');
                    updateFormData('allFormsComplete', true);
                  }}
                  className="flex-1 ml-4 px-6 py-3 bg-primary rounded-full border border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm text-base font-medium cursor-pointer"

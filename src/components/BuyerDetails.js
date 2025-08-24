@@ -45,15 +45,42 @@ export default function BuyerDetails() {
       updateFormData('buyerDetailsActiveStep', currentStep);
     }
     
-    console.log('✅ BuyerDetails - OK/Next Pressed:', {
-      currentStep,
-      buyerType: formData.buyerType,
-      isPPR: formData.isPPR,
-      isAustralianResident: formData.isAustralianResident,
-      isFirstHomeBuyer: formData.isFirstHomeBuyer,
-      hasPensionCard: formData.hasPensionCard,
-      needsLoan: formData.needsLoan,
-      savingsAmount: formData.savingsAmount
+    // Log current form entries before proceeding
+    console.log('🚀 BuyerDetails - Next Button Pressed - Step:', currentStep);
+    console.log('📋 Current Form Entries:', {
+      // Property Details
+   // Property Details
+        propertyAddress: formData.propertyAddress,
+        selectedState: formData.selectedState,
+        isWA: formData.isWA,
+        propertyCategory: formData.propertyCategory,
+        propertyType: formData.propertyType,
+        propertyPrice: formData.propertyPrice,
+        // Buyer Details
+        buyerType: formData.buyerType,
+        isPPR: formData.isPPR,
+        isAustralianResident: formData.isAustralianResident,
+        isFirstHomeBuyer: formData.isFirstHomeBuyer,
+        hasPensionCard: formData.hasPensionCard,
+        needsLoan: formData.needsLoan,
+        savingsAmount: formData.savingsAmount,
+        income: formData.income,
+        // Loan Details
+        loanDeposit: formData.loanDeposit,
+        loanType: formData.loanType,
+        loanTerm: formData.loanTerm,
+        loanRate: formData.loanRate,
+        loanLMI: formData.loanLMI,
+        loanSettlementFees: formData.loanSettlementFees,
+        loanEstablishmentFee: formData.loanEstablishmentFee,
+              // Seller Questions
+      councilRates: formData.councilRates,
+      waterRates: formData.waterRates,
+      bodyCorp: formData.bodyCorp,
+      landTransferFee: formData.landTransferFee,
+      legalFees: formData.legalFees,
+      buildingAndPestInspection: formData.buildingAndPestInspection,
+      sellerQuestion7: formData.sellerQuestion7
     });
     
     if (currentStep < totalSteps) {
@@ -155,7 +182,7 @@ export default function BuyerDetails() {
           <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
             {formData.needsLoan === 'yes' 
               ? 'Now let\'s get some details about your loan...'
-              : 'Now let\'s ask a few questions about the seller...'
+              : 'Now let\'s ask a few additional questions some of which you need to ask the seller...'
             }
           </p>
 
@@ -175,8 +202,8 @@ export default function BuyerDetails() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
               {[
-                { value: 'owner-occupier', label: 'Owner-Occupier', description: 'You will live in this property' },
-                { value: 'investor', label: 'Investor', description: 'You will rent this property out' }
+                { value: 'owner-occupier', label: 'Owner-Occupier', description: 'I will live in this property' },
+                { value: 'investor', label: 'Investor', description: 'I will rent this property out' }
               ].map((option) => (
                 <button
                   key={option.value}
@@ -188,7 +215,7 @@ export default function BuyerDetails() {
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
+                  <div className={`text-xs leading-none text-left ${
                     formData.buyerType === option.value || 
                     formData.isPPR === option.value || 
                     formData.isAustralianResident === option.value || 
@@ -227,7 +254,7 @@ export default function BuyerDetails() {
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
+                  <div className={`text-xs leading-none text-left ${
                     formData.buyerType === option.value || 
                     formData.isPPR === option.value || 
                     formData.isAustralianResident === option.value || 
@@ -305,7 +332,7 @@ export default function BuyerDetails() {
                   }`}
                 >
                   <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none ${
+                  <div className={`text-xs leading-none text-left ${
                     formData.buyerType === option.value || 
                     formData.isPPR === option.value || 
                     formData.isAustralianResident === option.value || 
@@ -544,7 +571,7 @@ export default function BuyerDetails() {
         <span className={`flex items-center text-xs -mt-85 md:-mt-70 lg:-mt-68 lg:text-sm xl:text-xl lg:pt-15 xl:-mt-64 font-extrabold mr-2 pt-14 whitespace-nowrap ${
           formData.buyerDetailsComplete ? 'text-base-100' : 'text-primary'
         }`}>
-          {(formData.buyerDetailsComplete ? getStartingStepNumber() : currentStep + getStartingStepNumber() - 1) < 10 ? <span className="text-xs text-base-100">*</span> : null}
+          {(formData.buyerDetailsComplete ? getStartingStepNumber() : currentStep + getStartingStepNumber() - 1) < 10 ? <span className="text-xs text-base-100">&nbsp;&nbsp;&nbsp;</span> : null}
           {formData.buyerDetailsComplete ? getStartingStepNumber() : currentStep + getStartingStepNumber() - 1} 
           <span className={`text-xs ${formData.buyerDetailsComplete ? 'text-primary' : ''}`}>→</span>
         </span>
