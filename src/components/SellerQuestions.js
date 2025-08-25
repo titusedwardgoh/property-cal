@@ -227,7 +227,7 @@ export default function SellerQuestions() {
           <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
             Seller Questions Complete
           </h2>
-          <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+          <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
             All forms are now complete!
           </p>
         </div>
@@ -240,10 +240,10 @@ export default function SellerQuestions() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Ask the seller: What are the annual council rates?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               This helps calculate ongoing property costs
             </p>
-            <div className="max-w-md relative pr-8">
+            <div className="relative pr-8">
               <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                 formData.councilRates ? 'text-gray-800' : 'text-gray-400'
               }`}>
@@ -270,10 +270,10 @@ export default function SellerQuestions() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
             Ask the seller: What are the annual water rates?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Annual water rates and service charges
             </p>
-            <div className="max-w-md relative pr-8">
+            <div className="relative pr-8">
               <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                 formData.waterRates ? 'text-gray-800' : 'text-gray-400'
               }`}>
@@ -300,10 +300,10 @@ export default function SellerQuestions() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Ask the seller: Is there body corporate or strata fees?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Annual body corporate or strata fees
             </p>
-            <div className="max-w-md relative pr-8">
+            <div className="relative pr-8">
               <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                 formData.bodyCorp ? 'text-gray-800' : 'text-gray-400'
               }`}>
@@ -330,10 +330,10 @@ export default function SellerQuestions() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               What is the Land Transfer Fee?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Official registration of property ownership
             </p>
-            <div className="max-w-md relative pr-8">
+            <div className="relative pr-8">
               <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                 formData.landTransferFee ? 'text-gray-800' : 'text-gray-400'
               }`}>
@@ -360,10 +360,10 @@ export default function SellerQuestions() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               What is the cost for Legal & Conveyancing Services?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Professional legal services for property transfer
             </p>
-            <div className="max-w-md relative pr-8">
+            <div className="relative pr-8">
               <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                 formData.legalFees ? 'text-gray-800' : 'text-gray-400'
               }`}>
@@ -390,10 +390,10 @@ export default function SellerQuestions() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               What is the cost for Building and Pest Inspection?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Professional inspection of property condition and pest assessment
             </p>
-            <div className="max-w-md relative pr-8">
+            <div className="relative pr-8">
               <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                 formData.buildingAndPestInspection ? 'text-gray-800' : 'text-gray-400'
               }`}>
@@ -420,10 +420,10 @@ export default function SellerQuestions() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Seller Question 7
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Placeholder question for now
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-8">
               {[
                 { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
                 { value: 'no', label: 'No', description: 'I am not a placeholder' }
@@ -455,7 +455,7 @@ export default function SellerQuestions() {
   };
 
   return (
-    <div className="bg-base-100 rounded-lg overflow-hidden mt-15 md:max-w-[450px] lg:max-w-[650px] xl:max-w-[800px]">
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
       <div className="flex">
         <span className={`flex items-center text-xs -mt-85 md:-mt-70 lg:-mt-68 lg:text-sm xl:text-xl lg:pt-15 xl:-mt-64 font-extrabold mr-2 pt-14 whitespace-nowrap ${
           formData.sellerQuestionsComplete ? 'text-base-100' : 'text-primary'
@@ -466,7 +466,7 @@ export default function SellerQuestions() {
         </span>
         <div className="pb-6 pb-24 md:pb-8 flex">
           {/* Step Content */}
-          <div className="h-80 max-w-[400px] lg:max-w-[650px] xl:max-w-[800px]">
+          <div className="h-80">
             {renderStep()}
           </div>
         </div>
@@ -482,7 +482,7 @@ export default function SellerQuestions() {
           ></div>
         </div>
         
-                 <div className="flex justify-between max-w-4xl mx-auto mt-4">
+                 <div className="flex justify-between mx-auto mt-4">
            {localCompletionState ? (
              // Completion state: Back to last question and Next to final completion
              <>

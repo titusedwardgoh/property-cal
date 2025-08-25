@@ -203,7 +203,7 @@ export default function LoanDetails() {
           <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
             Loan Details Complete
           </h2>
-          <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+          <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
             Now let&apos;s ask a few additional questions some of which you need to ask the seller...
           </p>
         </div>
@@ -217,10 +217,10 @@ export default function LoanDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               What is your deposit amount?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               This will help us calculate your loan amount and LMI requirements
             </p>
-            <div className="max-w-md relative pr-8">
+            <div className="relative pr-8">
               <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                 formData.loanDeposit ? 'text-gray-800' : 'text-gray-400'
               }`}>
@@ -247,7 +247,7 @@ export default function LoanDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               What type of loan do you need?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               This affects your monthly payments and loan structure
             </p>
             <div className="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 mb-8">
@@ -282,10 +282,10 @@ export default function LoanDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               How long do you want your mortgage for?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Enter the number of years for your loan (1-30 years)
             </p>
-            <div className="max-w-md relative">
+            <div className="relative">
               <input
                 type="number"
                 min="1"
@@ -316,10 +316,10 @@ export default function LoanDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               What is your interest rate are you paying?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Enter the annual interest rate percentage for your loan
             </p>
-            <div className="max-w-md relative">
+            <div className="relative">
               <input
                 type="number"
                 min="0.01"
@@ -349,7 +349,7 @@ export default function LoanDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Do you need Lenders Mortgage Insurance?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               LMI is typically required when your deposit is less than 20% of the property value
             </p>
             <div className="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 mb-8">
@@ -384,10 +384,10 @@ export default function LoanDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Banks usually charge a Settlement Fee
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Fee charged by the bank for settlement processing
             </p>
-            <div className="max-w-md relative pr-8">
+            <div className="relative pr-8">
               <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                 formData.loanSettlementFees ? 'text-gray-800' : 'text-gray-400'
               }`}>
@@ -419,10 +419,10 @@ export default function LoanDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Banks usually charge an Establishment Fee
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Fee charged by the bank for setting up your loan
             </p>
-            <div className="max-w-md relative pr-8">
+            <div className="relative pr-8">
               <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                 formData.loanEstablishmentFee ? 'text-gray-800' : 'text-gray-400'
               }`}>
@@ -454,7 +454,7 @@ export default function LoanDetails() {
   };
 
   return (
-    <div className="bg-base-100 rounded-lg overflow-hidden mt-15 md:max-w-[450px] lg:max-w-[650px] xl:max-w-[800px]">
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
       <div className="flex">
         <span className={`flex items-center text-xs -mt-85 md:-mt-70 lg:-mt-68 lg:text-sm xl:text-xl lg:pt-15 xl:-mt-64 font-extrabold mr-2 pt-14 whitespace-nowrap ${formData.loanDetailsComplete ? 'text-base-100' : 'text-primary'}`}>
           <span className="text-xs text-base-100">{formData.needsLoan === 'yes' ? '3' : '2'}</span>{formData.loanDetailsComplete ? (getStartingStepNumber() + totalSteps - 1) : (currentStep + getStartingStepNumber() - 1)} 
@@ -462,14 +462,14 @@ export default function LoanDetails() {
         </span>
         <div className="pb-6 pb-24 md:pb-8 flex">
           {/* Step Content */}
-          <div className="h-80 max-w-[400px] lg:max-w-[650px] xl:max-w-[800px]">
+          <div className="h-80">
             {renderStep()}
           </div>
         </div>
       </div>
 
       {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
-      <div className="md:pl-8 md:max-w-[420px] lg:max-w-[500px] fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
+      <div className="md:pl-8 fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
         {/* Progress Bar - Now rendered on main page for medium+ screens */}
         <div className="block md:hidden w-full bg-gray-100 h-1 mb-4">
           <div 
@@ -478,7 +478,7 @@ export default function LoanDetails() {
           ></div>
         </div>
         
-        <div className="flex justify-start max-w-4xl mx-auto mt-4">
+        <div className="flex justify-start mx-auto mt-4">
           {formData.loanDetailsComplete ? (
             // Completion state: Back to Q7 and Next to SellerQuestions
             <>
