@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 // Import state-specific functions
-import { calculateNSWStampDuty } from './nsw/calculations.js';
+import { calculateNSWStampDuty, calculateNSWFirstHomeOwnersGrant } from './nsw/calculations.js';
 import { calculateVICStampDuty } from './vic/calculations.js';
 import { calculateQLDStampDuty } from './qld/calculations.js';
 import { calculateSAStampDuty } from './sa/calculations.js';
@@ -49,9 +49,18 @@ export const useStateSelector = (selectedState) => {
         return () => 0; // Placeholder for other states
     }
   };
+
+  // Get NSW First Home Owners Grant function if NSW is selected
+  const getNSWFirstHomeOwnersGrantFunction = () => {
+    if (selectedState === 'NSW') {
+      return calculateNSWFirstHomeOwnersGrant;
+    }
+    return null;
+  };
   
   const stateFunctions = {
     calculateStampDuty: getStampDutyFunction(),
+    calculateNSWFirstHomeOwnersGrant: getNSWFirstHomeOwnersGrantFunction(),
     // Shared functions that exist
     calculateMonthlyRepayment,
     calculateTotalRepayments,

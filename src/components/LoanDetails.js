@@ -250,7 +250,7 @@ export default function LoanDetails() {
             <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
               This affects your monthly payments and loan structure
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 mb-8">
               {[
                 { value: 'principal-and-interest', label: 'Principal and Interest', description: 'Pay both principal and interest each month' },
                 { value: 'interest-only', label: 'Interest Only', description: 'Pay only interest for a set period' }
@@ -258,7 +258,7 @@ export default function LoanDetails() {
                 <button
                   key={option.value}
                   onClick={() => updateFormData('loanType', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                  className={`py-2 px-3 rounded-lg w-full md:w-[260px] border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
                     formData.loanType === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
@@ -352,7 +352,7 @@ export default function LoanDetails() {
             <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
               LMI is typically required when your deposit is less than 20% of the property value
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 mb-8">
               {[
                 { value: 'yes', label: 'Yes', description: 'I need LMI coverage' },
                 { value: 'no', label: 'No', description: 'I don\'t need LMI coverage' }
@@ -360,7 +360,7 @@ export default function LoanDetails() {
                 <button
                   key={option.value}
                   onClick={() => updateFormData('loanLMI', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                  className={`py-2 px-3 rounded-lg w-full md:w-[260px] border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
                     formData.loanLMI === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'

@@ -35,7 +35,7 @@ export default function Page() {
             <main className="container mx-auto px-4 py-4 lg:py-10 max-w-7xl">
                 <div className="flex flex-col md:flex-row gap-6">
                     {/* Progress Bar - above UpfrontCosts on medium+ screens */}
-                    <div className="order-1 md:order-2 md:w-80 md:flex-shrink-0 md:p-6 md:rounded-r-lg md:mt-22">
+                    <div className="order-1 md:order-2 md:w-2/5 md:flex-shrink-0 md:p-6 md:rounded-r-lg md:mt-22">
                                                 {/* Progress Bar */}
                         <div className="hidden md:block mb-4">
                             <h4 className="text-sm lg:text-base font-medium text-gray-700 mb-2">Overall Progress</h4>
@@ -129,7 +129,7 @@ export default function Page() {
                     </div>
                     
                     {/* Main content area */}
-                    <div className="order-2 md:order-1 flex-1">
+                    <div className="order-2 md:order-1 md:w-3/5">
                         {!propertyDetailsComplete ? (
                             <PropertyDetails />
                         ) : !buyerDetailsComplete ? (

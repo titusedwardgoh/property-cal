@@ -179,7 +179,7 @@ export default function BuyerDetails() {
           <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
             Buyer Details Complete
           </h2>
-          <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+          <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
             {formData.needsLoan === 'yes' 
               ? 'Now let\'s get some details about your loan...'
               : 'Now let\'s ask a few additional questions some of which you need to ask the seller...'
@@ -197,10 +197,10 @@ export default function BuyerDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Are you an Owner or Investor?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               This affects your eligibility for concessions and grants
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 mb-8">
               {[
                 { value: 'owner-occupier', label: 'Owner-Occupier', description: 'I will live in this property' },
                 { value: 'investor', label: 'Investor', description: 'I will rent this property out' }
@@ -208,7 +208,7 @@ export default function BuyerDetails() {
                 <button
                   key={option.value}
                   onClick={() => updateFormData('buyerType', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                  className={`py-2 px-3 rounded-lg w-full md:w-[250px] border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
                     formData.buyerType === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
@@ -236,10 +236,10 @@ export default function BuyerDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Will you live in this property?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               This affects your eligibility for principal place of residence (PPR) concessions
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 mb-8">
               {[
                 { value: 'yes', label: 'Yes', description: 'This will be my main home' },
                 { value: 'no', label: 'No', description: 'This will not be my main home' }
@@ -247,7 +247,7 @@ export default function BuyerDetails() {
                 <button
                   key={option.value}
                   onClick={() => updateFormData('isPPR', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                  className={`py-2 px-3 rounded-lg w-full md:w-[250px] border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
                     formData.isPPR === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
@@ -275,10 +275,10 @@ export default function BuyerDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Australian citizen or permanent resident?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Residents may have additional concessions and foreigners extra duties
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:flex gap-2 max-w-4xl mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 mb-8">
               {[
                 { value: 'yes', label: 'Yes', description: 'Australian citizen or permanent resident' },
                 { value: 'no', label: 'No, I reside overseas', description: 'Foreign buyer' }
@@ -314,10 +314,10 @@ export default function BuyerDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Is this your first home purchase?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               First home buyers may have additional concessions and grants.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 mb-8">
               {[
                 { value: 'yes', label: 'Yes', description: 'This is my first home purchase' },
                 { value: 'no', label: 'No', description: 'I have owned property before' }
@@ -325,7 +325,7 @@ export default function BuyerDetails() {
                 <button
                   key={option.value}
                   onClick={() => updateFormData('isFirstHomeBuyer', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                  className={`py-2 px-3 rounded-lg w-full md:w-[250px] border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
                     formData.isFirstHomeBuyer === option.value
                       ? 'border-gray-800 bg-secondary text-white shadow-lg'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
@@ -353,10 +353,10 @@ export default function BuyerDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               Are you a holder of a pensioneer card?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               This may affect your eligibility for additional concessions and grants.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:flex gap-2 max-w-4xl mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 mb-8">
               {[
                 { value: 'yes', label: 'Yes', description: 'I have a pension or concession card' },
                 { value: 'no', label: 'No', description: 'I do not have a pension or concession card' }
@@ -393,10 +393,10 @@ export default function BuyerDetails() {
                           <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               What is your income?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               In ACT the Home Buyer Concession Scheme (HBCS) is income tested.
             </p>
-              <div className="max-w-md relative pr-8">
+              <div className=" relative pr-8">
                 <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                   formData.income ? 'text-gray-800' : 'text-gray-400'
                 }`}>
@@ -422,10 +422,10 @@ export default function BuyerDetails() {
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 Do you need a loan to purchase?
               </h2>
-              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
                 This affects your loan calculations and costs.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 mb-8">
                 {[
                   { value: 'yes', label: 'Yes', description: 'I need a loan to purchase' },
                   { value: 'no', label: 'No', description: 'I will pay cash' }
@@ -433,7 +433,7 @@ export default function BuyerDetails() {
                   <button
                     key={option.value}
                     onClick={() => updateFormData('needsLoan', option.value)}
-                    className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                    className={`py-2 px-3 rounded-lg w-full md:w-[250px] border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
                       formData.needsLoan === option.value
                         ? 'border-gray-800 bg-secondary text-white shadow-lg'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
@@ -463,10 +463,10 @@ export default function BuyerDetails() {
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 Do you need a loan to purchase?
               </h2>
-              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
                 This affects your loan calculations and costs.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mb-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 mb-8">
                 {[
                   { value: 'yes', label: 'Yes', description: 'I need a loan to purchase' },
                   { value: 'no', label: 'No', description: 'I will pay cash' }
@@ -474,7 +474,7 @@ export default function BuyerDetails() {
                   <button
                     key={option.value}
                     onClick={() => updateFormData('needsLoan', option.value)}
-                    className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                    className={`py-2 px-3 rounded-lg w-full md:w-[250px] border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
                       formData.needsLoan === option.value
                         ? 'border-gray-800 bg-secondary text-white shadow-lg'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
@@ -498,14 +498,14 @@ export default function BuyerDetails() {
         } else {
           return (
             <div className="h-full flex flex-col justify-center items-start bg-base-100">
-              <div className="max-w-3xl pr-2">
+              <div className=" pr-2">
                 <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight lg:-mt-1 xl:mt-4">
                   How much savings do you have?
                 </h2>
-                <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+                <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 ">
                   This helps us calculate your loan amount and upfront costs
                 </p>
-                <div className="max-w-md relative pr-8">
+                <div className=" relative pr-8">
                   <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                     formData.savingsAmount ? 'text-gray-800' : 'text-gray-400'
                   }`}>
@@ -531,14 +531,14 @@ export default function BuyerDetails() {
       case 8:
         return (
           <div className="h-full flex flex-col justify-center items-start bg-base-100">
-            <div className="max-w-3xl pr-2">
+            <div className=" pr-2">
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight lg:-mt-1 xl:mt-4">
                 How much savings do you have?
               </h2>
-              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 ">
                 This helps us calculate your loan amount and upfront costs
               </p>
-              <div className="max-w-md relative pr-8">
+              <div className=" relative pr-8">
                 <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                   formData.savingsAmount ? 'text-gray-800' : 'text-gray-800'
                 }`}>
@@ -566,7 +566,7 @@ export default function BuyerDetails() {
   };
 
   return (
-    <div className="bg-base-100 rounded-lg overflow-hidden mt-15 md:max-w-[450px] lg:max-w-[650px] xl:max-w-[800px]">
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
       <div className="flex">
         <span className={`flex items-center text-xs -mt-85 md:-mt-70 lg:-mt-68 lg:text-sm xl:text-xl lg:pt-15 xl:-mt-64 font-extrabold mr-2 pt-14 whitespace-nowrap ${
           formData.buyerDetailsComplete ? 'text-base-100' : 'text-primary'
@@ -577,14 +577,14 @@ export default function BuyerDetails() {
         </span>
         <div className="pb-6 pb-24 md:pb-8 flex">
           {/* Step Content */}
-          <div className="h-80 max-w-[400px] lg:max-w-[650px] xl:max-w-[800px]">
+          <div className="h-80">
             {renderStep()}
           </div>
         </div>
       </div>
 
       {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
-      <div className="md:pl-8 md:max-w-[420px] lg:max-w-[500px] fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
+      <div className="md:pl-8 fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
         {/* Progress Bar - Now rendered on main page for medium+ screens */}
         <div className="block md:hidden w-full bg-gray-100 h-1 mb-4">
           <div 
@@ -593,7 +593,7 @@ export default function BuyerDetails() {
           ></div>
         </div>
         
-        <div className="flex justify-start max-w-4xl mx-auto mt-4">
+        <div className="flex justify-start mx-auto mt-4">
           {formData.buyerDetailsComplete ? (
             // Completion state: Back and Next buttons
             <>
@@ -623,7 +623,7 @@ export default function BuyerDetails() {
                     updateFormData('showSellerQuestions', true);
                   }
                 }}
-                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm font-medium cursor-pointer lg:max-w-[500px]"
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm font-medium cursor-pointer"
               >
                 Next
               </button>
@@ -641,7 +641,7 @@ export default function BuyerDetails() {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm font-medium cursor-pointer md:max-w-[400px]"
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm font-medium cursor-pointer"
               >
                 OK
               </button>
@@ -659,7 +659,7 @@ export default function BuyerDetails() {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border font-medium md:max-w-[400px] ${
+                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border font-medium ${
                   !isCurrentStepValid()
                     ? 'border-primary-100 cursor-not-allowed bg-gray-50'
                     : 'border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'

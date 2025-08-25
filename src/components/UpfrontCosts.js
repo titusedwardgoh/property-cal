@@ -35,13 +35,38 @@ export default function UpfrontCosts() {
     return stampDuty;
   };
 
+  // Calculate NSW First Home Owners Grant eligibility and amount
+  const calculateFirstHomeOwnersGrant = () => {
+    if (!stateFunctions?.calculateNSWFirstHomeOwnersGrant || !formData.buyerDetailsComplete) {
+      return { eligible: false, amount: 0, reason: '' };
+    }
+
+    const buyerData = {
+      buyerType: formData.buyerType,
+      isPPR: formData.isPPR,
+      isAustralianResident: formData.isAustralianResident,
+      isFirstHomeBuyer: formData.isFirstHomeBuyer
+    };
+
+    const propertyData = {
+      propertyPrice: formData.propertyPrice,
+      propertyType: formData.propertyType,
+      propertyCategory: formData.propertyCategory
+    };
+
+    return stateFunctions.calculateNSWFirstHomeOwnersGrant(buyerData, propertyData, formData.selectedState);
+  };
+
   // Calculate total upfront costs
   const calculateTotalCosts = () => {
     const stampDuty = calculateStampDuty();
     const concession = -2; // Stamp duty concession
+    const firstHomeOwnersGrant = calculateFirstHomeOwnersGrant();
+    const grantAmount = firstHomeOwnersGrant.eligible ? -firstHomeOwnersGrant.amount : 0;
+    
     // Only include Property Price if BuyerDetails is complete and no loan is needed
     const propertyPrice = (formData.buyerDetailsComplete && formData.needsLoan === 'no') ? parseInt(formData.propertyPrice) || 0 : 0;
-    return stampDuty + concession + propertyPrice;
+    return stampDuty + concession + propertyPrice + grantAmount;
   };
 
   return (
@@ -52,10 +77,10 @@ export default function UpfrontCosts() {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <h3 className="text-xl font-medium text-base-100">Upfront Costs</h3>
+            <h3 className="text-lg lg:text-xl xl:text-2xl font-medium text-base-100">Upfront Costs</h3>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-semibold text-base-100">
+            <div className="text-lg lg:text-xl xl:text-2xl font-semibold text-base-100">
               {isPropertyComplete ? formatCurrency(calculateTotalCosts()) : '$0'}
             </div>
           </div>
@@ -69,24 +94,57 @@ export default function UpfrontCosts() {
             {/* Show Property Price first if BuyerDetails complete and no loan needed */}
             {formData.buyerDetailsComplete && formData.needsLoan === 'no' && (
               <div className="flex justify-between items-center">
-                <span className="text-gray-800 text-lg">Property Price</span>
-                <span className="text-gray-800 text-lg font-semibold">
+                <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">Property Price</span>
+                <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl font-medium">
                   {formatCurrency(parseInt(formData.propertyPrice) || 0)}
                 </span>
               </div>
             )}
             <div className="flex justify-between items-center">
-              <span className="text-gray-800 text-lg">Stamp Duty</span>
-              <span className="text-gray-800 text-lg font-semibold">
+              <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">Stamp Duty</span>
+              <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl font-medium">
                 {formatCurrency(calculateStampDuty())}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-800 text-lg">Stamp Duty Concession</span>
-              <span className="text-gray-800 text-lg font-semibold text-green-600">
+              <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">Stamp Duty Concession</span>
+              <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl font-medium text-green-600">
                 -$2
               </span>
             </div>
+            {/* Show First Home Owners Grant if eligible */}
+            {formData.buyerDetailsComplete && formData.selectedState === 'NSW' && (
+              (() => {
+                const grant = calculateFirstHomeOwnersGrant();
+                if (grant.eligible) {
+                  return (
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">First Home Owners Grant</span>
+                      <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl font-medium text-green-600">
+                        -{formatCurrency(grant.amount)}
+                      </span>
+                    </div>
+                  );
+                } else if (grant.reason && grant.reason !== 'Not NSW') {
+                  return (
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">First Home Owners Grant</span>
+                      <span 
+                        className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help"
+                        title={grant.reason}
+                      >
+                        Not Eligible
+                                                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                          {grant.reason}
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                        </div>
+                      </span>
+                    </div>
+                  );
+                }
+                return null;
+              })()
+            )}
           </div>
         </div>
       )}

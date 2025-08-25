@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { formatCurrency } from '../states/shared/baseCalculations.js';
 import { useStateSelector } from '../states/useStateSelector.js';
 import useFormNavigation from './shared/FormNavigation.js';
@@ -12,6 +12,7 @@ export default function PropertyDetails() {
   const [direction, setDirection] = useState('forward'); // 'forward' or 'backward'
   const [isComplete, setIsComplete] = useState(false);
   const totalSteps = 6; // Always 6 internal steps, but step 3 is skipped for non-WA
+  const prevPropertyCategoryRef = useRef(formData.propertyCategory);
   
   // Calculate the display step number (what the user sees)
   const getDisplayStep = () => {
@@ -108,6 +109,18 @@ export default function PropertyDetails() {
       updateFormData('isACT', false);
     }
   }, [formData.selectedState, formData.isACT, updateFormData]);
+
+  // Watch for property category changes and reset property type if needed
+  useEffect(() => {
+    // Only reset property type if the category actually changed (not just navigation)
+    if (prevPropertyCategoryRef.current && 
+        prevPropertyCategoryRef.current !== formData.propertyCategory && 
+        formData.propertyType) {
+      updateFormData('propertyType', '');
+    }
+    // Update the ref to the current value
+    prevPropertyCategoryRef.current = formData.propertyCategory;
+  }, [formData.propertyCategory, formData.propertyType, updateFormData]);
 
   const nextStep = () => {
     
@@ -309,7 +322,7 @@ export default function PropertyDetails() {
           <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
             Basic Property Details Complete
           </h2>
-          <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+          <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
             Now a few questions about you... 
           </p>
         </div>
@@ -323,10 +336,10 @@ export default function PropertyDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
               What&apos;s the property address?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               This helps us determine the state and provide accurate calculations
             </p>
-            <div className="max-w-md  relative pr-8">
+            <div className="  relative pr-8">
               <input
                 type="tel"
                 placeholder="Enter street address"
@@ -344,11 +357,11 @@ export default function PropertyDetails() {
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">  
               Which state is the property in?
             </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[800px]">
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Different states have different stamp duty rates and concessions
             </p>
-            <div className="max-w-md relative pr-8">
-              <div className="grid grid-cols-4 gap-3 max-w-md">
+            <div className=" relative pr-8">
+              <div className="grid grid-cols-4 gap-3">
                 {['NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT'].map((state) => (
                   <button
                     key={state}
@@ -382,10 +395,10 @@ export default function PropertyDetails() {
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 Is the Property north or south?
               </h2>
-              <p className="lg:text-lg xl:text-xl text-gray-500 lg:mb-20 leading-relaxed mb-8 max-w-lg lg:max-w-xl xl:max-w-[900px]">
+              <p className="lg:text-lg xl:text-xl text-gray-500 lg:mb-20 leading-relaxed mb-8">
                 This affects stamp duty calculations for Western Australia
               </p>
-              <div className="grid grid-cols-1 gap-2 max-w-4xl mb-8 md:max-w-[250px] lg:grid-cols-2 lg:max-w-[800px]">
+              <div className="grid grid-cols-1 gap-2 mb-8 lg:grid-cols-2">
                 {[
                   { value: 'north', label: 'North' },
                   { value: 'south', label: 'South' }
@@ -420,10 +433,10 @@ export default function PropertyDetails() {
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 What type of property is it?
               </h2>
-              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg xl:max-w-[800px]">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
                 This affects your stamp duty concessions and ongoing costs
               </p>
-              <div className="grid grid-cols-2 gap-2 max-w-3xl lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
                 {[
                   { value: 'house', label: 'House' },
                   { value: 'apartment', label: 'Apartment' },
@@ -450,21 +463,38 @@ export default function PropertyDetails() {
           return (
             <div className="flex flex-col mt-12 pr-2">
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
-                Is this a new or existing property?
+                {formData.propertyCategory === 'land' 
+                  ? 'Is this a house and land package?' 
+                  : 'Is this property new or existing?'
+                }
               </h2>
-              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl">
-                New properties may have different concessions and costs
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
+                {formData.propertyCategory === 'land' 
+                  ? 'There are different concessions.' 
+                  : 'New properties may have different concessions and costs'
+                }
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 max-w-4xl mb-8">
-                {[
-                  { value: 'existing', label: 'Existing Property', description: 'Already built and lived in' },
-                  { value: 'new', label: 'New Property', description: 'Recently built, never lived in' },
-                  { value: 'off-the-plan', label: 'Off-the-Plan', description: 'Buying before construction' }
-                ].map((option) => (
+              <div className={`grid gap-2 mb-8 ${
+                formData.propertyCategory === 'land' ? 'grid-cols-1' : 'grid-cols-2'
+              }`}>
+                {(
+                  formData.propertyCategory === 'land' 
+                    ? [
+                        { value: 'house-and-land', label: 'House and Land', description: 'As a package or intending to build' },
+                        { value: 'vacant-land-only', label: 'Vacant Land Only', description: 'Not intending to build' }
+                      ]
+                    : [
+                        { value: 'existing', label: 'Existing Property', description: 'Already built and lived in' },
+                        { value: 'new', label: 'New Property', description: 'Recently built, never lived in' },
+                        { value: 'off-the-plan', label: 'Off-the-Plan', description: 'Buying before construction' }
+                      ]
+                ).map((option) => (
                   <button
                     key={option.value}
                     onClick={() => updateFormData('propertyType', option.value)}
-                    className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                    className={`py-2 px-3 rounded-lg border-2 flex flex-col transition-all duration-200 hover:scale-105 max-w-[300px] ${
+                      formData.propertyCategory === 'land' ? 'items-start' : 'items-center'
+                    } ${
                       formData.propertyType === option.value
                         ? 'border-gray-800 bg-secondary text-white shadow-lg'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
@@ -488,10 +518,10 @@ export default function PropertyDetails() {
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 What is the property&apos;s price?
               </h2>
-              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 max-w-lg lg:max-w-xl">
+              <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
                 This will help us calculate your stamp duty and other costs
               </p>
-              <div className="max-w-md relative pr-8">
+              <div className="relative pr-8">
                 <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
                   formData.propertyPrice ? 'text-gray-800' : 'text-gray-400'
                 }`}>
@@ -518,19 +548,19 @@ export default function PropertyDetails() {
   };
 
   return (
-    <div className="bg-base-100 rounded-lg overflow-hidden mt-15 md:max-w-[450px] lg:max-w-[650px] xl:max-w-[800px]">
+    <div className="bg-base-100 rounded-lg overflow-hidden mt-15">
         <div className="flex">
          <span className={`flex items-center text-xs -mt-85 md:-mt-70 lg:-mt-68 lg:text-sm xl:text-xl lg:pt-15 xl:-mt-64 font-extrabold mr-2 pt-14 whitespace-nowrap ${isComplete ? 'text-base-100' : "text-primary"}`}><span className="text-xs text-base-100">&nbsp;&nbsp;&nbsp;</span>{isComplete ? getDisplayTotalSteps() : getDisplayStep()}<span className={`text-xs ${isComplete ? 'text-primary' : ""}`}>→</span></span>
         <div className="pb-6 pb-24 md:pb-8 flex">
           {/* Step Content */}
-          <div className="h-80 max-w-[400px] lg:max-w-[6500px] xl:max-w-[800px]">
+          <div className="h-80">
             {renderStep()}
           </div>
         </div>
       </div>
 
       {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
-      <div className="md:pl-8 md:max-w-[420px] xl:text-lg lg:max-w-[500px] fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
+      <div className="md:pl-8 xl:text-lg fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
         {/* Progress Bar - Now rendered on main page for medium+ screens */}
         <div className="block md:hidden w-full bg-gray-100 h-1 mb-4 ">
           <div 
@@ -539,7 +569,7 @@ export default function PropertyDetails() {
           ></div>
         </div>
         
-        <div className="flex justify-start max-w-4xl mx-auto mt-4">
+        <div className="flex justify-start mx-auto mt-4">
           {isComplete ? (
             // Completion state: Back and Next buttons
             <>
@@ -555,7 +585,7 @@ export default function PropertyDetails() {
               
               <button
                 onClick={goToBuyerDetails}
-                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm font-medium cursor-pointer lg:max-w-[500px]"
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm font-medium cursor-pointer"
               >
                 Next
               </button>
@@ -565,7 +595,7 @@ export default function PropertyDetails() {
             <button
               onClick={nextStep}
               disabled={!isCurrentStepValid()}
-              className={`w-full px-6 py-3 md:max-w-[400px] lg:max-w-auto rounded-full border font-medium   ${
+              className={`w-full px-6 py-3 rounded-full border font-medium   ${
                 !isCurrentStepValid()
                   ? 'border-primary-100 cursor-not-allowed bg-primary'
                   : 'border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
@@ -590,7 +620,7 @@ export default function PropertyDetails() {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className={`flex-1 ml-4 px-6 py-3 md:max-w-[400px] bg-primary rounded-full border font-medium ${
+                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border font-medium ${
                   !isCurrentStepValid()
                     ? 'border-primary-100 cursor-not-allowed bg-gray-50'
                     : 'border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
