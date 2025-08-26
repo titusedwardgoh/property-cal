@@ -608,11 +608,7 @@ export default function PropertyDetails() {
             <>
               <button
                 onClick={prevStep}
-                className={`bg-primary px-6 py-3 rounded-full border border-primary font-medium border-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer ${
-                  isTransitioning && direction === 'backward' ? 'transform translate-x-4 opacity-0' : 
-                  isTransitioning && direction === 'forward' ? 'transform -translate-x-4 opacity-0' : 
-                  'transform translate-x-0 opacity-100'
-                }`}
+                className="bg-primary px-6 py-3 rounded-full border border-primary font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
