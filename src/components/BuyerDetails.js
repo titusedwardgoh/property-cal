@@ -460,7 +460,7 @@ export default function BuyerDetails() {
         if (formData.isACT) {
           return (
             <div className="flex flex-col mt-12 pr-2">
-              <h2 className="text-xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 Do you need a loan to purchase?
               </h2>
               <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
@@ -497,42 +497,8 @@ export default function BuyerDetails() {
           );
         } else {
           return (
-            <div className="h-full flex flex-col justify-center items-start bg-base-100">
-              <div className=" pr-2">
-                <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight lg:-mt-1 xl:mt-19">
-                  How much savings do you have?
-                </h2>
-                <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 ">
-                  This helps us calculate your loan amount and upfront costs
-                </p>
-                <div className=" relative pr-8">
-                  <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
-                    formData.savingsAmount ? 'text-gray-800' : 'text-gray-400'
-                  }`}>
-                    $
-                  </div>
-                  <input
-                    type="tel"
-                    placeholder="0"
-                    value={formData.savingsAmount ? formatCurrency(parseInt(formData.savingsAmount)).replace('$', '') : ''}
-                    onChange={(e) => {
-                      // Remove all non-digit characters and update form data
-                      const numericValue = e.target.value.replace(/[^\d]/g, '');
-                      updateFormData('savingsAmount', numericValue);
-                    }}
-                    className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300"
-                  />
-                </div>
-              </div>
-            </div>
-          );
-        }
-
-      case 8:
-        return (
-          <div className="h-full flex flex-col justify-center items-start bg-base-100">
-            <div className=" pr-2">
-              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight lg:-mt-1 xl:mt-4">
+            <div className="flex flex-col mt-12 pr-2">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 How much savings do you have?
               </h2>
               <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 ">
@@ -540,7 +506,7 @@ export default function BuyerDetails() {
               </p>
               <div className=" relative pr-8">
                 <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
-                  formData.savingsAmount ? 'text-gray-800' : 'text-gray-800'
+                  formData.savingsAmount ? 'text-gray-800' : 'text-gray-400'
                 }`}>
                   $
                 </div>
@@ -553,9 +519,39 @@ export default function BuyerDetails() {
                     const numericValue = e.target.value.replace(/[^\d]/g, '');
                     updateFormData('savingsAmount', numericValue);
                   }}
-                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300"
                 />
               </div>
+            </div>
+          );
+        }
+
+      case 8:
+        return (
+          <div className="flex flex-col mt-12 pr-2">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              How much savings do you have?
+            </h2>
+            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 ">
+              This helps us calculate your loan amount and upfront costs
+            </p>
+            <div className=" relative pr-8">
+              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 text-2xl pointer-events-none ${
+                formData.savingsAmount ? 'text-gray-800' : 'text-gray-400'
+              }`}>
+                $
+              </div>
+              <input
+                type="tel"
+                placeholder="0"
+                value={formData.savingsAmount ? formatCurrency(parseInt(formData.savingsAmount)).replace('$', '') : ''}
+                onChange={(e) => {
+                  // Remove all non-digit characters and update form data
+                  const numericValue = e.target.value.replace(/[^\d]/g, '');
+                  updateFormData('savingsAmount', numericValue);
+                }}
+                className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+              />
             </div>
           </div>
         );
