@@ -519,9 +519,13 @@ export default function SellerQuestions() {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer"
+                className={`flex-1 ml-4 px-6 py-3 rounded-full border border-primary font-medium ${
+                  !isCurrentStepValid()
+                    ? 'border-primary-100 cursor-not-allowed bg-primary text-base-100'
+                    : 'bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
+                }`}
               >
-                OK
+                Next
               </button>
             </>
           ) : (
@@ -537,13 +541,13 @@ export default function SellerQuestions() {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border font-medium ${
+                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border border-primary font-medium ${
                   !isCurrentStepValid()
-                    ? 'border-primary-100 cursor-not-allowed bg-gray-50'
-                    : 'border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
+                    ? 'border-primary-100 cursor-not-allowed bg-gray-50 text-base-100'
+                    : 'text-secondary hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
                 }`}
               >
-                {currentStep === totalSteps ? 'Complete' : 'OK'}
+                {currentStep === totalSteps ? 'Add in other costs' : 'Next'}
               </button>
             </>
           )}
