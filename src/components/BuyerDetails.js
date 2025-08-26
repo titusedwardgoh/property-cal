@@ -460,7 +460,7 @@ export default function BuyerDetails() {
         if (formData.isACT) {
           return (
             <div className="flex flex-col mt-12 pr-2">
-              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
+              <h2 className="text-xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
                 Do you need a loan to purchase?
               </h2>
               <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
@@ -499,7 +499,7 @@ export default function BuyerDetails() {
           return (
             <div className="h-full flex flex-col justify-center items-start bg-base-100">
               <div className=" pr-2">
-                <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight lg:-mt-1 xl:mt-4">
+                <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight lg:-mt-1 xl:mt-19">
                   How much savings do you have?
                 </h2>
                 <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8 ">
@@ -584,7 +584,7 @@ export default function BuyerDetails() {
       </div>
 
       {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
-      <div className="md:pl-8 fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
+      <div className="md:pl-8 xl:text-lg fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
         {/* Progress Bar - Now rendered on main page for medium+ screens */}
         <div className="block md:hidden w-full bg-gray-100 h-1 mb-4">
           <div 

@@ -469,7 +469,7 @@ export default function LoanDetails() {
       </div>
 
       {/* Navigation - Fixed bottom on mobile, normal position on desktop */}
-      <div className="md:pl-8 fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
+      <div className="md:pl-8 xl:text-lg fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-base-100 md:bg-transparent pt-0 pr-4 pb-4 pl-4 md:p-0 md:mt-8 md:px-6 md:pb-8 lg:mt-15 xl:mt-30">
         {/* Progress Bar - Now rendered on main page for medium+ screens */}
         <div className="block md:hidden w-full bg-gray-100 h-1 mb-4">
           <div 
@@ -487,14 +487,14 @@ export default function LoanDetails() {
                   updateFormData('loanDetailsComplete', false);
                   setCurrentStep(7);
                 }}
-                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
+                className="bg-primary px-6 py-3 rounded-full border border-primary font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
               
               <button
                 onClick={() => updateFormData('showSellerQuestions', true)}
-                className="flex-1 ml-4 px-6 py-3 bg-primary rounded-full border border-primary text-base font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer"
+                className="flex-1 ml-4 px-6 py-3 bg-primary rounded-full border border-primary font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer"
               >
                 Next
               </button>
@@ -504,7 +504,7 @@ export default function LoanDetails() {
             <>
               <button
                 onClick={handleBack}
-                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
+                className="bg-primary px-6 py-3 rounded-full border border-primary font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
@@ -512,7 +512,7 @@ export default function LoanDetails() {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm text-base font-medium cursor-pointer"
+                className="flex-1 ml-4 px-6 py-3 rounded-full border border-primary bg-primary font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer"
               >
                 OK
               </button>
@@ -522,7 +522,7 @@ export default function LoanDetails() {
             <>
               <button
                 onClick={prevStep}
-                className="bg-primary px-6 py-3 rounded-full border border-primary text-base font-medium border-primary text-base hover:bg-primary hover:text-base-100 hover:border-primary hover:shadow-sm flex-shrink-0 cursor-pointer"
+                className="bg-primary px-6 py-3 rounded-full border border-primary font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"
               >
                 &lt;
               </button>
@@ -530,10 +530,10 @@ export default function LoanDetails() {
               <button
                 onClick={nextStep}
                 disabled={!isCurrentStepValid()}
-                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border text-base font-medium ${
+                className={`flex-1 ml-4 px-6 py-3 bg-primary rounded-full border font-medium ${
                   !isCurrentStepValid()
-                    ? 'border-primary text-base-100 cursor-not-allowed bg-gray-50'
-                    : 'border-primary bg-primary text-base hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
+                    ? 'border-primary-100 cursor-not-allowed bg-gray-50'
+                    : 'border-primary bg-primary hover:bg-primary hover:border-gray-700 hover:shadow-sm cursor-pointer'
                 }`}
               >
                 {currentStep === totalSteps ? 'Complete' : 'OK'}
