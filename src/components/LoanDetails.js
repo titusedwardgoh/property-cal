@@ -285,7 +285,7 @@ export default function LoanDetails() {
             <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Enter the number of years for your loan (1-30 years)
             </p>
-            <div className="relative">
+            <div className="flex items-center gap-2">
               <input
                 type="number"
                 min="1"
@@ -301,11 +301,11 @@ export default function LoanDetails() {
                     updateFormData('loanTerm', '');
                   }
                 }}
-                className="w-full px-6 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="px-4 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
-              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 text-lg text-gray-500 pointer-events-none">
+              <span className="pl-4 text-xl text-gray-500">
                 years
-              </div>
+              </span>
             </div>
           </div>
         );
@@ -319,7 +319,7 @@ export default function LoanDetails() {
             <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
               Enter the annual interest rate percentage for your loan
             </p>
-            <div className="relative">
+            <div className="flex items-center gap-2">
               <input
                 type="number"
                 min="0.01"
@@ -334,11 +334,11 @@ export default function LoanDetails() {
                     updateFormData('loanRate', value);
                   }
                 }}
-                className="w-full px-6 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="px-4 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
-              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 text-lg text-gray-500 pointer-events-none">
+              <span className="text-xl text-gray-500">
                 %
-              </div>
+              </span>
             </div>
           </div>
         );
