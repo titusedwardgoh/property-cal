@@ -519,7 +519,7 @@ export default function BuyerDetails() {
                     const numericValue = e.target.value.replace(/[^\d]/g, '');
                     updateFormData('savingsAmount', numericValue);
                   }}
-                  className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300"
+                  className="w-64 pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:outline-none transition-all duration-200 hover:border-gray-300"
                 />
               </div>
             </div>
@@ -550,7 +550,7 @@ export default function BuyerDetails() {
                   const numericValue = e.target.value.replace(/[^\d]/g, '');
                   updateFormData('savingsAmount', numericValue);
                 }}
-                className="w-full pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
+                className="w-64 pl-8 pr-8 py-2 text-2xl border-b-2 border-gray-200 rounded-none focus:border-secondary focus:outline-none transition-all duration-200 hover:border-gray-300"
               />
             </div>
           </div>
