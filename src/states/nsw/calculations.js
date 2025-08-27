@@ -98,12 +98,12 @@ export const calculateNSWFirstHomeOwnersGrant = (buyerData, propertyData, select
     };
   }
 
-  // Check property type eligibility - only new properties and off-the-plan are eligible
-  if (propertyType !== 'new' && propertyType !== 'off-the-plan') {
+  // Check property type eligibility - new properties, off-the-plan, and house and land are eligible
+  if (propertyType !== 'new' && propertyType !== 'off-the-plan' && propertyType !== 'house-and-land') {
     return {
       eligible: false,
       amount: 0,
-      reason: 'Only new properties and off-the-plan properties are eligible'
+      reason: 'Only new, off-the-plan and house and land packages are eligible'
     };
   }
 
