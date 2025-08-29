@@ -54,13 +54,48 @@ export default function UpfrontCosts() {
       propertyCategory: formData.propertyCategory
     };
 
-    return stateFunctions.calculateNSWFirstHomeOwnersGrant(buyerData, propertyData, formData.selectedState);
+    const fhogResult = stateFunctions.calculateNSWFirstHomeOwnersGrant(buyerData, propertyData, formData.selectedState);
+    
+    // Calculate First Home Buyers Assistance Scheme stamp duty concession
+    if (formData.selectedState === 'NSW' && stateFunctions?.calculateNSWFirstHomeBuyersAssistance) {
+      const stampDuty = calculateStampDuty();
+      const concessionResult = stateFunctions.calculateNSWFirstHomeBuyersAssistance(buyerData, propertyData, formData.selectedState, stampDuty);
+      
+      // Console log the concession amount as requested
+      console.log('Stamp Duty Concession Amount:', concessionResult.concessionAmount);
+    }
+    
+    return fhogResult;
+  };
+
+  // Calculate NSW First Home Buyers Assistance Scheme stamp duty concession
+  const calculateStampDutyConcession = () => {
+    if (!stateFunctions?.calculateNSWFirstHomeBuyersAssistance || !formData.buyerDetailsComplete || formData.selectedState !== 'NSW') {
+      return { eligible: false, concessionAmount: 0, reason: '' };
+    }
+
+    const buyerData = {
+      buyerType: formData.buyerType,
+      isPPR: formData.isPPR,
+      isAustralianResident: formData.isAustralianResident,
+      isFirstHomeBuyer: formData.isFirstHomeBuyer
+    };
+
+    const propertyData = {
+      propertyPrice: formData.propertyPrice,
+      propertyType: formData.propertyType,
+      propertyCategory: formData.propertyCategory
+    };
+
+    const stampDuty = calculateStampDuty();
+    return stateFunctions.calculateNSWFirstHomeBuyersAssistance(buyerData, propertyData, formData.selectedState, stampDuty);
   };
 
   // Calculate total upfront costs
   const calculateTotalCosts = () => {
     const stampDuty = calculateStampDuty();
-    const concession = -2; // Stamp duty concession
+    const concessionResult = calculateStampDutyConcession();
+    const concession = concessionResult.eligible ? -concessionResult.concessionAmount : 0;
     const firstHomeOwnersGrant = calculateFirstHomeOwnersGrant();
     const grantAmount = firstHomeOwnersGrant.eligible ? -firstHomeOwnersGrant.amount : 0;
     
@@ -106,12 +141,53 @@ export default function UpfrontCosts() {
                 {formatCurrency(calculateStampDuty())}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">Stamp Duty Concession</span>
-              <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl font-medium text-green-600">
-                -$2
-              </span>
-            </div>
+                         {/* Only show Stamp Duty Concession when NSW is selected and buyer details are complete */}
+             {formData.selectedState === 'NSW' && formData.buyerDetailsComplete && stateFunctions?.calculateNSWFirstHomeBuyersAssistance && (() => {
+               const concession = calculateStampDutyConcession();
+               if (concession.eligible && concession.concessionAmount > 0) {
+                 return (
+                   <>
+                     <div className="flex justify-between items-center">
+                       <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">Stamp Duty Concession</span>
+                       <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl font-medium text-green-600">
+                         -{formatCurrency(concession.concessionAmount)}
+                       </span>
+                     </div>
+                     <div className="flex justify-between items-center border-t border-gray-200 pt-2">
+                       <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl font-semibold">Net Stamp Duty</span>
+                       <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl font-semibold">
+                         {formatCurrency(calculateStampDuty() - concession.concessionAmount)}
+                       </span>
+                     </div>
+                   </>
+                 );
+               } else if (concession.reason && concession.reason !== 'Not NSW') {
+                 return (
+                   <div className="flex justify-between items-center">
+                     <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">Stamp Duty Concession</span>
+                     <span 
+                       className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help"
+                       title={concession.reason}
+                     >
+                       Not Eligible
+                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                         {concession.reason}
+                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                       </div>
+                     </span>
+                   </div>
+                 );
+               } else {
+                 return (
+                   <div className="flex justify-between items-center">
+                     <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">Stamp Duty Concession</span>
+                     <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl">
+                       $0
+                     </span>
+                   </div>
+                 );
+               }
+             })()}
             {/* Show First Home Owners Grant if eligible */}
             {formData.buyerDetailsComplete && formData.selectedState === 'NSW' && (
               (() => {

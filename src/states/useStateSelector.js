@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 // Import state-specific functions
-import { calculateNSWStampDuty, calculateNSWFirstHomeOwnersGrant } from './nsw/calculations.js';
+import { calculateNSWStampDuty, calculateNSWFirstHomeOwnersGrant, calculateNSWFirstHomeBuyersAssistance } from './nsw/calculations.js';
 import { calculateVICStampDuty } from './vic/calculations.js';
 import { calculateQLDStampDuty } from './qld/calculations.js';
 import { calculateSAStampDuty } from './sa/calculations.js';
@@ -61,6 +61,7 @@ export const useStateSelector = (selectedState) => {
   const stateFunctions = {
     calculateStampDuty: getStampDutyFunction(),
     calculateNSWFirstHomeOwnersGrant: getNSWFirstHomeOwnersGrantFunction(),
+    calculateNSWFirstHomeBuyersAssistance: selectedState === 'NSW' ? calculateNSWFirstHomeBuyersAssistance : null,
     // Shared functions that exist
     calculateMonthlyRepayment,
     calculateTotalRepayments,
