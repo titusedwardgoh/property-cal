@@ -9,7 +9,7 @@ export const NSW_STAMP_DUTY_RATES = [
   { min: 1240000, max: Infinity, rate: 0.055, fixedFee: 50212 }
 ];
 
-export const NSW_FOREIGN_BUYER_RATE = 0.08;
+export const NSW_FOREIGN_BUYER_RATE = 0.09;
 
 export const NSW_STATE_AVERAGE = 1200000;
 

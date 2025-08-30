@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 
 // Import state-specific functions
-import { calculateNSWStampDuty, calculateNSWFirstHomeOwnersGrant, calculateNSWFirstHomeBuyersAssistance } from './nsw/calculations.js';
-import { calculateVICStampDuty } from './vic/calculations.js';
+import { calculateNSWStampDuty, calculateNSWFirstHomeOwnersGrant, calculateNSWFirstHomeBuyersAssistance, calculateNSWForeignPurchaserDuty } from './nsw/calculations.js';
+import { calculateVICStampDuty, calculateVICFirstHomeOwnersGrant } from './vic/calculations.js';
 import { calculateQLDStampDuty } from './qld/calculations.js';
 import { calculateSAStampDuty } from './sa/calculations.js';
 import { calculateWAStampDuty } from './wa/calculations.js';
@@ -57,11 +57,21 @@ export const useStateSelector = (selectedState) => {
     }
     return null;
   };
+
+  // Get VIC First Home Owners Grant function if VIC is selected
+  const getVICFirstHomeOwnersGrantFunction = () => {
+    if (selectedState === 'VIC') {
+      return calculateVICFirstHomeOwnersGrant;
+    }
+    return null;
+  };
   
   const stateFunctions = {
     calculateStampDuty: getStampDutyFunction(),
     calculateNSWFirstHomeOwnersGrant: getNSWFirstHomeOwnersGrantFunction(),
+    calculateVICFirstHomeOwnersGrant: getVICFirstHomeOwnersGrantFunction(),
     calculateNSWFirstHomeBuyersAssistance: selectedState === 'NSW' ? calculateNSWFirstHomeBuyersAssistance : null,
+    calculateNSWForeignPurchaserDuty: selectedState === 'NSW' ? calculateNSWForeignPurchaserDuty : null,
     // Shared functions that exist
     calculateMonthlyRepayment,
     calculateTotalRepayments,
@@ -99,13 +109,13 @@ export const useStateSelector = (selectedState) => {
                      selectedState === 'ACT' ? 0.08 : 
                      selectedState === 'NT' ? 0.07 : 0.08,
     firstHomeOwnersGrant: selectedState === 'NSW' ? 10000 : 
-                          selectedState === 'VIC' ? 10000 : 
-                          selectedState === 'QLD' ? 30000 : 
-                          selectedState === 'SA' ? 15000 : 
-                          selectedState === 'WA' ? 10000 : 
-                          selectedState === 'TAS' ? 30000 : 
-                          selectedState === 'ACT' ? 7000 : 
-                          selectedState === 'NT' ? 10000 : 10000
+                         selectedState === 'VIC' ? 10000 : 
+                         selectedState === 'QLD' ? 30000 : 
+                         selectedState === 'SA' ? 15000 : 
+                         selectedState === 'WA' ? 10000 : 
+                         selectedState === 'TAS' ? 30000 : 
+                         selectedState === 'ACT' ? 7000 : 
+                         selectedState === 'NT' ? 10000 : 10000
   };
 
   return {

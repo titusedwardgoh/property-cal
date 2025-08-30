@@ -125,7 +125,7 @@ export default function PropertyDetails() {
   const nextStep = () => {
     
     // Log current form entries before proceeding
-    console.log('🚀 PropertyDetails - Next Button Pressed - Step:', currentStep);
+  
     console.log('📋 Current Form Entries:', {
       // Property Details
       propertyAddress: formData.propertyAddress,
@@ -193,7 +193,7 @@ export default function PropertyDetails() {
       updateFormData('propertyDetailsFormComplete', true);
       
       // Log final form completion
-      console.log('🎉 Property Details Form Complete!');
+      
       console.log('📊 Final Form Summary:', {
         // Property Details
       propertyAddress: formData.propertyAddress,

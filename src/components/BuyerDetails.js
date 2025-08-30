@@ -46,7 +46,6 @@ export default function BuyerDetails() {
     }
     
     // Log current form entries before proceeding
-    console.log('🚀 BuyerDetails - Next Button Pressed - Step:', currentStep);
     console.log('📋 Current Form Entries:', {
       // Property Details
    // Property Details
