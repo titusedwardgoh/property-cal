@@ -47,39 +47,40 @@ export default function BuyerDetails() {
     
     // Log current form entries before proceeding
     console.log('📋 Current Form Entries:', {
-      // Property Details
-   // Property Details
-        propertyAddress: formData.propertyAddress,
-        selectedState: formData.selectedState,
-        isWA: formData.isWA,
-        propertyCategory: formData.propertyCategory,
-        propertyType: formData.propertyType,
-        propertyPrice: formData.propertyPrice,
-        // Buyer Details
-        buyerType: formData.buyerType,
-        isPPR: formData.isPPR,
-        isAustralianResident: formData.isAustralianResident,
-        isFirstHomeBuyer: formData.isFirstHomeBuyer,
-        hasPensionCard: formData.hasPensionCard,
-        needsLoan: formData.needsLoan,
-        savingsAmount: formData.savingsAmount,
-        income: formData.income,
-        // Loan Details
-        loanDeposit: formData.loanDeposit,
-        loanType: formData.loanType,
-        loanTerm: formData.loanTerm,
-        loanRate: formData.loanRate,
-        loanLMI: formData.loanLMI,
-        loanSettlementFees: formData.loanSettlementFees,
-        loanEstablishmentFee: formData.loanEstablishmentFee,
-              // Seller Questions
+        // Property Details
+      propertyAddress: formData.propertyAddress,
+      selectedState: formData.selectedState,
+      isWA: formData.isWA,
+      propertyCategory: formData.propertyCategory,
+      propertyType: formData.propertyType,
+      propertyPrice: formData.propertyPrice,
+      // Buyer Details
+      buyerType: formData.buyerType,
+      isPPR: formData.isPPR,
+      isAustralianResident: formData.isAustralianResident,
+      isFirstHomeBuyer: formData.isFirstHomeBuyer,
+      hasPensionCard: formData.hasPensionCard,
+      needsLoan: formData.needsLoan,
+      savingsAmount: formData.savingsAmount,
+      income: formData.income,
+      // Loan Details (if applicable)
+      loanDeposit: formData.loanDeposit,
+      loanType: formData.loanType,
+      loanTerm: formData.loanTerm,
+      loanRate: formData.loanRate,
+      loanLMI: formData.loanLMI,
+      loanSettlementFees: formData.loanSettlementFees,
+      loanEstablishmentFee: formData.loanEstablishmentFee,
+      // Seller Questions
       councilRates: formData.councilRates,
       waterRates: formData.waterRates,
+      constructionStarted: formData.constructionStarted,
+      dutiableValue: formData.dutiableValue,
       bodyCorp: formData.bodyCorp,
       landTransferFee: formData.landTransferFee,
       legalFees: formData.legalFees,
       buildingAndPestInspection: formData.buildingAndPestInspection,
-      sellerQuestion7: formData.sellerQuestion7
+      sellerQuestion9: formData.sellerQuestion9
     });
     
     if (currentStep < totalSteps) {

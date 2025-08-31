@@ -28,9 +28,7 @@ export default function LoanDetails() {
 
   const nextStep = () => {
     // Log current form entries before proceeding
-    console.log('🚀 LoanDetails - Next Button Pressed - Step:', currentStep);
     console.log('📋 Current Form Entries:', {
-      // Property Details
       // Property Details
       propertyAddress: formData.propertyAddress,
       selectedState: formData.selectedState,
@@ -47,7 +45,7 @@ export default function LoanDetails() {
       needsLoan: formData.needsLoan,
       savingsAmount: formData.savingsAmount,
       income: formData.income,
-      // Loan Details
+      // Loan Details (if applicable)
       loanDeposit: formData.loanDeposit,
       loanType: formData.loanType,
       loanTerm: formData.loanTerm,
@@ -58,11 +56,13 @@ export default function LoanDetails() {
       // Seller Questions
       councilRates: formData.councilRates,
       waterRates: formData.waterRates,
+      constructionStarted: formData.constructionStarted,
+      dutiableValue: formData.dutiableValue,
       bodyCorp: formData.bodyCorp,
       landTransferFee: formData.landTransferFee,
       legalFees: formData.legalFees,
       buildingAndPestInspection: formData.buildingAndPestInspection,
-      sellerQuestion7: formData.sellerQuestion7
+      sellerQuestion9: formData.sellerQuestion9
     });
     
     // Initialize the store with current step if this is the first call
@@ -79,25 +79,24 @@ export default function LoanDetails() {
       updateFormData('loanDetailsComplete', true);
       
       // Log final form completion
-      console.log('🎉 Loan Details Form Complete!');
       console.log('📊 Final Form Summary:', {
         // Property Details
-          propertyAddress: formData.propertyAddress,
-          selectedState: formData.selectedState,
-          isWA: formData.isWA,
-          propertyCategory: formData.propertyCategory,
-          propertyType: formData.propertyType,
-          propertyPrice: formData.propertyPrice,
-          // Buyer Details
-          buyerType: formData.buyerType,
-          isPPR: formData.isPPR,
-          isAustralianResident: formData.isAustralianResident,
-          isFirstHomeBuyer: formData.isFirstHomeBuyer,
-          hasPensionCard: formData.hasPensionCard,
-          needsLoan: formData.needsLoan,
-          savingsAmount: formData.savingsAmount,
-          income: formData.income,
-                  // Loan Details
+        propertyAddress: formData.propertyAddress,
+        selectedState: formData.selectedState,
+        isWA: formData.isWA,
+        propertyCategory: formData.propertyCategory,
+        propertyType: formData.propertyType,
+        propertyPrice: formData.propertyPrice,
+        // Buyer Details
+        buyerType: formData.buyerType,
+        isPPR: formData.isPPR,
+        isAustralianResident: formData.isAustralianResident,
+        isFirstHomeBuyer: formData.isFirstHomeBuyer,
+        hasPensionCard: formData.hasPensionCard,
+        needsLoan: formData.needsLoan,
+        savingsAmount: formData.savingsAmount,
+        income: formData.income,
+        // Loan Details (if applicable)
         loanDeposit: formData.loanDeposit,
         loanType: formData.loanType,
         loanTerm: formData.loanTerm,
@@ -105,14 +104,16 @@ export default function LoanDetails() {
         loanLMI: formData.loanLMI,
         loanSettlementFees: formData.loanSettlementFees,
         loanEstablishmentFee: formData.loanEstablishmentFee,
-                 // Seller Questions
-         councilRates: formData.councilRates,
-         waterRates: formData.waterRates,
-         bodyCorp: formData.bodyCorp,
-         landTransferFee: formData.landTransferFee,
-         legalFees: formData.legalFees,
-         buildingAndPestInspection: formData.buildingAndPestInspection,
-         sellerQuestion7: formData.sellerQuestion7
+        // Seller Questions
+        councilRates: formData.councilRates,
+        waterRates: formData.waterRates,
+        constructionStarted: formData.constructionStarted,
+        dutiableValue: formData.dutiableValue,
+        bodyCorp: formData.bodyCorp,
+        landTransferFee: formData.landTransferFee,
+        legalFees: formData.legalFees,
+        buildingAndPestInspection: formData.buildingAndPestInspection,
+        sellerQuestion9: formData.sellerQuestion9
       });
     }
   };

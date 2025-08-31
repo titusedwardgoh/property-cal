@@ -143,7 +143,7 @@ export default function PropertyDetails() {
       needsLoan: formData.needsLoan,
       savingsAmount: formData.savingsAmount,
       income: formData.income,
-      // Loan Details
+      // Loan Details (if applicable)
       loanDeposit: formData.loanDeposit,
       loanType: formData.loanType,
       loanTerm: formData.loanTerm,
@@ -154,11 +154,13 @@ export default function PropertyDetails() {
       // Seller Questions
       councilRates: formData.councilRates,
       waterRates: formData.waterRates,
+      constructionStarted: formData.constructionStarted,
+      dutiableValue: formData.dutiableValue,
       bodyCorp: formData.bodyCorp,
       landTransferFee: formData.landTransferFee,
       legalFees: formData.legalFees,
       buildingAndPestInspection: formData.buildingAndPestInspection,
-      sellerQuestion7: formData.sellerQuestion7
+      sellerQuestion9: formData.sellerQuestion9
     });
     
     // Initialize the store with current step if this is the first call
@@ -211,7 +213,7 @@ export default function PropertyDetails() {
       needsLoan: formData.needsLoan,
       savingsAmount: formData.savingsAmount,
       income: formData.income,
-      // Loan Details
+      // Loan Details (if applicable)
       loanDeposit: formData.loanDeposit,
       loanType: formData.loanType,
       loanTerm: formData.loanTerm,
@@ -222,11 +224,13 @@ export default function PropertyDetails() {
       // Seller Questions
       councilRates: formData.councilRates,
       waterRates: formData.waterRates,
+      constructionStarted: formData.constructionStarted,
+      dutiableValue: formData.dutiableValue,
       bodyCorp: formData.bodyCorp,
       landTransferFee: formData.landTransferFee,
       legalFees: formData.legalFees,
       buildingAndPestInspection: formData.buildingAndPestInspection,
-      sellerQuestion7: formData.sellerQuestion7
+      sellerQuestion9: formData.sellerQuestion9
       });
     }
   };
