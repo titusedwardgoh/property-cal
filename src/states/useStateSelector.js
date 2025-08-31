@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 // Import state-specific functions
 import { calculateNSWStampDuty, calculateNSWFirstHomeOwnersGrant, calculateNSWFirstHomeBuyersAssistance, calculateNSWForeignPurchaserDuty } from './nsw/calculations.js';
-import { calculateVICStampDuty, calculateVICFirstHomeOwnersGrant } from './vic/calculations.js';
+import { calculateVICStampDuty, calculateVICFirstHomeOwnersGrant, calculateVICForeignPurchaserDuty, calculateVICFirstHomeBuyerDutyConcession, calculateVICPPRConcession } from './vic/calculations.js';
 import { calculateQLDStampDuty } from './qld/calculations.js';
 import { calculateSAStampDuty } from './sa/calculations.js';
 import { calculateWAStampDuty } from './wa/calculations.js';
@@ -71,7 +71,10 @@ export const useStateSelector = (selectedState) => {
     calculateNSWFirstHomeOwnersGrant: getNSWFirstHomeOwnersGrantFunction(),
     calculateVICFirstHomeOwnersGrant: getVICFirstHomeOwnersGrantFunction(),
     calculateNSWFirstHomeBuyersAssistance: selectedState === 'NSW' ? calculateNSWFirstHomeBuyersAssistance : null,
+    calculateVICFirstHomeBuyerDutyConcession: selectedState === 'VIC' ? calculateVICFirstHomeBuyerDutyConcession : null,
+    calculateVICPPRConcession: selectedState === 'VIC' ? calculateVICPPRConcession : null,
     calculateNSWForeignPurchaserDuty: selectedState === 'NSW' ? calculateNSWForeignPurchaserDuty : null,
+    calculateVICForeignPurchaserDuty: selectedState === 'VIC' ? calculateVICForeignPurchaserDuty : null,
     // Shared functions that exist
     calculateMonthlyRepayment,
     calculateTotalRepayments,

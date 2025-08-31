@@ -80,10 +80,19 @@ export default function UpfrontCosts() {
     return fhogResult;
   };
 
-  // Calculate NSW First Home Buyers Assistance Scheme stamp duty concession
+  // Calculate Stamp Duty Concession (NSW or VIC)
   const calculateStampDutyConcession = () => {
-    if (!stateFunctions?.calculateNSWFirstHomeBuyersAssistance || !formData.buyerDetailsComplete || formData.selectedState !== 'NSW') {
-      return { eligible: false, concessionAmount: 0, reason: '' };
+    if (!formData.buyerDetailsComplete) {
+      return { eligible: false, concessionAmount: 0, reason: 'Buyer details not complete' };
+    }
+
+    // Check if appropriate concession function is available
+    if (formData.selectedState === 'NSW' && !stateFunctions?.calculateNSWFirstHomeBuyersAssistance) {
+      return { eligible: false, concessionAmount: 0, reason: 'Stamp duty concession not available for NSW' };
+    }
+    
+    if (formData.selectedState === 'VIC' && !stateFunctions?.calculateVICFirstHomeBuyerDutyConcession) {
+      return { eligible: false, concessionAmount: 0, reason: 'Stamp duty concession not available for VIC' };
     }
 
     const buyerData = {
@@ -100,13 +109,74 @@ export default function UpfrontCosts() {
     };
 
     const stampDuty = calculateStampDuty();
-    return stateFunctions.calculateNSWFirstHomeBuyersAssistance(buyerData, propertyData, formData.selectedState, stampDuty);
+    
+    // Call appropriate concession function based on state
+    if (formData.selectedState === 'NSW') {
+      return stateFunctions.calculateNSWFirstHomeBuyersAssistance(buyerData, propertyData, formData.selectedState, stampDuty);
+    } else if (formData.selectedState === 'VIC') {
+      // Calculate both concessions separately
+      const firstHomeConcession = stateFunctions.calculateVICFirstHomeBuyerDutyConcession(buyerData, propertyData, formData.selectedState, stampDuty);
+      const pprConcession = stateFunctions?.calculateVICPPRConcession ? 
+        stateFunctions.calculateVICPPRConcession(buyerData, propertyData, formData.selectedState, stampDuty) : 
+        { eligible: false, concessionAmount: 0, reason: 'PPR concession not available' };
+      
+      // Store both concessions with their individual data
+      const bothConcessions = {
+        firstHome: {
+          eligible: firstHomeConcession.eligible,
+          concessionAmount: firstHomeConcession.concessionAmount,
+          reason: firstHomeConcession.reason
+        },
+        ppr: {
+          eligible: pprConcession.eligible,
+          concessionAmount: pprConcession.concessionAmount,
+          reason: pprConcession.reason
+        }
+      };
+      
+      // Compare and determine which concession is better
+      let concessionalAmount = 0;
+      let concessionType = null;
+      let eligible = false;
+      
+      if (firstHomeConcession.eligible && firstHomeConcession.concessionAmount > pprConcession.concessionAmount) {
+        concessionalAmount = firstHomeConcession.concessionAmount;
+        concessionType = 'First Home Buyer';
+        eligible = true;
+      } else if (pprConcession.eligible && pprConcession.concessionAmount > 0) {
+        concessionalAmount = pprConcession.concessionAmount;
+        concessionType = 'PPR';
+        eligible = true;
+      }
+      
+      // Return both concessions + the applied one
+      return {
+        eligible,
+        concessionAmount: concessionalAmount,
+        concessionType,
+        reason: eligible ? `Applied ${concessionType} concession` : firstHomeConcession.reason,
+        // Include both concessions for display purposes
+        firstHomeConcession: bothConcessions.firstHome,
+        pprConcession: bothConcessions.ppr
+      };
+    } else {
+      return { eligible: false, concessionAmount: 0, reason: 'Stamp duty concession not available for this state' };
+    }
   };
 
-  // Calculate NSW Foreign Purchaser Duty
+  // Calculate Foreign Purchaser Duty (NSW or VIC)
   const calculateForeignPurchaserDuty = () => {
-    if (!stateFunctions?.calculateNSWForeignPurchaserDuty || !formData.buyerDetailsComplete || formData.selectedState !== 'NSW') {
-      return { applicable: false, amount: 0, reason: '' };
+    if (!formData.buyerDetailsComplete) {
+      return { applicable: false, amount: 0, reason: 'Buyer details not complete' };
+    }
+
+    // Check if appropriate foreign purchaser duty function is available
+    if (formData.selectedState === 'NSW' && !stateFunctions?.calculateNSWForeignPurchaserDuty) {
+      return { applicable: false, amount: 0, reason: 'Foreign purchaser duty not available for NSW' };
+    }
+    
+    if (formData.selectedState === 'VIC' && !stateFunctions?.calculateVICForeignPurchaserDuty) {
+      return { applicable: false, amount: 0, reason: 'Foreign purchaser duty not available for VIC' };
     }
 
     const buyerData = {
@@ -122,7 +192,14 @@ export default function UpfrontCosts() {
       propertyCategory: formData.propertyCategory
     };
 
-    return stateFunctions.calculateNSWForeignPurchaserDuty(buyerData, propertyData, formData.selectedState);
+    // Call appropriate foreign purchaser duty function based on state
+    if (formData.selectedState === 'NSW') {
+      return stateFunctions.calculateNSWForeignPurchaserDuty(buyerData, propertyData, formData.selectedState);
+    } else if (formData.selectedState === 'VIC') {
+      return stateFunctions.calculateVICForeignPurchaserDuty(buyerData, propertyData, formData.selectedState);
+    } else {
+      return { applicable: false, amount: 0, reason: 'Foreign purchaser duty not available for this state' };
+    }
   };
 
   // Calculate total upfront costs
@@ -177,14 +254,21 @@ export default function UpfrontCosts() {
                 {formatCurrency(calculateStampDuty())}
               </span>
             </div>
-                         {/* Only show Stamp Duty Concession when NSW is selected and buyer details are complete */}
-             {formData.selectedState === 'NSW' && formData.buyerDetailsComplete && stateFunctions?.calculateNSWFirstHomeBuyersAssistance && (() => {
-               const concession = calculateStampDutyConcession();
-               if (concession.eligible && concession.concessionAmount > 0) {
+                                                   {/* Only show Stamp Duty Concession when NSW or VIC is selected and buyer details are complete */}
+              {(formData.selectedState === 'NSW' || formData.selectedState === 'VIC') && formData.buyerDetailsComplete && (
+                (() => {
+                                    // Check if appropriate concession function is available
+                  if (formData.selectedState === 'NSW' && !stateFunctions?.calculateNSWFirstHomeBuyersAssistance) return null;
+                  if (formData.selectedState === 'VIC' && !stateFunctions?.calculateVICFirstHomeBuyerDutyConcession) return null;
+                  
+                  const concession = calculateStampDutyConcession();
+                  if (concession.eligible && concession.concessionAmount > 0) {
                  return (
                    <>
                      <div className="flex justify-between items-center">
-                       <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">Stamp Duty Concession</span>
+                       <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">
+                         Stamp Duty Concession {concession.concessionType ? `(${concession.concessionType})` : ''}
+                       </span>
                        <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl font-medium text-green-600">
                          -{formatCurrency(concession.concessionAmount)}
                        </span>
@@ -225,13 +309,20 @@ export default function UpfrontCosts() {
                     </div>
                   );
                 }
-                          })()}
-             
-                           {/* Show Foreign Purchaser Duty if applicable */}
-              {formData.selectedState === 'NSW' && formData.buyerDetailsComplete && stateFunctions?.calculateNSWForeignPurchaserDuty && (
+                  return null;
+                })()
+              )}
+              
+                            {/* Show Foreign Purchaser Duty if applicable (standalone) */}
+              {(formData.selectedState === 'NSW' || formData.selectedState === 'VIC') && formData.buyerDetailsComplete && (
                 (() => {
                   const foreignDuty = calculateForeignPurchaserDuty();
-                  if (foreignDuty.applicable) {
+                  const concession = calculateStampDutyConcession();
+                  
+                  // Only show standalone foreign purchaser duty if:
+                  // 1. Foreign duty is applicable AND
+                  // 2. No concession was shown (to avoid duplication)
+                  if (foreignDuty.applicable && (!concession.eligible || concession.concessionAmount === 0)) {
                     return (
                       <>
                         <div className="flex justify-between items-center">
@@ -258,17 +349,50 @@ export default function UpfrontCosts() {
                  const concession = calculateStampDutyConcession();
                  const grant = calculateFirstHomeOwnersGrant();
                  
-                                   // Only show items that are actually ineligible (concession amount is 0 and have a reason)
+                                   // Show section if there are ineligible items OR if we're in VIC and want to show dual concession status
                   const hasIneligibleItems = (concession.concessionAmount === 0 && concession.reason) || 
-                                           (!grant.eligible && grant.reason);
+                                           (!grant.eligible && grant.reason) ||
+                                           (formData.selectedState === 'VIC' && concession.firstHomeConcession && concession.pprConcession);
                   
                   if (!hasIneligibleItems) return null;
                   
                   return (
                     <div className="border-t border-gray-200 pt-3 mt-3">
                       <div className="text-sm text-gray-500 mb-2">State Grants and Concessions:</div>
-                      {/* Show ineligible Stamp Duty Concession */}
-                      {concession.concessionAmount === 0 && concession.reason && (
+                                             {/* Show only ineligible concessions for VIC in this section */}
+                       {formData.selectedState === 'VIC' && concession.firstHomeConcession && concession.pprConcession && (
+                         <>
+                           {/* Only show First Home Buyer Concession if it's NOT eligible */}
+                           {!concession.firstHomeConcession.eligible && (
+                             <div className="flex justify-between items-center">
+                               <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">First Home Buyer Concession</span>
+                               <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={concession.firstHomeConcession.reason}>
+                                 Not Eligible
+                                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                                   {concession.firstHomeConcession.reason}
+                                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                 </div>
+                               </span>
+                             </div>
+                           )}
+                           {/* Only show PPR Concession if it's NOT eligible */}
+                           {!concession.pprConcession.eligible && (
+                             <div className="flex justify-between items-center">
+                               <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">PPR Concession</span>
+                               <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={concession.pprConcession.reason}>
+                                 Not Eligible
+                                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                                   {concession.pprConcession.reason}
+                                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                 </div>
+                               </span>
+                             </div>
+                           )}
+                         </>
+                       )}
+                      
+                      {/* Show ineligible Stamp Duty Concession for other states */}
+                      {formData.selectedState !== 'VIC' && concession.concessionAmount === 0 && concession.reason && (
                         <div className="flex justify-between items-center">
                           <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">Stamp Duty Concession</span>
                           <span 
