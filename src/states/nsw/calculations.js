@@ -419,3 +419,63 @@ export const calculateNSWForeignPurchaserDuty = (buyerData, propertyData, select
     }
   };
 };
+
+/**
+ * Calculate all upfront costs for NSW
+ * @param {Object} buyerData - Buyer information
+ * @param {Object} propertyData - Property information
+ * @param {string} selectedState - Selected state (must be 'NSW')
+ * @returns {Object} - Complete upfront costs breakdown
+ */
+export const calculateUpfrontCosts = (buyerData, propertyData, selectedState) => {
+  // Only calculate if NSW is selected
+  if (selectedState !== 'NSW') {
+    return {
+      stampDuty: { amount: 0, label: "Stamp Duty" },
+      concessions: [],
+      grants: [],
+      foreignDuty: { amount: 0, applicable: false },
+      netStateDuty: 0,
+      totalUpfrontCosts: 0
+    };
+  }
+
+  const price = parseInt(propertyData.propertyPrice) || 0;
+  
+  // Calculate base stamp duty
+  const stampDutyAmount = calculateNSWStampDuty(price, selectedState);
+  
+  // Calculate stamp duty concession
+  const concessionResult = calculateNSWFirstHomeBuyersAssistance(buyerData, propertyData, selectedState, stampDutyAmount);
+  
+  // Calculate foreign purchaser duty
+  const foreignDutyResult = calculateNSWForeignPurchaserDuty(buyerData, propertyData, selectedState);
+  
+  // Calculate first home owners grant
+  const grantResult = calculateNSWFirstHomeOwnersGrant(buyerData, propertyData, selectedState);
+  
+  // Calculate net state duty
+  const netStateDuty = stampDutyAmount + (foreignDutyResult.applicable ? foreignDutyResult.amount : 0) - (concessionResult.eligible ? concessionResult.concessionAmount : 0);
+  
+  // Calculate total upfront costs (including property price if no loan needed)
+  const propertyPrice = (buyerData.needsLoan === 'no') ? price : 0;
+  const totalUpfrontCosts = netStateDuty + propertyPrice - (grantResult.eligible ? grantResult.amount : 0);
+  
+  return {
+    stampDuty: { amount: stampDutyAmount, label: "Stamp Duty" },
+    concessions: concessionResult.eligible ? [{
+      type: 'First Home Buyer',
+      amount: concessionResult.concessionAmount,
+      eligible: concessionResult.eligible,
+      reason: concessionResult.reason,
+      showBothConcessions: false
+    }] : [],
+    grants: grantResult.eligible ? [grantResult] : [],
+    foreignDuty: { 
+      amount: foreignDutyResult.applicable ? foreignDutyResult.amount : 0, 
+      applicable: foreignDutyResult.applicable 
+    },
+    netStateDuty: netStateDuty,
+    totalUpfrontCosts: totalUpfrontCosts
+  };
+};

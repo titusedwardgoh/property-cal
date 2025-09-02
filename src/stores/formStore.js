@@ -19,6 +19,7 @@ export const useFormStore = create((set, get) => ({
   isPPR: '',
   isAustralianResident: '',
   isFirstHomeBuyer: '',
+  hasPensionCard: '',
   needsLoan: '',
   savingsAmount: '',
   income: '', // New field for ACT income question
@@ -77,6 +78,7 @@ export const useFormStore = create((set, get) => ({
     isPPR: '',
     isAustralianResident: '',
     isFirstHomeBuyer: '',
+    hasPensionCard: '',
     needsLoan: '',
     savingsAmount: '',
     income: '', // New field for ACT income question

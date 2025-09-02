@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 
 // Import state-specific functions
-import { calculateNSWStampDuty, calculateNSWFirstHomeOwnersGrant, calculateNSWFirstHomeBuyersAssistance, calculateNSWForeignPurchaserDuty } from './nsw/calculations.js';
-import { calculateVICStampDuty, calculateVICFirstHomeOwnersGrant, calculateVICForeignPurchaserDuty, calculateVICFirstHomeBuyerDutyConcession, calculateVICPPRConcession } from './vic/calculations.js';
+import { calculateNSWStampDuty, calculateNSWFirstHomeOwnersGrant, calculateNSWFirstHomeBuyersAssistance, calculateNSWForeignPurchaserDuty, calculateUpfrontCosts as calculateNSWUpfrontCosts } from './nsw/calculations.js';
+import { calculateVICStampDuty, calculateVICFirstHomeOwnersGrant, calculateVICForeignPurchaserDuty, calculateVICFirstHomeBuyerDutyConcession, calculateVICPPRConcession, calculateVICPensionConcession, calculateVICTempOffThePlanConcession, calculateUpfrontCosts as calculateVICUpfrontCosts } from './vic/calculations.js';
 import { calculateQLDStampDuty } from './qld/calculations.js';
 import { calculateSAStampDuty } from './sa/calculations.js';
 import { calculateWAStampDuty } from './wa/calculations.js';
@@ -73,8 +73,13 @@ export const useStateSelector = (selectedState) => {
     calculateNSWFirstHomeBuyersAssistance: selectedState === 'NSW' ? calculateNSWFirstHomeBuyersAssistance : null,
     calculateVICFirstHomeBuyerDutyConcession: selectedState === 'VIC' ? calculateVICFirstHomeBuyerDutyConcession : null,
     calculateVICPPRConcession: selectedState === 'VIC' ? calculateVICPPRConcession : null,
+    calculateVICPensionConcession: selectedState === 'VIC' ? calculateVICPensionConcession : null,
+    calculateVICTempOffThePlanConcession: selectedState === 'VIC' ? calculateVICTempOffThePlanConcession : null,
     calculateNSWForeignPurchaserDuty: selectedState === 'NSW' ? calculateNSWForeignPurchaserDuty : null,
     calculateVICForeignPurchaserDuty: selectedState === 'VIC' ? calculateVICForeignPurchaserDuty : null,
+    // New comprehensive upfront costs calculation
+    calculateUpfrontCosts: selectedState === 'NSW' ? calculateNSWUpfrontCosts : 
+                          selectedState === 'VIC' ? calculateVICUpfrontCosts : null,
     // Shared functions that exist
     calculateMonthlyRepayment,
     calculateTotalRepayments,

@@ -40,9 +40,30 @@ export const VIC_FIRST_HOME_BUYER_CONCESSION = {
   }
 };
 
+// VIC PPR requirements
+export const VIC_PPR_REQUIREMENT = 'Must live for 12 months within 12 months of settlement';
+
+// VIC Pensioner Duty Concession
+export const VIC_PENSIONER_CONCESSIONS = {
+  AVAILABLE: true,
+  DESCRIPTION: "Pensioner duty concession available for eligible pensioners in VIC",
+  REQUIREMENTS: "Must be owner-occupier with PPR, can be foreign buyer or first home buyer, all property types except vacant land",
+  PROPERTY_PRICE_CAP: 750000,
+  FULL_CONCESSION_THRESHOLD: 600000,
+  PARTIAL_CONCESSION_THRESHOLD: 750000,
+  PROPERTY_TYPE_RESTRICTIONS: ['all-except-vacant-land']
+};
+
+// VIC Temp Off-The-Plan Concession
+export const VIC_TEMP_OFF_THE_PLAN_CONCESSION = {
+  AVAILABLE: true,
+  DESCRIPTION: "Temporary off-the-plan concession available for eligible buyers in VIC",
+  REQUIREMENTS: "Must be off-the-plan property with apartment or townhouse category",
+  PROPERTY_PRICE_CAP: 999999999,
+  PROPERTY_TYPE_RESTRICTIONS: ['off-the-plan'],
+  PROPERTY_CATEGORY_RESTRICTIONS: ['apartment', 'townhouse']
+};
+
 // VIC-specific fees
 export const VIC_LAND_TRANSFER_FEE_UNIT = 16.81;
 export const VIC_STANDARD_TRANSFER_FEE_UNITS = 7; // Average for standard transfer
-
-// VIC PPR requirements
-export const VIC_PPR_REQUIREMENT = 'Must live for 12 months within 12 months of settlement';
