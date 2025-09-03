@@ -283,11 +283,35 @@ export const calculateVICFirstHomeBuyerDutyConcession = (buyerData, propertyData
     // Full concession: property price below $600k
     concessionAmount = stampDutyAmount;
   } else if (price === 750000) {
-    // Special case: property price exactly $750k - eligible but no concession amount
-    concessionAmount = 0;
+    // Special case: property price exactly $750k - not eligible (at threshold)
+    return {
+      eligible: false,
+      concessionAmount: 0,
+      reason: `First Home Buyer concession only applies to properties valued below $750,000. Your property is valued at exactly $${price.toLocaleString()}`,
+      details: {
+        propertyPrice: price,
+        stampDutyAmount: stampDutyAmount,
+        concessionAmount: 0,
+        netStampDuty: stampDutyAmount,
+        threshold750k: true,
+        note: 'Property price is at the $750k threshold'
+      }
+    };
   } else if (price > 750000) {
-    // No concession: property price above $750k
-    concessionAmount = 0;
+    // No concession: property price above $750k - not eligible
+    return {
+      eligible: false,
+      concessionAmount: 0,
+      reason: `First Home Buyer concession only applies to properties valued at $750,000 or below. Your property is valued at $${price.toLocaleString()}`,
+      details: {
+        propertyPrice: price,
+        stampDutyAmount: stampDutyAmount,
+        concessionAmount: 0,
+        netStampDuty: stampDutyAmount,
+        threshold750k: true,
+        note: 'Property price exceeds $750k threshold'
+      }
+    };
   } else {
     // Partial concession: property price between $600k and $750k
     // Use interpolation with concessional rates
@@ -333,11 +357,7 @@ export const calculateVICFirstHomeBuyerDutyConcession = (buyerData, propertyData
   return {
     eligible: true,
     concessionAmount: concessionAmount,
-    reason: concessionAmount > 0
-      ? 'Eligible for VIC First Home Buyer Duty Concession'
-      : price === 750000
-      ? 'Eligible for VIC First Home Buyer Duty Concession (at threshold - no concession amount)'
-      : 'You are an eligible buyer but your property price is outside of the concession range',
+    reason: 'Eligible for VIC First Home Buyer Duty Concession',
     details: {
       propertyPrice: price,
       stampDutyAmount: stampDutyAmount,
@@ -477,9 +497,11 @@ export const calculateVICPPRConcession = (buyerData, propertyData, selectedState
  * @param {Object} propertyData - Property information
  * @param {string} selectedState - Selected state (must be 'VIC')
  * @param {number} stampDutyAmount - Calculated stamp duty amount
+ * @param {number} dutiableValue - Dutiable value of the property (optional for off-the-plan)
+ * @param {boolean} sellerQuestionsComplete - Whether seller questions are complete
  * @returns {Object} - Pensioner concession result with amount and details
  */
-export const calculateVICPensionConcession = (buyerData, propertyData, selectedState, stampDutyAmount) => {
+export const calculateVICPensionConcession = (buyerData, propertyData, selectedState, stampDutyAmount, dutiableValue = 0, sellerQuestionsComplete = false) => {
   // Only calculate if VIC is selected
   if (selectedState !== 'VIC') {
     return {
@@ -537,23 +559,120 @@ export const calculateVICPensionConcession = (buyerData, propertyData, selectedS
     };
   }
 
-  // For off-the-plan and house-and-land properties, show as eligible but $0 concession
-  // Additional seller information is needed for calculation
+  // For off-the-plan and house-and-land properties
   if (propertyType === 'off-the-plan' || propertyType === 'house-and-land') {
-    return {
-      eligible: true,
-      concessionAmount: 0,
-      reason: 'Eligible for VIC Pensioner Duty Concession (additional seller information required for calculation)',
-      details: {
-        propertyPrice: price,
-        baseStampDuty: stampDutyAmount,
-        pensionerStampDuty: 0,
+    // If seller questions not complete, show as eligible but $0 concession
+    if (!sellerQuestionsComplete || dutiableValue <= 0) {
+      return {
+        eligible: true,
         concessionAmount: 0,
-        netStampDuty: stampDutyAmount,
-        propertyType: propertyType,
-        note: 'Additional seller information required for concession calculation'
+        reason: 'Eligible for VIC Pensioner Duty Concession (additional seller information required for calculation)',
+        details: {
+          propertyPrice: price,
+          baseStampDuty: stampDutyAmount,
+          pensionerStampDuty: 0,
+          concessionAmount: 0,
+          netStampDuty: stampDutyAmount,
+          propertyType: propertyType,
+          note: 'Additional seller information required for concession calculation'
+        }
+      };
+    }
+    
+    // Seller questions complete - calculate based on dutiable value and property price
+    const dutiable = parseInt(dutiableValue) || 0;
+    
+    if (dutiable <= 550000) {
+      // Dutiable value ≤ $550k: Full pension concession (net stamp duty = 0), ignore property price
+      return {
+        eligible: true,
+        concessionAmount: stampDutyAmount,
+        reason: 'Eligible for VIC Pensioner Duty Concession (full concession - dutiable value ≤ $550k)',
+        details: {
+          propertyPrice: price,
+          dutiableValue: dutiable,
+          baseStampDuty: stampDutyAmount,
+          pensionerStampDuty: 0,
+          concessionAmount: stampDutyAmount,
+          netStampDuty: 0,
+          propertyType: propertyType,
+          note: 'Full concession applies as dutiable value is ≤ $550k'
+        }
+      };
+    } else if (price > 750000) {
+      // Dutiable value > $550k AND property price > $750k: No pension concession
+      return {
+        eligible: false,
+        concessionAmount: 0,
+        reason: `Pensioner concession not available - dutiable value ($${dutiable.toLocaleString()}) > $550k and property price ($${price.toLocaleString()}) > $750k`,
+        details: {
+          propertyPrice: price,
+          dutiableValue: dutiable,
+          baseStampDuty: stampDutyAmount,
+          pensionerStampDuty: stampDutyAmount,
+          concessionAmount: 0,
+          netStampDuty: stampDutyAmount,
+          propertyType: propertyType,
+          note: 'Both dutiable value and property price exceed thresholds'
+        }
+      };
+    } else {
+      // Dutiable value > $550k AND property price ≤ $750k: Calculate using FHO interpolation method on property price
+      const sortedRates = Object.entries(VIC_FHB_CONCESSIONAL_RATES)
+        .sort(([a], [b]) => parseInt(a) - parseInt(b));
+      
+      let lowerPrice = 0;
+      let lowerRate = 0;
+      let upperPrice = 0;
+      let upperRate = 0;
+      
+      for (let i = 0; i < sortedRates.length; i++) {
+        const [ratePrice, rate] = sortedRates[i];
+        const currentPrice = parseInt(ratePrice);
+        
+        if (price <= currentPrice) {
+          upperPrice = currentPrice;
+          upperRate = rate;
+          
+          if (i > 0) {
+            const [prevPrice, prevRate] = sortedRates[i - 1];
+            lowerPrice = parseInt(prevPrice);
+            lowerRate = prevRate;
+          }
+          break;
+        }
       }
-    };
+      
+      let applicableRate;
+      if (lowerPrice > 0 && upperPrice > 0) {
+        // Interpolate between two rates
+        applicableRate = lowerRate + (upperRate - lowerRate) * (price - lowerPrice) / (upperPrice - lowerPrice);
+      } else {
+        // Use the upper rate directly
+        applicableRate = upperRate;
+      }
+      
+      // Calculate concessional amount using the interpolated rate on property price
+      const pensionerStampDuty = price * applicableRate;
+      const concessionAmount = Math.max(0, stampDutyAmount - pensionerStampDuty);
+      
+      return {
+        eligible: true,
+        concessionAmount: concessionAmount,
+        reason: 'Eligible for VIC Pensioner Duty Concession (partial concession - dutiable value > $550k, property price ≤ $750k)',
+        details: {
+          propertyPrice: price,
+          dutiableValue: dutiable,
+          baseStampDuty: stampDutyAmount,
+          pensionerStampDuty: pensionerStampDuty,
+          concessionAmount: concessionAmount,
+          netStampDuty: stampDutyAmount - concessionAmount,
+          propertyType: propertyType,
+          applicableRate: applicableRate,
+          note: 'Partial concession calculated using FHO interpolation method on property price'
+        }
+      };
+    }
   }
 
   if (price <= 0) {
@@ -907,12 +1026,13 @@ export const calculateUpfrontCosts = (buyerData, propertyData, selectedState) =>
   // Calculate all concessions
   const firstHomeConcession = calculateVICFirstHomeBuyerDutyConcession(buyerData, propertyData, selectedState, stampDutyAmount);
   const pprConcession = calculateVICPPRConcession(buyerData, propertyData, selectedState, stampDutyAmount);
-  const pensionerConcession = calculateVICPensionConcession(buyerData, propertyData, selectedState, stampDutyAmount);
+  const pensionerConcession = calculateVICPensionConcession(buyerData, propertyData, selectedState, stampDutyAmount, dutiableValue, buyerData.sellerQuestionsComplete);
   const tempOffThePlanConcession = calculateVICTempOffThePlanConcession(buyerData, propertyData, selectedState, stampDutyAmount, dutiableValue, buyerData.sellerQuestionsComplete);
   
   // Determine which concession to apply
   let appliedConcession = null;
   let showBothConcessions = false;
+  let ineligibleConcessions = [];
   
   const isFirstHomeBuyerEligible = firstHomeConcession.eligible && buyerData.isFirstHomeBuyer === 'yes';
   const isPensionerEligible = pensionerConcession.eligible && buyerData.hasPensionCard === 'yes';
@@ -933,19 +1053,58 @@ export const calculateUpfrontCosts = (buyerData, propertyData, selectedState) =>
       tempOffThePlanConcession: tempOffThePlanConcession
     };
   } else if (isFirstHomeBuyerEligible && isPensionerEligible) {
-    // User is eligible for both - show both concessions
-    showBothConcessions = true;
-    appliedConcession = {
-      type: 'First Home Buyer',
-      amount: firstHomeConcession.concessionAmount,
-      eligible: true,
-      reason: firstHomeConcession.reason,
-      showBothConcessions: true,
-      firstHomeConcession: firstHomeConcession,
-      pprConcession: pprConcession,
-      pensionerConcession: pensionerConcession,
-      tempOffThePlanConcession: tempOffThePlanConcession
-    };
+    // User is eligible for both - apply the higher concession only
+    if (firstHomeConcession.concessionAmount >= pensionerConcession.concessionAmount) {
+      // First Home Buyer concession is higher or equal
+      appliedConcession = {
+        type: 'First Home Buyer',
+        amount: firstHomeConcession.concessionAmount,
+        eligible: true,
+        reason: firstHomeConcession.reason,
+        showBothConcessions: false,
+        firstHomeConcession: firstHomeConcession,
+        pprConcession: pprConcession,
+        pensionerConcession: pensionerConcession,
+        tempOffThePlanConcession: tempOffThePlanConcession
+      };
+      // Add the lower pensioner concession to ineligible
+      ineligibleConcessions.push({
+        type: 'Pensioner',
+        amount: pensionerConcession.concessionAmount,
+        eligible: false,
+        reason: 'Only one concession can be applied',
+        showBothConcessions: false,
+        firstHomeConcession: firstHomeConcession,
+        pprConcession: pprConcession,
+        pensionerConcession: pensionerConcession,
+        tempOffThePlanConcession: tempOffThePlanConcession
+      });
+    } else {
+      // Pensioner concession is higher
+      appliedConcession = {
+        type: 'Pensioner',
+        amount: pensionerConcession.concessionAmount,
+        eligible: true,
+        reason: pensionerConcession.reason,
+        showBothConcessions: false,
+        firstHomeConcession: firstHomeConcession,
+        pprConcession: pprConcession,
+        pensionerConcession: pensionerConcession,
+        tempOffThePlanConcession: tempOffThePlanConcession
+      };
+      // Add the lower first home buyer concession to ineligible
+      ineligibleConcessions.push({
+        type: 'First Home Buyer',
+        amount: firstHomeConcession.concessionAmount,
+        eligible: false,
+        reason: 'Only one concession can be applied',
+        showBothConcessions: false,
+        firstHomeConcession: firstHomeConcession,
+        pprConcession: pprConcession,
+        pensionerConcession: pensionerConcession,
+        tempOffThePlanConcession: tempOffThePlanConcession
+      });
+    }
   } else if (isFirstHomeBuyerEligible) {
     appliedConcession = {
       type: 'First Home Buyer',
@@ -984,6 +1143,31 @@ export const calculateUpfrontCosts = (buyerData, propertyData, selectedState) =>
     };
   }
   
+  // Handle cases where concessions are eligible but not applied due to priority rules
+  // (e.g., pension concession for off-the-plan properties when Temp Off-The-Plan takes priority)
+  if (buyerData.hasPensionCard === 'yes' && 
+      buyerData.buyerType === 'owner-occupier' && 
+      buyerData.isPPR === 'yes' && 
+      propertyData.propertyType === 'off-the-plan' &&
+      buyerData.sellerQuestionsComplete &&
+      isTempOffThePlanEligible && 
+      tempOffThePlanConcession.concessionAmount > 0) {
+    
+    // If Temp Off-The-Plan concession is applied, add pension concession to ineligible
+    // regardless of whether pension concession is technically eligible or not
+    ineligibleConcessions.push({
+      type: 'Pensioner',
+      amount: 0,
+      eligible: false,
+      reason: 'Only one concession can be applied',
+      showBothConcessions: false,
+      firstHomeConcession: firstHomeConcession,
+      pprConcession: pprConcession,
+      pensionerConcession: pensionerConcession,
+      tempOffThePlanConcession: tempOffThePlanConcession
+    });
+  }
+  
   // Calculate foreign purchaser duty
   const foreignDutyResult = calculateVICForeignPurchaserDuty(buyerData, propertyData, selectedState);
   
@@ -1000,6 +1184,7 @@ export const calculateUpfrontCosts = (buyerData, propertyData, selectedState) =>
   return {
     stampDuty: { amount: stampDutyAmount, label: "Stamp Duty" },
     concessions: appliedConcession ? [appliedConcession] : [],
+    ineligibleConcessions: ineligibleConcessions,
     grants: grantResult.eligible ? [grantResult] : [],
     foreignDuty: { 
       amount: foreignDutyResult.applicable ? foreignDutyResult.amount : 0, 
