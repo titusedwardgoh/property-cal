@@ -37,6 +37,16 @@ export const QLD_FIRST_HOME_OWNERS_GRANT = 30000; // $30,000 for contracts signe
 export const QLD_FHOG_PROPERTY_CAP = 750000;
 export const QLD_FHOG_LAND_CAP = 750000;
 
+// QLD First Home Owners Grant Concession
+export const QLD_FIRST_HOME_OWNERS_GRANT_CONCESSION = {
+  AVAILABLE: true,
+  DESCRIPTION: "Queensland First Home Owners Grant - $30,000 for new properties",
+  REQUIREMENTS: "Must be owner-occupier, PPR, Australian resident, first home buyer, new property only",
+  PROPERTY_PRICE_CAP: 750000,
+  PROPERTY_TYPE_RESTRICTIONS: ['new'], // Only new properties
+  AMOUNT: 30000
+};
+
 // QLD-specific concessions and requirements
 export const QLD_FIRST_HOME_BUYER_CONCESSION = {
   REQUIREMENTS: {
@@ -48,19 +58,6 @@ export const QLD_FIRST_HOME_BUYER_CONCESSION = {
   DESCRIPTION: "First home buyer concessions available for PPR properties regardless of citizenship"
 };
 
-// QLD land transfer fees (tiered by property value)
-export const QLD_LAND_TRANSFER_FEES = {
-  50000: 200,
-  100000: 300,
-  200000: 400,
-  350000: 500,
-  500000: 600,
-  750000: 800,
-  1000000: 1000,
-  1500000: 1500,
-  INFINITY: 2000 // For properties over $1.5M
-};
-
 // QLD PPR requirements
 export const QLD_PPR_REQUIREMENT = 'Must live for 6 months within 12 months of settlement';
 
@@ -69,4 +66,34 @@ export const QLD_VACANT_LAND_CONCESSION = {
   AVAILABLE: true,
   DESCRIPTION: "If claimed, stamp duty is $0 with no price caps for Queensland vacant land purchases",
   REQUIREMENTS: "Must be land with build cost and claimVacantLandConcession must be true"
+};
+
+// QLD Home Concession
+export const QLD_HOME_CONCESSION = {
+  AVAILABLE: true,
+  DESCRIPTION: "Home concession provides reduced stamp duty rates for owner-occupier PPR properties",
+  REQUIREMENTS: "Must be owner-occupier with PPR, all property types, no price caps",
+  PROPERTY_TYPE_RESTRICTIONS: ['all'],
+  FOREIGN_BUYER_ELIGIBLE: true
+};
+
+// QLD First Home Concession
+export const QLD_FIRST_HOME_CONCESSION = {
+  AVAILABLE: true,
+  DESCRIPTION: "First home concession provides additional stamp duty reduction for first home buyers on existing properties",
+  REQUIREMENTS: "Must be owner-occupier with PPR, first home buyer, existing properties only, price cap $800k",
+  PROPERTY_PRICE_CAP: 800000,
+  PROPERTY_TYPE_RESTRICTIONS: ['existing'],
+  FOREIGN_BUYER_ELIGIBLE: true,
+  CALCULATION_METHOD: "Home concession rate minus first home concession amount"
+};
+
+// QLD First Home (New Concession)
+export const QLD_FIRST_HOME_NEW_CONCESSION = {
+  AVAILABLE: true,
+  DESCRIPTION: "First home (new) concession provides full stamp duty exemption for first home buyers on new and off-the-plan properties",
+  REQUIREMENTS: "Must be owner-occupier with PPR, first home buyer, new/off-the-plan/house-and-land properties only, no price caps",
+  PROPERTY_TYPE_RESTRICTIONS: ['new', 'off-the-plan', 'house-and-land'],
+  FOREIGN_BUYER_ELIGIBLE: true,
+  CALCULATION_METHOD: "No Stamp - Full exemption"
 };

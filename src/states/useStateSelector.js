@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 // Import state-specific functions
 import { calculateNSWStampDuty, calculateNSWFirstHomeOwnersGrant, calculateNSWFirstHomeBuyersAssistance, calculateNSWForeignPurchaserDuty, calculateUpfrontCosts as calculateNSWUpfrontCosts } from './nsw/calculations.js';
 import { calculateVICStampDuty, calculateVICFirstHomeOwnersGrant, calculateVICForeignPurchaserDuty, calculateVICFirstHomeBuyerDutyConcession, calculateVICPPRConcession, calculateVICPensionConcession, calculateVICTempOffThePlanConcession, calculateUpfrontCosts as calculateVICUpfrontCosts } from './vic/calculations.js';
-import { calculateQLDStampDuty } from './qld/calculations.js';
+import { calculateQLDStampDuty, calculateQLDFirstHomeOwnersGrant, calculateQLDHomeConcession, calculateQLDFirstHomeConcession, calculateQLDFirstHomeNewConcession, calculateQLDFirstHomeVacantLandConcession, calculateQLDForeignBuyerDuty, calculateUpfrontCosts as calculateQLDUpfrontCosts } from './qld/calculations.js';
 import { calculateSAStampDuty } from './sa/calculations.js';
 import { calculateWAStampDuty } from './wa/calculations.js';
 import { calculateTASStampDuty } from './tas/calculations.js';
@@ -70,6 +70,12 @@ export const useStateSelector = (selectedState) => {
     calculateStampDuty: getStampDutyFunction(),
     calculateNSWFirstHomeOwnersGrant: getNSWFirstHomeOwnersGrantFunction(),
     calculateVICFirstHomeOwnersGrant: getVICFirstHomeOwnersGrantFunction(),
+    calculateQLDFirstHomeOwnersGrant: selectedState === 'QLD' ? calculateQLDFirstHomeOwnersGrant : null,
+    calculateQLDHomeConcession: selectedState === 'QLD' ? calculateQLDHomeConcession : null,
+    calculateQLDFirstHomeConcession: selectedState === 'QLD' ? calculateQLDFirstHomeConcession : null,
+    calculateQLDFirstHomeNewConcession: selectedState === 'QLD' ? calculateQLDFirstHomeNewConcession : null,
+    calculateQLDFirstHomeVacantLandConcession: selectedState === 'QLD' ? calculateQLDFirstHomeVacantLandConcession : null,
+    calculateQLDForeignBuyerDuty: selectedState === 'QLD' ? calculateQLDForeignBuyerDuty : null,
     calculateNSWFirstHomeBuyersAssistance: selectedState === 'NSW' ? calculateNSWFirstHomeBuyersAssistance : null,
     calculateVICFirstHomeBuyerDutyConcession: selectedState === 'VIC' ? calculateVICFirstHomeBuyerDutyConcession : null,
     calculateVICPPRConcession: selectedState === 'VIC' ? calculateVICPPRConcession : null,
@@ -79,7 +85,8 @@ export const useStateSelector = (selectedState) => {
     calculateVICForeignPurchaserDuty: selectedState === 'VIC' ? calculateVICForeignPurchaserDuty : null,
     // New comprehensive upfront costs calculation
     calculateUpfrontCosts: selectedState === 'NSW' ? calculateNSWUpfrontCosts : 
-                          selectedState === 'VIC' ? calculateVICUpfrontCosts : null,
+                          selectedState === 'VIC' ? calculateVICUpfrontCosts :
+                          selectedState === 'QLD' ? calculateQLDUpfrontCosts : null,
     // Shared functions that exist
     calculateMonthlyRepayment,
     calculateTotalRepayments,
