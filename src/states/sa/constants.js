@@ -24,45 +24,4 @@ export const SA_FOREIGN_BUYER_RATE = 0.07; // 7% additional duty for foreign buy
 export const SA_STATE_AVERAGE = 600000;
 export const SA_FIRST_HOME_OWNERS_GRANT = 15000; // $15,000 for eligible first home buyers
 export const SA_FHOG_PROPERTY_CAP = 9999999999; 
-
-
-// SA-specific concessions and requirements
-export const SA_FIRST_HOME_BUYER_CONCESSION = {
-  REQUIREMENTS: {
-    MUST_BE_PPR: true,
-    MUST_BE_FIRST_HOME_BUYER: true,
-    PROPERTY_TYPE: 'all', // Available for all property types
-    MAX_PRICE: 800000
-  },
-  DESCRIPTION: "First home buyer concessions available for PPR properties up to $800,000"
-};
-
-// SA land transfer fees (tiered by property value)
-export const SA_LAND_TRANSFER_FEES = {
-  50000: 200,
-  100000: 300,
-  200000: 400,
-  300000: 500,
-  500000: 600,
-  750000: 800,
-  1000000: 1000,
-  1500000: 1500,
-  INFINITY: 2000 // For properties over $1.5M
-};
-
-// SA PPR requirements
-export const SA_PPR_REQUIREMENT = 'Must live for 6 months within 12 months of settlement';
-
-// SA vacant land concession
-export const SA_VACANT_LAND_CONCESSION = {
-  AVAILABLE: false,
-  DESCRIPTION: "No specific vacant land concession in SA - standard rates apply",
-  REQUIREMENTS: "Standard stamp duty rates apply to all property types"
-};
-
-// SA off-the-plan concession
-export const SA_OFF_THE_PLAN_CONCESSION = {
-  AVAILABLE: true,
-  DESCRIPTION: "Off-the-plan properties get stamp duty concession based on construction progress",
-  REQUIREMENTS: "Must be off-the-plan property with construction progress certificate"
-};
+export const SA_FHO_CONCESSION_PROPERTY_CAP = 9999999999; 

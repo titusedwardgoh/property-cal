@@ -8,6 +8,7 @@ export const useFormStore = create((set, get) => ({
   propertyType: '',
   propertyCategory: '',
   isWA: '',
+  isWAMetro: '', // New field for WA Metro/Non-Metro
   isACT: '', // New field for ACT
   propertyDetailsComplete: false,
   propertyDetailsFormComplete: false,
@@ -73,6 +74,7 @@ export const useFormStore = create((set, get) => ({
     propertyType: '',
     propertyCategory: '',
     isWA: '',
+    isWAMetro: '', // New field for WA Metro/Non-Metro
     isACT: '', // New field for ACT
     buyerType: '',
     isPPR: '',

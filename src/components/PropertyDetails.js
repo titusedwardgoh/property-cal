@@ -131,6 +131,7 @@ export default function PropertyDetails() {
       propertyAddress: formData.propertyAddress,
       selectedState: formData.selectedState,
       isWA: formData.isWA,
+      isWAMetro: formData.isWAMetro,
       propertyCategory: formData.propertyCategory,
       propertyType: formData.propertyType,
       propertyPrice: formData.propertyPrice,
@@ -201,6 +202,7 @@ export default function PropertyDetails() {
       propertyAddress: formData.propertyAddress,
       selectedState: formData.selectedState,
       isWA: formData.isWA,
+      isWAMetro: formData.isWAMetro,
       propertyCategory: formData.propertyCategory,
       propertyType: formData.propertyType,
       propertyPrice: formData.propertyPrice,
@@ -292,7 +294,7 @@ export default function PropertyDetails() {
       case 2:
         return formData.selectedState && formData.selectedState.trim() !== '';
       case 3:
-        return formData.selectedState === 'WA' ? (formData.isWA && formData.isWA.trim() !== '') : true;
+        return formData.selectedState === 'WA' ? (formData.isWA && formData.isWA.trim() !== '' && formData.isWAMetro && formData.isWAMetro.trim() !== '') : true;
       case 4:
         return formData.propertyCategory && formData.propertyCategory.trim() !== '';
       case 5:
@@ -397,33 +399,71 @@ export default function PropertyDetails() {
           return (
             <div className="flex flex-col mt-12 pr-2">
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
-                Is the Property north or south?
+                Where is the Property
               </h2>
               <p className="lg:text-lg xl:text-xl text-gray-500 lg:mb-20 leading-relaxed mb-8">
                 This affects stamp duty calculations for Western Australia
               </p>
-              <div className="grid grid-cols-1 gap-2 mb-8 lg:grid-cols-2">
+              <div className="grid grid-cols-2 gap-2 mb-8 lg:grid-cols-2">
                 {[
                   { value: 'north', label: 'North' },
                   { value: 'south', label: 'South' }
                 ].map((option) => (
                   <button
                     key={option.value}
-                    onClick={() => updateFormData('isWA', option.value)}
-                    className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
+                    onClick={() => {
+                      updateFormData('isWA', option.value);
+                      // Clear metro selection if switching to north
+                      if (option.value === 'north' && formData.isWAMetro === 'metro') {
+                        updateFormData('isWAMetro', '');
+                      }
+                    }}
+                    className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 w-full ${
                       formData.isWA === option.value
                         ? 'border-gray-800 bg-secondary text-white shadow-lg'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
                     <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                    <div className={`text-xs leading-none ${
+                    <div className={`text-xs leading-none text-left ${
                       formData.isWA === option.value
                         ? 'text-gray-400'
                         : 'text-gray-500'
-                    }`}>of the 26th parallel of South latitude.</div>
+                    }`}>of 26th parallel of South lat.</div>
                   </button>
                 ))}
+                
+                {/* WA Metro/Non-Metro Selection */}
+                {[
+                  { value: 'metro', label: 'Metro/Peel Region' },
+                  { value: 'non-metro', label: 'Non-Metro/Peel Region' }
+                ].map((option) => {
+                  const isDisabled = option.value === 'metro' && formData.isWA === 'north';
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => !isDisabled && updateFormData('isWAMetro', option.value)}
+                      disabled={isDisabled}
+                      className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 w-full ${
+                        isDisabled 
+                          ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : formData.isWAMetro === option.value
+                            ? 'border-gray-800 bg-secondary text-white shadow-lg hover:scale-105'
+                            : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:scale-105'
+                      }`}
+                      title={isDisabled ? "There are no metropolitan regions in the north" : ""}
+                    >
+                      <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
+                      <div className={`text-xs leading-none text-left ${
+                        isDisabled
+                          ? 'text-gray-300'
+                          : formData.isWAMetro === option.value
+                            ? 'text-gray-400'
+                            : 'text-gray-500'
+                      }`}>Check your local gov authority</div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           );

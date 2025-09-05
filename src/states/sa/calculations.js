@@ -1,4 +1,4 @@
-import { SA_STAMP_DUTY_RATES, SA_FIRST_HOME_OWNERS_GRANT, SA_FHOG_PROPERTY_CAP, SA_FOREIGN_BUYER_RATE, SA_FIRST_HOME_CONCESSION_BRACKETS } from './constants.js';
+import { SA_STAMP_DUTY_RATES, SA_FIRST_HOME_OWNERS_GRANT, SA_FHOG_PROPERTY_CAP, SA_FOREIGN_BUYER_RATE } from './constants.js';
 
 export const calculateSAStampDuty = (propertyPrice, selectedState) => {
   // Only calculate if SA is selected
@@ -212,12 +212,12 @@ export const calculateSAFirstHomeBuyerConcession = (buyerData, propertyData, sel
     };
   }
 
-  // Check property type - SA First Home Buyer Concession applies to off-the-plan, house-and-land, and vacant land
-  if (propertyType !== 'off-the-plan' && propertyType !== 'house-and-land' && propertyType !== 'vacant-land-only') {
+  // Check property type - SA First Home Buyer Concession applies to off-the-plan and house-and-land
+  if (propertyType !== 'off-the-plan' && propertyType !== 'house-and-land') {
     return {
       eligible: false,
       concessionAmount: 0,
-      reason: 'SA First Home Buyer Concession only applies to off-the-plan, house-and-land, and vacant land properties'
+      reason: 'SA First Home Buyer Concession only applies to off-the-plan and house-and-land properties'
     };
   }
 

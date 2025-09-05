@@ -408,12 +408,12 @@ export const calculateQLDFirstHomeNewConcession = (buyerData, propertyData, sele
     };
   }
 
-  // Check property type - only new, off-the-plan, and house-and-land properties are eligible
-  if (propertyType !== 'new' && propertyType !== 'off-the-plan' && propertyType !== 'house-and-land') {
+  // Check property type - only new and off-the-plan properties are eligible
+  if (propertyType !== 'new' && propertyType !== 'off-the-plan') {
     return {
       eligible: false,
       concessionAmount: 0,
-      reason: 'First Home (New Concession) only applies to new, off-the-plan, and house-and-land properties'
+      reason: 'First Home (New Concession) only applies to new and off-the-plan properties'
     };
   }
 
@@ -505,12 +505,12 @@ export const calculateQLDFirstHomeVacantLandConcession = (buyerData, propertyDat
     };
   }
 
-  // Check property type - must be vacant land
-  if (propertyType !== 'vacant-land-only') {
+  // Check property type - must be house-and-land
+  if (propertyType !== 'house-and-land') {
     return {
       eligible: false,
       concessionAmount: 0,
-      reason: 'First Home (Vac Land) Concession only applies to vacant land properties',
+      reason: 'First Home (Vac Land) Concession only applies to house-and-land properties',
       details: {}
     };
   }
