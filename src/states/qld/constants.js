@@ -31,7 +31,7 @@ export const QLD_FIRST_HOME_CONCESSION_BRACKETS = [
   { min: 800000, max: Infinity, concession: 0 } // $800,000 or more: Nil
 ];
 
-export const QLD_FOREIGN_BUYER_RATE = 0.07;
+export const QLD_FOREIGN_BUYER_RATE = 0.08;
 export const QLD_STATE_AVERAGE = 650000;
 export const QLD_FIRST_HOME_OWNERS_GRANT = 30000; // $30,000 for contracts signed between 20 Nov 2023 and 30 Jun 2026
 export const QLD_FHOG_PROPERTY_CAP = 750000;

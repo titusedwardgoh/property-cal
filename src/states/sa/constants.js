@@ -23,9 +23,8 @@ export const SA_FIRST_HOME_CONCESSION_BRACKETS = [
 export const SA_FOREIGN_BUYER_RATE = 0.07; // 7% additional duty for foreign buyers
 export const SA_STATE_AVERAGE = 600000;
 export const SA_FIRST_HOME_OWNERS_GRANT = 15000; // $15,000 for eligible first home buyers
-export const SA_FHOG_PROPERTY_CAP = 575000; // Cap for existing properties
-export const SA_FHOG_LAND_CAP = 400000; // Cap for vacant land
-export const SA_FHOG_NEW_BUILD_CAP = 750000; // Cap for new builds
+export const SA_FHOG_PROPERTY_CAP = 9999999999; 
+
 
 // SA-specific concessions and requirements
 export const SA_FIRST_HOME_BUYER_CONCESSION = {
