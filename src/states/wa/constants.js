@@ -22,3 +22,33 @@ export const WA_FIRST_HOME_OWNERS_GRANT = 10000; // $10,000 for eligible first h
 export const WA_FHOG_PROPERTY_CAP_SOUTH = 750000; // $750k cap for South WA
 export const WA_FHOG_PROPERTY_CAP_NORTH = 1000000; // $1M cap for North WA
 
+// WA First Home Owner Concession caps
+export const WA_FHO_CONCESSION_CAP_METRO = 700000; // $700k cap for Metro/Peel regions
+export const WA_FHO_CONCESSION_CAP_NON_METRO = 750000; // $750k cap for Non-Metro regions
+export const WA_FHO_CONCESSION_CAP_VACANT_LAND = 450000; // $450k cap for vacant land
+
+// WA First Home Owner Concession rates
+export const WA_FHO_CONCESSION_RATE_METRO = 13.63; // $13.63 per $100 for Metro/Peel regions
+export const WA_FHO_CONCESSION_RATE_NON_METRO = 11.89; // $11.89 per $100 for Non-Metro regions
+export const WA_FHO_CONCESSION_RATE_VACANT_LAND = 15.39; // $15.39 per $100 for vacant land
+
+// WA First Home Owner Concession thresholds
+export const WA_FHO_CONCESSION_THRESHOLD = 500000; // $500k threshold for general properties
+export const WA_FHO_CONCESSION_THRESHOLD_VACANT_LAND = 350000; // $350k threshold for vacant land
+
+// WA Off-The-Plan Concession (21 March 2025 - 30 June 2026)
+export const WA_OFF_THE_PLAN_CONCESSION_CAP = 50000; // $50k cap for all scenarios
+
+// Pre-Construction (construction not started)
+export const WA_OFF_THE_PLAN_PRE_CONSTRUCTION_FULL_CONCESSION_THRESHOLD = 750000; // $750k threshold for 100% concession
+export const WA_OFF_THE_PLAN_PRE_CONSTRUCTION_PARTIAL_CONCESSION_THRESHOLD = 850000; // $850k threshold for 50% concession
+export const WA_OFF_THE_PLAN_PRE_CONSTRUCTION_REDUCTION_RATE = 0.0005; // 0.05% reduction per $100 over $750k
+export const WA_OFF_THE_PLAN_PRE_CONSTRUCTION_PARTIAL_CONCESSION_RATE = 0.5; // 50% concession for $850k+
+
+// Under Construction (construction started)
+export const WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_FULL_CONCESSION_THRESHOLD = 750000; // $750k threshold for 75% concession
+export const WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_PARTIAL_CONCESSION_THRESHOLD = 850000; // $850k threshold for 37.5% concession
+export const WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_REDUCTION_RATE = 0.000375; // 0.0375% reduction per $100 over $750k
+export const WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_PARTIAL_CONCESSION_RATE = 0.375; // 37.5% concession for $850k+
+export const WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_FULL_CONCESSION_RATE = 0.75; // 75% concession for $750k and under
+

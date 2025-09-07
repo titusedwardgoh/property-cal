@@ -8,7 +8,7 @@ export default function SellerQuestions() {
   const updateFormData = useFormStore(state => state.updateFormData);
   const [currentStep, setCurrentStep] = useState(1);
   const [localCompletionState, setLocalCompletionState] = useState(false);
-  const totalSteps = 9;
+  const totalSteps = 8;
 
   // Calculate the starting step number based on WA, ACT selection and loan need
   const getStartingStepNumber = () => {
@@ -46,16 +46,44 @@ export default function SellerQuestions() {
   // Calculate the actual number of steps being shown based on property type
   const getActualStepsShown = () => {
     const shouldShowConstructionQuestions = formData.propertyType === 'off-the-plan' || formData.propertyType === 'house-and-land';
-    return shouldShowConstructionQuestions ? totalSteps : (totalSteps - 2); // Subtract 2 for skipped construction questions
+    const isOffThePlanNonVIC = formData.propertyType === 'off-the-plan' && formData.selectedState !== 'VIC';
+    
+    if (shouldShowConstructionQuestions) {
+      if (isOffThePlanNonVIC) {
+        // Off-the-plan (non-VIC): Skip dutiable value question (subtract 1)
+        return totalSteps - 1;
+      } else {
+        // VIC off-the-plan or house-and-land: All questions shown
+        return totalSteps;
+      }
+    } else {
+      // Construction questions are skipped (subtract 2)
+      return totalSteps - 2;
+    }
   };
 
   // Calculate the current step number for display, accounting for skipped questions
   const getCurrentStepNumber = () => {
     const shouldShowConstructionQuestions = formData.propertyType === 'off-the-plan' || formData.propertyType === 'house-and-land';
+    const isOffThePlanNonVIC = formData.propertyType === 'off-the-plan' && formData.selectedState !== 'VIC';
     
     if (shouldShowConstructionQuestions) {
-      // All questions are shown, use normal numbering
-      return currentStep + getStartingStepNumber() - 1;
+      if (isOffThePlanNonVIC) {
+        // Off-the-plan (non-VIC): Skip dutiable value question (case 4)
+        if (currentStep <= 3) {
+          // Cases 1-3: Normal numbering
+          return currentStep + getStartingStepNumber() - 1;
+        } else if (currentStep >= 5) {
+          // Cases 5+: Adjust for skipped dutiable value question (subtract 1)
+          return (currentStep - 1) + getStartingStepNumber() - 1;
+        } else {
+          // Case 4: Shouldn't happen for off-the-plan (non-VIC), but fallback
+          return currentStep + getStartingStepNumber() - 1;
+        }
+      } else {
+        // VIC off-the-plan or house-and-land: All questions shown
+        return currentStep + getStartingStepNumber() - 1;
+      }
     } else {
       // Construction questions are skipped, adjust numbering
       if (currentStep <= 2) {
@@ -73,7 +101,6 @@ export default function SellerQuestions() {
 
   const nextStep = useCallback(() => {
     // Log current form entries before proceeding
-    console.log('🚀 SellerQuestions - Next Button Pressed - Step:', currentStep);
     console.log('📋 Current Form Entries:', {
       // Property Details
       propertyAddress: formData.propertyAddress,
@@ -107,8 +134,7 @@ export default function SellerQuestions() {
       bodyCorp: formData.bodyCorp,
       landTransferFee: formData.landTransferFee,
       legalFees: formData.legalFees,
-      buildingAndPestInspection: formData.buildingAndPestInspection,
-      sellerQuestion9: formData.sellerQuestion9
+      buildingAndPestInspection: formData.buildingAndPestInspection
     });
     
     // Initialize the store with current step if this is the first call
@@ -127,6 +153,14 @@ export default function SellerQuestions() {
         // After water rates, skip to body corporate (case 5)
         nextStepNumber = 5;
       }
+    } else {
+      // Skip dutiable value for off-the-plan (non-VIC)
+      if (currentStep === 3 && formData.propertyType === 'off-the-plan' && formData.selectedState !== 'VIC') {
+        // Skip from construction started to body corporate
+        nextStepNumber = 5;
+        // Auto-set dutiable value
+        updateFormData('dutiableValue', formData.propertyPrice);
+      }
     }
     
     if (currentStep < totalSteps) {
@@ -139,7 +173,6 @@ export default function SellerQuestions() {
       setLocalCompletionState(true);
       
       // Log final form completion
-      console.log('🎉 Seller Questions Form Complete!');
       console.log('📊 Final Complete Form Summary:', {
         // Property Details
         propertyAddress: formData.propertyAddress,
@@ -173,8 +206,7 @@ export default function SellerQuestions() {
         bodyCorp: formData.bodyCorp,
         landTransferFee: formData.landTransferFee,
         legalFees: formData.legalFees,
-        buildingAndPestInspection: formData.buildingAndPestInspection,
-        sellerQuestion9: formData.sellerQuestion9
+        buildingAndPestInspection: formData.buildingAndPestInspection
       });
     }
   }, [currentStep, totalSteps, updateFormData, formData]);
@@ -191,6 +223,12 @@ export default function SellerQuestions() {
         if (currentStep === 5) {
           // When going back from body corporate, skip to water rates (case 2)
           prevStepNumber = 2;
+        }
+      } else {
+        // Handle back navigation for off-the-plan (non-VIC)
+        if (currentStep === 5 && formData.propertyType === 'off-the-plan' && formData.selectedState !== 'VIC') {
+          // When going back from body corporate, skip to construction started (case 3)
+          prevStepNumber = 3;
         }
       }
       
@@ -236,6 +274,10 @@ export default function SellerQuestions() {
       case 3:
         return shouldShowConstructionQuestions ? (formData.constructionStarted && formData.constructionStarted.trim() !== '') : true;
       case 4:
+        // Skip validation for off-the-plan (non-VIC) since we auto-set the value
+        if (formData.propertyType === 'off-the-plan' && formData.selectedState !== 'VIC') {
+          return true; // Always valid since we auto-set the value
+        }
         return shouldShowConstructionQuestions ? (formData.dutiableValue && formData.dutiableValue.trim() !== '') : true;
       case 5:
         return formData.bodyCorp && formData.bodyCorp.trim() !== '';
@@ -245,12 +287,10 @@ export default function SellerQuestions() {
         return formData.legalFees && formData.legalFees.trim() !== '';
       case 8:
         return formData.buildingAndPestInspection && formData.buildingAndPestInspection.trim() !== '';
-      case 9:
-        return formData.sellerQuestion9 && formData.sellerQuestion9.trim() !== '';
       default:
         return false;
     }
-  }, [currentStep, formData.councilRates, formData.waterRates, formData.constructionStarted, formData.dutiableValue, formData.bodyCorp, formData.landTransferFee, formData.legalFees, formData.buildingAndPestInspection, formData.sellerQuestion9, formData.propertyType]);
+  }, [currentStep, formData.councilRates, formData.waterRates, formData.constructionStarted, formData.dutiableValue, formData.bodyCorp, formData.landTransferFee, formData.legalFees, formData.buildingAndPestInspection, formData.propertyType]);
 
   // Auto-advance when construction questions are skipped
   useEffect(() => {
@@ -262,8 +302,18 @@ export default function SellerQuestions() {
         setCurrentStep(5);
         updateFormData('sellerQuestionsActiveStep', 5);
       }
+    } else {
+      // Auto-advance for off-the-plan (non-VIC) - skip dutiable value question
+      if (formData.propertyType === 'off-the-plan' && formData.selectedState !== 'VIC') {
+        if (currentStep === 4) {
+          // Skip to body corporate question (case 5) and auto-set dutiable value
+          updateFormData('dutiableValue', formData.propertyPrice);
+          setCurrentStep(5);
+          updateFormData('sellerQuestionsActiveStep', 5);
+        }
+      }
     }
-  }, [currentStep, formData.propertyType, updateFormData]);
+  }, [currentStep, formData.propertyType, formData.selectedState, formData.propertyPrice, updateFormData]);
 
   // Use shared navigation hook
   useFormNavigation({
@@ -287,7 +337,7 @@ export default function SellerQuestions() {
         // We're on the completion page, go back to the last question
         updateFormData('sellerQuestionsComplete', false);
         setLocalCompletionState(false);
-        setCurrentStep(9);
+        setCurrentStep(8);
       } else {
         // We're on a question, use the normal back logic
         handleBack();
@@ -415,6 +465,15 @@ export default function SellerQuestions() {
       case 4:
         // Only show dutiable value question if property type is off-the-plan or house-and-land
         if (formData.propertyType === 'off-the-plan' || formData.propertyType === 'house-and-land') {
+          // Skip dutiable value question for off-the-plan (non-VIC) and auto-set value
+          if (formData.propertyType === 'off-the-plan' && formData.selectedState !== 'VIC') {
+            // Auto-set dutiable value to property price and skip to next question
+            updateFormData('dutiableValue', formData.propertyPrice);
+            // This will be handled by the navigation logic
+            return null;
+          }
+          
+          // Show dutiable value question for VIC off-the-plan or house-and-land
           return (
             <div className="flex flex-col mt-12 pr-2">
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
@@ -568,40 +627,6 @@ export default function SellerQuestions() {
           </div>
         );
 
-      case 9:
-        return (
-          <div className="flex flex-col mt-12 pr-2">
-            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-base text-gray-800 mb-4 leading-tight">
-              Seller Question 9
-            </h2>
-            <p className="lg:text-lg xl:text-xl lg:mb-20 text-gray-500 leading-relaxed mb-8">
-              Placeholder question for now
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-8">
-              {[
-                { value: 'yes', label: 'Yes', description: 'I am a placeholder' },
-                { value: 'no', label: 'No', description: 'I am not a placeholder' }
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => updateFormData('sellerQuestion9', option.value)}
-                  className={`py-2 px-3 rounded-lg border-2 flex flex-col items-start transition-all duration-200 hover:scale-105 ${
-                    formData.sellerQuestion9 === option.value
-                      ? 'border-gray-800 bg-secondary text-white shadow-lg'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-base font-medium mb-2 leading-none">{option.label}</div>
-                  <div className={`text-xs leading-none text-left ${
-                    formData.sellerQuestion9 === option.value
-                      ? 'text-gray-300'
-                      : 'text-gray-500'
-                  }`}>{option.description}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-        );
 
       default:
         return null;
@@ -643,7 +668,7 @@ export default function SellerQuestions() {
                <button
                  onClick={() => {
                    setLocalCompletionState(false);
-                   setCurrentStep(9);
+                   setCurrentStep(8);
                    updateFormData('sellerQuestionsComplete', false);
                  }}
                  className="bg-primary px-6 py-3 rounded-full border border-primary font-medium hover:bg-primary hover:border-gray-700 hover:shadow-sm flex-shrink-0 cursor-pointer"

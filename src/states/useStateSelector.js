@@ -5,7 +5,7 @@ import { calculateNSWStampDuty, calculateNSWFirstHomeOwnersGrant, calculateNSWFi
 import { calculateVICStampDuty, calculateVICFirstHomeOwnersGrant, calculateVICForeignPurchaserDuty, calculateVICFirstHomeBuyerDutyConcession, calculateVICPPRConcession, calculateVICPensionConcession, calculateVICTempOffThePlanConcession, calculateUpfrontCosts as calculateVICUpfrontCosts } from './vic/calculations.js';
 import { calculateQLDStampDuty, calculateQLDFirstHomeOwnersGrant, calculateQLDHomeConcession, calculateQLDFirstHomeConcession, calculateQLDFirstHomeNewConcession, calculateQLDFirstHomeVacantLandConcession, calculateQLDForeignBuyerDuty, calculateUpfrontCosts as calculateQLDUpfrontCosts } from './qld/calculations.js';
 import { calculateSAStampDuty, calculateSAFirstHomeOwnersGrant, calculateSAFirstHomeBuyerConcession, calculateSAForeignBuyerDuty, calculateUpfrontCosts as calculateSAUpfrontCosts } from './sa/calculations.js';
-import { calculateWAStampDuty, calculateWAFirstHomeOwnersGrant, calculateUpfrontCosts as calculateWAUpfrontCosts } from './wa/calculations.js';
+import { calculateWAStampDuty, calculateWAFirstHomeOwnersGrant, calculateWAFirstHomeOwnerConcession, calculateWAOffThePlanConcession, calculateUpfrontCosts as calculateWAUpfrontCosts } from './wa/calculations.js';
 import { calculateTASStampDuty } from './tas/calculations.js';
 import { calculateACTStampDuty } from './act/calculations.js';
 import { calculateNTStampDuty } from './nt/calculations.js';
@@ -75,6 +75,8 @@ export const useStateSelector = (selectedState) => {
     calculateSAFirstHomeBuyerConcession: selectedState === 'SA' ? calculateSAFirstHomeBuyerConcession : null,
     calculateSAForeignBuyerDuty: selectedState === 'SA' ? calculateSAForeignBuyerDuty : null,
     calculateWAFirstHomeOwnersGrant: selectedState === 'WA' ? calculateWAFirstHomeOwnersGrant : null,
+    calculateWAFirstHomeOwnerConcession: selectedState === 'WA' ? calculateWAFirstHomeOwnerConcession : null,
+    calculateWAOffThePlanConcession: selectedState === 'WA' ? calculateWAOffThePlanConcession : null,
     calculateQLDHomeConcession: selectedState === 'QLD' ? calculateQLDHomeConcession : null,
     calculateQLDFirstHomeConcession: selectedState === 'QLD' ? calculateQLDFirstHomeConcession : null,
     calculateQLDFirstHomeNewConcession: selectedState === 'QLD' ? calculateQLDFirstHomeNewConcession : null,

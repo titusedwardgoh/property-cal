@@ -53,7 +53,6 @@ export const useFormStore = create((set, get) => ({
   landTransferFee: '',
   legalFees: '',
   buildingAndPestInspection: '',
-  sellerQuestion9: '',
   sellerQuestionsComplete: false,
   sellerQuestionsActiveStep: 1,
   
@@ -111,7 +110,6 @@ export const useFormStore = create((set, get) => ({
     landTransferFee: '',
     legalFees: '',
     buildingAndPestInspection: '',
-    sellerQuestion9: '',
     sellerQuestionsComplete: false,
     sellerQuestionsActiveStep: 1,
     allFormsComplete: false,
