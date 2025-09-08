@@ -75,7 +75,7 @@ export default function PropertyDetails() {
         updateFormData('propertyDetailsFormComplete', false);
       }
     }
-  }, [formData.propertyDetailsCurrentStep, updateFormData, currentStep, formData.propertyDetailsComplete]);
+  }, [formData.propertyDetailsCurrentStep, updateFormData, currentStep, formData.propertyDetailsComplete, formData.propertyDetailsFormComplete]);
 
 
 

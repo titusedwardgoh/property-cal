@@ -236,7 +236,7 @@ export default function SellerQuestions() {
       // Update the store with current step for progress tracking
       updateFormData('sellerQuestionsActiveStep', prevStepNumber);
     }
-  }, [currentStep, updateFormData, formData.propertyType]);
+  }, [currentStep, updateFormData, formData.propertyType, formData.selectedState]);
 
   const handleBack = useCallback(() => {
     // Reset the current section completion and visibility
@@ -258,7 +258,7 @@ export default function SellerQuestions() {
       const loanQuestionStep = formData.selectedState === 'ACT' ? 7 : 6;
       updateFormData('buyerDetailsCurrentStep', loanQuestionStep);
     }
-  }, [formData.needsLoan, updateFormData]);
+  }, [formData.needsLoan, updateFormData, formData.selectedState]);
 
 
 
@@ -290,7 +290,7 @@ export default function SellerQuestions() {
       default:
         return false;
     }
-  }, [currentStep, formData.councilRates, formData.waterRates, formData.constructionStarted, formData.dutiableValue, formData.bodyCorp, formData.landTransferFee, formData.legalFees, formData.buildingAndPestInspection, formData.propertyType]);
+  }, [currentStep, formData.councilRates, formData.waterRates, formData.constructionStarted, formData.dutiableValue, formData.bodyCorp, formData.landTransferFee, formData.legalFees, formData.buildingAndPestInspection, formData.propertyType, formData.selectedState]);
 
   // Auto-advance when construction questions are skipped
   useEffect(() => {
