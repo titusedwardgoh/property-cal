@@ -202,6 +202,7 @@ export default function UpfrontCosts() {
                           {concession.type === 'Pensioner' ? 'Pensioner Duty Concession' : 
                            concession.type === 'First Home Buyer' ? 'First Home Buyer Concession' :
                            concession.type === 'First Home Owner' ? 'First Home Owner Concession' :
+                           concession.type === 'First Home Duty Relief' ? 'First Home Duty Relief' :
                            concession.type === 'Off-The-Plan' ? 'Off-The-Plan Concession' :
                            concession.type === 'Temp Off-The-Plan' ? 'Temp Off-The-Plan Concession' :
                            concession.type === 'Home Concession' ? 'Home Concession' :
@@ -294,7 +295,7 @@ export default function UpfrontCosts() {
                   ))}
                   
                   {/* Show Ineligible Grants/Concessions below Net State Duty */}
-                  {formData.buyerDetailsComplete && (formData.selectedState === 'NSW' || formData.selectedState === 'VIC' || formData.selectedState === 'QLD' || formData.selectedState === 'SA' || formData.selectedState === 'WA') && (() => {
+                  {formData.buyerDetailsComplete && (formData.selectedState === 'NSW' || formData.selectedState === 'VIC' || formData.selectedState === 'QLD' || formData.selectedState === 'SA' || formData.selectedState === 'WA' || formData.selectedState === 'TAS') && (() => {
                     // Collect all ineligible items first
                     const ineligibleItems = [];
                     
@@ -305,7 +306,8 @@ export default function UpfrontCosts() {
                       (formData.selectedState === 'VIC' && upfrontCosts.allConcessions) ||
                       (formData.selectedState === 'WA' && upfrontCosts.allConcessions) ||
                       (formData.selectedState === 'QLD' && upfrontCosts.allConcessions) ||
-                      (formData.selectedState === 'SA' && upfrontCosts.allConcessions);
+                      (formData.selectedState === 'SA' && upfrontCosts.allConcessions) ||
+                      (formData.selectedState === 'TAS' && upfrontCosts.grants.length === 0);
                     
                     if (!hasIneligibleItems) return null;
                     
@@ -340,6 +342,7 @@ export default function UpfrontCosts() {
                         !upfrontCosts.allConcessions.offThePlan.eligible
                       )) ||
                       (formData.selectedState === 'NSW' && upfrontCosts.concessions.length === 0) ||
+                      (formData.selectedState === 'TAS' && (upfrontCosts.concessions.length === 0 || upfrontCosts.grants.length === 0)) ||
                       (upfrontCosts.grants.length === 0);
                     
                     if (!hasActualItems) return null;
@@ -592,6 +595,73 @@ export default function UpfrontCosts() {
                             </>
                           )}
                           
+                          {/* Show ineligible concessions for TAS */}
+                          {formData.selectedState === 'TAS' && upfrontCosts.concessions.length === 0 && (() => {
+                            // Get the reason for ineligibility
+                            const buyerData = {
+                              buyerType: formData.buyerType,
+                              isPPR: formData.isPPR,
+                              isAustralianResident: formData.isAustralianResident,
+                              isFirstHomeBuyer: formData.isFirstHomeBuyer,
+                              hasPensionCard: formData.hasPensionCard
+                            };
+                            const propertyData = {
+                              propertyPrice: formData.propertyPrice,
+                              propertyType: formData.propertyType,
+                              propertyCategory: formData.propertyCategory
+                            };
+                            const stampDutyAmount = calculateStampDuty();
+                            const concessionResult = stateFunctions?.calculateTASFirstHomeDutyRelief ? 
+                              stateFunctions.calculateTASFirstHomeDutyRelief(buyerData, propertyData, formData.selectedState, stampDutyAmount) : 
+                              { reason: 'Concession not available' };
+                            
+                            return (
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">First Home Duty Relief</span>
+                                <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={concessionResult.reason}>
+                                  Not Eligible
+                                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                                    {concessionResult.reason}
+                                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                  </div>
+                                </span>
+                              </div>
+                            );
+                          })()}
+                          
+                          {/* Show ineligible grants for TAS */}
+                          {formData.selectedState === 'TAS' && upfrontCosts.grants.length === 0 && (() => {
+                            // Get the reason for ineligibility
+                            const buyerData = {
+                              buyerType: formData.buyerType,
+                              isPPR: formData.isPPR,
+                              isAustralianResident: formData.isAustralianResident,
+                              isFirstHomeBuyer: formData.isFirstHomeBuyer,
+                              hasPensionCard: formData.hasPensionCard
+                            };
+                            const propertyData = {
+                              propertyPrice: formData.propertyPrice,
+                              propertyType: formData.propertyType,
+                              propertyCategory: formData.propertyCategory
+                            };
+                            const grantResult = stateFunctions?.calculateTASFirstHomeOwnersGrant ? 
+                              stateFunctions.calculateTASFirstHomeOwnersGrant(buyerData, propertyData, formData.selectedState) : 
+                              { reason: 'Grant not available' };
+                            
+                            return (
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">First Home Owners Grant</span>
+                                <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={grantResult.reason}>
+                                  Not Eligible
+                                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                                    {grantResult.reason}
+                                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                  </div>
+                                </span>
+                              </div>
+                            );
+                          })()}
+                          
                           {/* Show ineligible Stamp Duty Concession for NSW */}
                           {formData.selectedState === 'NSW' && upfrontCosts.concessions.length === 0 && (() => {
                             // Get the reason for ineligibility
@@ -627,7 +697,7 @@ export default function UpfrontCosts() {
                           })()}
                           
                           {/* Show ineligible First Home Owners Grant */}
-                          {upfrontCosts.grants.length === 0 && formData.selectedState !== 'SA' && formData.selectedState !== 'WA' && (() => {
+                          {upfrontCosts.grants.length === 0 && formData.selectedState !== 'SA' && formData.selectedState !== 'WA' && formData.selectedState !== 'TAS' && (() => {
                             // Get the reason for ineligibility
                             const buyerData = {
                               buyerType: formData.buyerType,

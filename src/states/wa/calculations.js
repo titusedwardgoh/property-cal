@@ -1,4 +1,4 @@
-import { WA_STAMP_DUTY_RATES, WA_FIRST_HOME_OWNERS_GRANT, WA_FHOG_PROPERTY_CAP_SOUTH, WA_FHOG_PROPERTY_CAP_NORTH, WA_FHO_CONCESSION_CAP_METRO, WA_FHO_CONCESSION_CAP_NON_METRO, WA_FHO_CONCESSION_CAP_VACANT_LAND, WA_FHO_CONCESSION_RATE_METRO, WA_FHO_CONCESSION_RATE_NON_METRO, WA_FHO_CONCESSION_RATE_VACANT_LAND, WA_FHO_CONCESSION_THRESHOLD, WA_FHO_CONCESSION_THRESHOLD_VACANT_LAND, WA_OFF_THE_PLAN_CONCESSION_CAP, WA_OFF_THE_PLAN_PRE_CONSTRUCTION_FULL_CONCESSION_THRESHOLD, WA_OFF_THE_PLAN_PRE_CONSTRUCTION_PARTIAL_CONCESSION_THRESHOLD, WA_OFF_THE_PLAN_PRE_CONSTRUCTION_REDUCTION_RATE, WA_OFF_THE_PLAN_PRE_CONSTRUCTION_PARTIAL_CONCESSION_RATE, WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_FULL_CONCESSION_THRESHOLD, WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_PARTIAL_CONCESSION_THRESHOLD, WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_REDUCTION_RATE, WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_PARTIAL_CONCESSION_RATE, WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_FULL_CONCESSION_RATE } from './constants.js';
+import { WA_STAMP_DUTY_RATES, WA_FIRST_HOME_OWNERS_GRANT, WA_FHOG_PROPERTY_CAP_SOUTH, WA_FHOG_PROPERTY_CAP_NORTH, WA_FHO_CONCESSION_CAP_METRO, WA_FHO_CONCESSION_CAP_NON_METRO, WA_FHO_CONCESSION_CAP_VACANT_LAND, WA_FHO_CONCESSION_RATE_METRO, WA_FHO_CONCESSION_RATE_NON_METRO, WA_FHO_CONCESSION_RATE_VACANT_LAND, WA_FHO_CONCESSION_THRESHOLD, WA_FHO_CONCESSION_THRESHOLD_VACANT_LAND, WA_OFF_THE_PLAN_CONCESSION_CAP, WA_OFF_THE_PLAN_PRE_CONSTRUCTION_FULL_CONCESSION_THRESHOLD, WA_OFF_THE_PLAN_PRE_CONSTRUCTION_PARTIAL_CONCESSION_THRESHOLD, WA_OFF_THE_PLAN_PRE_CONSTRUCTION_REDUCTION_RATE, WA_OFF_THE_PLAN_PRE_CONSTRUCTION_PARTIAL_CONCESSION_RATE, WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_FULL_CONCESSION_THRESHOLD, WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_PARTIAL_CONCESSION_THRESHOLD, WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_REDUCTION_RATE, WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_PARTIAL_CONCESSION_RATE, WA_OFF_THE_PLAN_UNDER_CONSTRUCTION_FULL_CONCESSION_RATE, WA_FOREIGN_BUYER_RATE } from './constants.js';
 
 export const calculateWAStampDuty = (propertyPrice, selectedState) => {
   // Only calculate if WA is selected
@@ -504,6 +504,61 @@ export const calculateWAOffThePlanConcession = (buyerData, propertyData, selecte
 };
 
 /**
+ * Calculate WA Foreign Buyer Duty
+ * @param {Object} buyerData - Buyer information
+ * @param {Object} propertyData - Property information
+ * @param {string} selectedState - Selected state (must be 'WA')
+ * @returns {Object} - Foreign buyer duty result with amount and details
+ */
+export const calculateWAForeignBuyerDuty = (buyerData, propertyData, selectedState) => {
+  // Only calculate if WA is selected
+  if (selectedState !== 'WA') {
+    return {
+      applicable: false,
+      amount: 0,
+      reason: 'Foreign buyer duty only applies in WA'
+    };
+  }
+
+  const { isAustralianResident } = buyerData;
+  const { propertyPrice } = propertyData;
+
+  // Convert propertyPrice to number if it's a string
+  const price = parseInt(propertyPrice) || 0;
+
+  if (price <= 0) {
+    return {
+      applicable: false,
+      amount: 0,
+      reason: 'Invalid property price'
+    };
+  }
+
+  // Check if foreign buyer duty applies
+  if (isAustralianResident === 'yes') {
+    return {
+      applicable: false,
+      amount: 0,
+      reason: 'Australian resident - no foreign buyer duty'
+    };
+  }
+
+  // Calculate foreign buyer duty: property price × 7%
+  const foreignBuyerDuty = price * WA_FOREIGN_BUYER_RATE;
+
+  return {
+    applicable: true,
+    amount: foreignBuyerDuty,
+    reason: 'Foreign buyer duty applies (7% of property price)',
+    details: {
+      propertyPrice: price,
+      rate: WA_FOREIGN_BUYER_RATE,
+      calculation: `${price.toLocaleString()} × ${(WA_FOREIGN_BUYER_RATE * 100)}% = $${foreignBuyerDuty.toLocaleString()}`
+    }
+  };
+};
+
+/**
  * Calculate all upfront costs for WA
  * @param {Object} buyerData - Buyer information
  * @param {Object} propertyData - Property information
@@ -531,6 +586,9 @@ export const calculateUpfrontCosts = (buyerData, propertyData, selectedState) =>
   // Calculate first home owners grant
   const grantResult = calculateWAFirstHomeOwnersGrant(buyerData, propertyData, selectedState);
   
+  // Calculate foreign buyer duty
+  const foreignDutyResult = calculateWAForeignBuyerDuty(buyerData, propertyData, selectedState);
+  
   // Calculate first home owner concession
   const concessionResult = calculateWAFirstHomeOwnerConcession(buyerData, propertyData, selectedState, stampDutyAmount);
   
@@ -550,16 +608,19 @@ export const calculateUpfrontCosts = (buyerData, propertyData, selectedState) =>
   const netStampDutyAfterFHO = stampDutyAmount - firstHomeOwnerConcessionAmount;
   
   
-  // Calculate Off-The-Plan concession as additional concession on net stamp duty
+  // Calculate Off-The-Plan concession as additional concession on net stamp duty plus foreign duty
   let offThePlanConcessionAmount = 0;
   if (offThePlanConcessionResult.eligible) {
     if (buyerData.sellerQuestionsComplete) {
-      // Recalculate Off-The-Plan concession based on net stamp duty after FHO concession
+      // Calculate base duty including foreign duty for concession calculation
+      const baseDutyWithForeign = netStampDutyAfterFHO + (foreignDutyResult.applicable ? foreignDutyResult.amount : 0);
+      
+      // Recalculate Off-The-Plan concession based on base duty plus foreign duty
       const offThePlanConcessionRecalc = calculateWAOffThePlanConcession(
         buyerData, 
         propertyData, 
         selectedState, 
-        netStampDutyAfterFHO, // Use net stamp duty instead of base stamp duty
+        baseDutyWithForeign, // Use base duty plus foreign duty for concession calculation
         buyerData.dutiableValue || 0, 
         true, // Force seller questions complete for recalculation
         buyerData.constructionStarted || 'no'
@@ -571,8 +632,8 @@ export const calculateUpfrontCosts = (buyerData, propertyData, selectedState) =>
     }
   }
   
-  // Final net state duty
-  const netStateDuty = netStampDutyAfterFHO - offThePlanConcessionAmount;
+  // Final net state duty (stamp duty plus foreign duty minus concessions)
+  const netStateDuty = netStampDutyAfterFHO + (foreignDutyResult.applicable ? foreignDutyResult.amount : 0) - offThePlanConcessionAmount;
   
   // Calculate total upfront costs (including property price if no loan needed, minus grants)
   const propertyPrice = (buyerData.needsLoan === 'no') ? price : 0;
@@ -631,7 +692,10 @@ export const calculateUpfrontCosts = (buyerData, propertyData, selectedState) =>
     concessions: concessions,
     ineligibleConcessions: ineligibleConcessions,
     grants: grantResult.eligible ? [grantResult] : [],
-    foreignDuty: { amount: 0, applicable: false }, // Not implemented yet
+    foreignDuty: { 
+      amount: foreignDutyResult.applicable ? foreignDutyResult.amount : 0, 
+      applicable: foreignDutyResult.applicable 
+    },
     netStateDuty: netStateDuty,
     totalUpfrontCosts: totalUpfrontCosts,
     // Include all concession and grant data for display purposes

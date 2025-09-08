@@ -5,8 +5,8 @@ import { calculateNSWStampDuty, calculateNSWFirstHomeOwnersGrant, calculateNSWFi
 import { calculateVICStampDuty, calculateVICFirstHomeOwnersGrant, calculateVICForeignPurchaserDuty, calculateVICFirstHomeBuyerDutyConcession, calculateVICPPRConcession, calculateVICPensionConcession, calculateVICTempOffThePlanConcession, calculateUpfrontCosts as calculateVICUpfrontCosts } from './vic/calculations.js';
 import { calculateQLDStampDuty, calculateQLDFirstHomeOwnersGrant, calculateQLDHomeConcession, calculateQLDFirstHomeConcession, calculateQLDFirstHomeNewConcession, calculateQLDFirstHomeVacantLandConcession, calculateQLDForeignBuyerDuty, calculateUpfrontCosts as calculateQLDUpfrontCosts } from './qld/calculations.js';
 import { calculateSAStampDuty, calculateSAFirstHomeOwnersGrant, calculateSAFirstHomeBuyerConcession, calculateSAForeignBuyerDuty, calculateUpfrontCosts as calculateSAUpfrontCosts } from './sa/calculations.js';
-import { calculateWAStampDuty, calculateWAFirstHomeOwnersGrant, calculateWAFirstHomeOwnerConcession, calculateWAOffThePlanConcession, calculateUpfrontCosts as calculateWAUpfrontCosts } from './wa/calculations.js';
-import { calculateTASStampDuty } from './tas/calculations.js';
+import { calculateWAStampDuty, calculateWAFirstHomeOwnersGrant, calculateWAFirstHomeOwnerConcession, calculateWAOffThePlanConcession, calculateWAForeignBuyerDuty, calculateUpfrontCosts as calculateWAUpfrontCosts } from './wa/calculations.js';
+import { calculateTASStampDuty, calculateTASFirstHomeOwnersGrant, calculateTASFirstHomeDutyRelief, calculateUpfrontCosts as calculateTASUpfrontCosts } from './tas/calculations.js';
 import { calculateACTStampDuty } from './act/calculations.js';
 import { calculateNTStampDuty } from './nt/calculations.js';
 
@@ -74,6 +74,8 @@ export const useStateSelector = (selectedState) => {
     calculateSAFirstHomeOwnersGrant: selectedState === 'SA' ? calculateSAFirstHomeOwnersGrant : null,
     calculateSAFirstHomeBuyerConcession: selectedState === 'SA' ? calculateSAFirstHomeBuyerConcession : null,
     calculateSAForeignBuyerDuty: selectedState === 'SA' ? calculateSAForeignBuyerDuty : null,
+    calculateTASFirstHomeOwnersGrant: selectedState === 'TAS' ? calculateTASFirstHomeOwnersGrant : null,
+    calculateTASFirstHomeDutyRelief: selectedState === 'TAS' ? calculateTASFirstHomeDutyRelief : null,
     calculateWAFirstHomeOwnersGrant: selectedState === 'WA' ? calculateWAFirstHomeOwnersGrant : null,
     calculateWAFirstHomeOwnerConcession: selectedState === 'WA' ? calculateWAFirstHomeOwnerConcession : null,
     calculateWAOffThePlanConcession: selectedState === 'WA' ? calculateWAOffThePlanConcession : null,
@@ -89,12 +91,14 @@ export const useStateSelector = (selectedState) => {
     calculateVICTempOffThePlanConcession: selectedState === 'VIC' ? calculateVICTempOffThePlanConcession : null,
     calculateNSWForeignPurchaserDuty: selectedState === 'NSW' ? calculateNSWForeignPurchaserDuty : null,
     calculateVICForeignPurchaserDuty: selectedState === 'VIC' ? calculateVICForeignPurchaserDuty : null,
+    calculateWAForeignBuyerDuty: selectedState === 'WA' ? calculateWAForeignBuyerDuty : null,
     // New comprehensive upfront costs calculation
     calculateUpfrontCosts: selectedState === 'NSW' ? calculateNSWUpfrontCosts : 
                           selectedState === 'VIC' ? calculateVICUpfrontCosts :
                           selectedState === 'QLD' ? calculateQLDUpfrontCosts :
                           selectedState === 'SA' ? calculateSAUpfrontCosts :
-                          selectedState === 'WA' ? calculateWAUpfrontCosts : null,
+                          selectedState === 'WA' ? calculateWAUpfrontCosts :
+                          selectedState === 'TAS' ? calculateTASUpfrontCosts : null,
     // Shared functions that exist
     calculateMonthlyRepayment,
     calculateTotalRepayments,
@@ -136,7 +140,7 @@ export const useStateSelector = (selectedState) => {
                          selectedState === 'QLD' ? 30000 : 
                          selectedState === 'SA' ? 15000 : 
                          selectedState === 'WA' ? 10000 : 
-                         selectedState === 'TAS' ? 30000 : 
+                         selectedState === 'TAS' ? 10000 : 
                          selectedState === 'ACT' ? 7000 : 
                          selectedState === 'NT' ? 10000 : 10000
   };
