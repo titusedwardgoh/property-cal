@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useStateSelector } from '../states/useStateSelector.js';
 import { formatCurrency } from '../states/shared/baseCalculations.js';
+import { calculateNTStampDuty } from '../states/nt/calculations.js';
 
 import { useFormStore } from '../stores/formStore';
 
@@ -39,17 +40,21 @@ export default function UpfrontCosts() {
   const calculateAllUpfrontCosts = () => {
     
     if (!formData.buyerDetailsComplete || !stateFunctions?.calculateUpfrontCosts) {
-      console.log('Returning early - buyer details not complete or no state functions');
       // Return basic stamp duty calculation when buyer details not complete
       // But check for temp off-the-plan concession if property details are complete
       if (formData.propertyDetailsFormComplete && formData.selectedState === 'VIC' && stateFunctions?.calculateVICTempOffThePlanConcession) {
         const buyerData = {
+          selectedState: formData.selectedState || '',
           buyerType: formData.buyerType || '',
           isPPR: formData.isPPR || '',
           isAustralianResident: formData.isAustralianResident || '',
           isFirstHomeBuyer: formData.isFirstHomeBuyer || '',
+          ownedPropertyLast5Years: formData.ownedPropertyLast5Years || '',
           hasPensionCard: formData.hasPensionCard || '',
           needsLoan: formData.needsLoan || '',
+          savingsAmount: formData.savingsAmount || '',
+          income: formData.income || '',
+          dependants: formData.dependants || '',
           dutiableValue: formData.dutiableValue || '',
           sellerQuestionsComplete: formData.sellerQuestionsComplete || false
         };
@@ -107,12 +112,17 @@ export default function UpfrontCosts() {
     }
 
     const buyerData = {
+      selectedState: formData.selectedState,
       buyerType: formData.buyerType,
       isPPR: formData.isPPR,
       isAustralianResident: formData.isAustralianResident,
       isFirstHomeBuyer: formData.isFirstHomeBuyer,
+      ownedPropertyLast5Years: formData.ownedPropertyLast5Years,
       hasPensionCard: formData.hasPensionCard,
       needsLoan: formData.needsLoan,
+      savingsAmount: formData.savingsAmount,
+      income: formData.income,
+      dependants: formData.dependants,
       dutiableValue: formData.dutiableValue,
       constructionStarted: formData.constructionStarted,
       sellerQuestionsComplete: formData.sellerQuestionsComplete
@@ -209,31 +219,37 @@ export default function UpfrontCosts() {
                            concession.type === 'First Home Concession' ? 'First Home Concession' :
                            concession.type === 'First Home (New) Concession' ? 'First Home (New) Concession' :
                            concession.type === 'First Home (Vac Land) Concession' ? 'First Home (Vac Land) Concession' :
+                           concession.type === 'House and Land' ? 'House and Land Concession' :
+                           concession.type === 'Home Buyer Concession' ? 'Home Buyer Concession' :
                            `Stamp Duty Concession${concession.type ? ` (${concession.type})` : ''}`}
                         </span>
                         <span className={`text-md md:text-sm lg:text-base xl:text-xl font-medium ${concession.amount > 0 ? 'text-green-600' : 'text-gray-600'} ${concession.amount === 0 || concession.type === 'First Home (Vac Land) Concession' ? 'relative group cursor-help' : ''}`} title={
                           concession.amount === 0 ? 
-                            (concession.type === 'Pensioner' && concession.pensionerConcession && concession.pensionerConcession.reason && concession.pensionerConcession.reason.includes('additional seller information') ? 
-                              'You are eligible but additional information is required to calculate your concession' : 
-                              concession.type === 'Temp Off-The-Plan' && concession.tempOffThePlanConcession && concession.tempOffThePlanConcession.details && concession.tempOffThePlanConcession.details.waitingForSellerQuestions ?
-                              'You are eligible but concession amount will be calculated after seller questions' :
-                              concession.type === 'Off-The-Plan' && concession.offThePlanConcession && concession.offThePlanConcession.details && concession.offThePlanConcession.details.waitingForSellerQuestions ?
-                              'You are eligible but concession will be calculated after seller questions' :
-                              'You are eligible but the concession amount is 0 at this property price') :
-                            (concession.type === 'First Home (Vac Land) Concession' ? 'Assumes you are buying a house-and-land package to build your first home' : '')
-                        }>
-                          {concession.amount > 0 ? `-${formatCurrency(concession.amount)}` : formatCurrency(concession.amount)}
-                          {(concession.amount === 0 || concession.type === 'First Home (Vac Land) Concession') && (
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
-                              {concession.type === 'Pensioner' && concession.pensionerConcession && concession.pensionerConcession.reason && concession.pensionerConcession.reason.includes('additional seller information') ? 
+                            (concession.reason ? 
+                              concession.reason :
+                              concession.type === 'Pensioner' && concession.pensionerConcession && concession.pensionerConcession.reason && concession.pensionerConcession.reason.includes('additional seller information') ? 
                                 'You are eligible but additional information is required to calculate your concession' : 
                                 concession.type === 'Temp Off-The-Plan' && concession.tempOffThePlanConcession && concession.tempOffThePlanConcession.details && concession.tempOffThePlanConcession.details.waitingForSellerQuestions ?
                                 'You are eligible but concession amount will be calculated after seller questions' :
                                 concession.type === 'Off-The-Plan' && concession.offThePlanConcession && concession.offThePlanConcession.details && concession.offThePlanConcession.details.waitingForSellerQuestions ?
                                 'You are eligible but concession will be calculated after seller questions' :
-                                concession.type === 'First Home (Vac Land) Concession' ?
-                                'Assumes you are buying a house-and-land package to build your first home' :
-                                'You are eligible but the concession amount is 0 at this property price'}
+                                'You are eligible but the concession amount is 0 at this property price') :
+                            (concession.type === 'First Home (Vac Land) Concession' ? 'Assumes you are buying a house-and-land package to build your first home' : '')
+                        }>
+                          {concession.amount > 0 ? `-${formatCurrency(concession.amount)}` : formatCurrency(concession.amount)}
+                          {(concession.amount === 0 || concession.type === 'First Home (Vac Land) Concession') && (
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                              {concession.reason ? 
+                                concession.reason :
+                                concession.type === 'Pensioner' && concession.pensionerConcession && concession.pensionerConcession.reason && concession.pensionerConcession.reason.includes('additional seller information') ? 
+                                  'You are eligible but additional information is required to calculate your concession' : 
+                                  concession.type === 'Temp Off-The-Plan' && concession.tempOffThePlanConcession && concession.tempOffThePlanConcession.details && concession.tempOffThePlanConcession.details.waitingForSellerQuestions ?
+                                  'You are eligible but concession amount will be calculated after seller questions' :
+                                  concession.type === 'Off-The-Plan' && concession.offThePlanConcession && concession.offThePlanConcession.details && concession.offThePlanConcession.details.waitingForSellerQuestions ?
+                                  'You are eligible but concession will be calculated after seller questions' :
+                                  concession.type === 'First Home (Vac Land) Concession' ?
+                                  'Assumes you are buying a house-and-land package to build your first home' :
+                                  'You are eligible but the concession amount is 0 at this property price'}
                               <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
                             </div>
                           )}
@@ -285,29 +301,50 @@ export default function UpfrontCosts() {
                   )}
                   
                   {/* Grants */}
-                  {upfrontCosts.grants.map((grant, index) => (
-                    <div key={index} className="flex justify-between items-center">
-                      <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">First Home Owners Grant</span>
-                      <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl font-medium text-green-600">
-                        -{formatCurrency(grant.amount)}
-                      </span>
-                    </div>
-                  ))}
+                  {upfrontCosts.grants.map((grant, index) => {
+                    // Determine grant label based on state and grant type
+                    let grantLabel = 'First Home Owners Grant';
+                    if (formData.selectedState === 'NT') {
+                      // Check if this is a FreshStart Grant by looking at the reason or amount
+                      if (grant.reason && grant.reason.includes('FreshStart')) {
+                        grantLabel = 'FreshStart Grant';
+                      } else if (grant.amount === 30000) {
+                        // FreshStart Grant is always $30,000
+                        grantLabel = 'FreshStart Grant';
+                      } else {
+                        grantLabel = 'HomeGrown Territory Grant';
+                      }
+                    }
+                    
+                    return (
+                      <div key={index} className="flex justify-between items-center">
+                        <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">
+                          {grantLabel}
+                        </span>
+                        <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl font-medium text-green-600">
+                          -{formatCurrency(grant.amount)}
+                        </span>
+                      </div>
+                    );
+                  })}
                   
                   {/* Show Ineligible Grants/Concessions below Net State Duty */}
-                  {formData.buyerDetailsComplete && (formData.selectedState === 'NSW' || formData.selectedState === 'VIC' || formData.selectedState === 'QLD' || formData.selectedState === 'SA' || formData.selectedState === 'WA' || formData.selectedState === 'TAS') && (() => {
+                  {formData.buyerDetailsComplete && (formData.selectedState === 'NSW' || formData.selectedState === 'VIC' || formData.selectedState === 'QLD' || formData.selectedState === 'SA' || formData.selectedState === 'WA' || formData.selectedState === 'TAS' || formData.selectedState === 'NT' || formData.selectedState === 'ACT') && (() => {
                     // Collect all ineligible items first
                     const ineligibleItems = [];
                     
                     // Check if we have any ineligible items to show
                     const hasIneligibleItems = 
                       (upfrontCosts.concessions.length === 0) ||
-                      (upfrontCosts.grants.length === 0) ||
+                      (formData.selectedState !== 'ACT' && upfrontCosts.grants.length === 0) ||
                       (formData.selectedState === 'VIC' && upfrontCosts.allConcessions) ||
                       (formData.selectedState === 'WA' && upfrontCosts.allConcessions) ||
                       (formData.selectedState === 'QLD' && upfrontCosts.allConcessions) ||
                       (formData.selectedState === 'SA' && upfrontCosts.allConcessions) ||
-                      (formData.selectedState === 'TAS' && upfrontCosts.grants.length === 0);
+                      (formData.selectedState === 'TAS' && upfrontCosts.grants.length === 0) ||
+                      (formData.selectedState === 'NT' && (upfrontCosts.grants.length === 0 || (upfrontCosts.ineligibleGrants && upfrontCosts.ineligibleGrants.length > 0) || (upfrontCosts.ineligibleConcessions && upfrontCosts.ineligibleConcessions.length > 0))) ||
+                      (formData.selectedState === 'ACT' && (upfrontCosts.ineligibleConcessions && upfrontCosts.ineligibleConcessions.length > 0));
+                    
                     
                     if (!hasIneligibleItems) return null;
                     
@@ -343,7 +380,10 @@ export default function UpfrontCosts() {
                       )) ||
                       (formData.selectedState === 'NSW' && upfrontCosts.concessions.length === 0) ||
                       (formData.selectedState === 'TAS' && (upfrontCosts.concessions.length === 0 || upfrontCosts.grants.length === 0)) ||
-                      (upfrontCosts.grants.length === 0);
+                      (formData.selectedState === 'NT' && (upfrontCosts.grants.length === 0 || (upfrontCosts.ineligibleGrants && upfrontCosts.ineligibleGrants.length > 0) || (upfrontCosts.ineligibleConcessions && upfrontCosts.ineligibleConcessions.length > 0))) ||
+                      (formData.selectedState === 'ACT' && (upfrontCosts.ineligibleConcessions && upfrontCosts.ineligibleConcessions.length > 0)) ||
+                      (formData.selectedState !== 'ACT' && upfrontCosts.grants.length === 0);
+                    
                     
                     if (!hasActualItems) return null;
                     
@@ -361,6 +401,7 @@ export default function UpfrontCosts() {
                                   <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">
                                     {concession.type === 'Pensioner' ? 'Pensioner Duty Concession' : 
                                      concession.type === 'First Home Buyer' ? 'First Home Buyer Concession' :
+                                     concession.type === 'Home Buyer Concession' ? 'Home Buyer Concession' :
                                      `Stamp Duty Concession${concession.type ? ` (${concession.type})` : ''}`}
                                   </span>
                                   <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={concession.reason}>
@@ -441,6 +482,7 @@ export default function UpfrontCosts() {
                                      concession.type === 'First Home Concession' ? 'First Home Concession' :
                                      concession.type === 'First Home (New) Concession' ? 'First Home (New) Concession' :
                                      concession.type === 'First Home (Vac Land) Concession' ? 'First Home (Vac Land) Concession' :
+                                     concession.type === 'Home Buyer Concession' ? 'Home Buyer Concession' :
                                      `Stamp Duty Concession${concession.type ? ` (${concession.type})` : ''}`}
                                   </span>
                                   <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={concession.reason}>
@@ -566,6 +608,7 @@ export default function UpfrontCosts() {
                                   <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">
                                     {concession.type === 'First Home Owner' ? 'First Home Owner Concession' : 
                                      concession.type === 'Off-The-Plan' ? 'Off-The-Plan Concession' :
+                                     concession.type === 'Home Buyer Concession' ? 'Home Buyer Concession' :
                                      `Stamp Duty Concession${concession.type ? ` (${concession.type})` : ''}`}
                                   </span>
                                   <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={concession.reason}>
@@ -662,6 +705,111 @@ export default function UpfrontCosts() {
                             );
                           })()}
                           
+                          {/* Show ineligible grants and concessions for NT */}
+                          {formData.selectedState === 'NT' && (() => {
+                            // Show ineligible grants from the new ineligibleGrants array
+                            const ineligibleItems = [];
+                            
+                            if (upfrontCosts.ineligibleGrants && upfrontCosts.ineligibleGrants.length > 0) {
+                              ineligibleItems.push(...upfrontCosts.ineligibleGrants.map((grant, index) => (
+                                <div key={index} className="flex justify-between items-center">
+                                  <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">
+                                    {grant.grantType === 'FreshStart' ? 'FreshStart Grant' : 'HomeGrown Territory Grant'}
+                                  </span>
+                                  <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={grant.reason}>
+                                    Not Eligible
+                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                                      {grant.reason}
+                                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                    </div>
+                                  </span>
+                                </div>
+                              )));
+                            }
+                            
+                            // Show ineligible concessions from the new ineligibleConcessions array
+                            if (upfrontCosts.ineligibleConcessions && upfrontCosts.ineligibleConcessions.length > 0) {
+                              ineligibleItems.push(...upfrontCosts.ineligibleConcessions.map((concession, index) => (
+                                <div key={`concession-${index}`} className="flex justify-between items-center">
+                                  <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">
+                                    {concession.type === 'House and Land' ? 'House and Land Concession' : concession.type}
+                                  </span>
+                                  <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={concession.reason}>
+                                    Not Eligible
+                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                                      {concession.reason}
+                                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                    </div>
+                                  </span>
+                                </div>
+                              )));
+                            }
+                            
+                            return ineligibleItems;
+                            
+                            // If no grants at all and no ineligible grants from calculation, show both as ineligible
+                            if (upfrontCosts.grants.length === 0 && (!upfrontCosts.ineligibleGrants || upfrontCosts.ineligibleGrants.length === 0)) {
+                              const buyerData = {
+                                buyerType: formData.buyerType,
+                                isPPR: formData.isPPR,
+                                isAustralianResident: formData.isAustralianResident,
+                                isFirstHomeBuyer: formData.isFirstHomeBuyer,
+                                hasPensionCard: formData.hasPensionCard
+                              };
+                              const propertyData = {
+                                propertyPrice: formData.propertyPrice,
+                                propertyType: formData.propertyType,
+                                propertyCategory: formData.propertyCategory
+                              };
+                              const homeGrownResult = stateFunctions?.calculateNTHomeGrownTerritoryGrant ? 
+                                stateFunctions.calculateNTHomeGrownTerritoryGrant(buyerData, propertyData, formData.selectedState) : 
+                                { reason: 'Grant not available' };
+                              const freshStartResult = stateFunctions?.calculateNTFreshStartGrant ? 
+                                stateFunctions.calculateNTFreshStartGrant(buyerData, propertyData, formData.selectedState) : 
+                                { reason: 'Grant not available' };
+                              const houseAndLandResult = stateFunctions?.calculateNTHouseAndLandConcession ? 
+                                stateFunctions.calculateNTHouseAndLandConcession(buyerData, propertyData, formData.selectedState, calculateNTStampDuty(parseInt(formData.propertyPrice) || 0, formData.selectedState)) : 
+                                { reason: 'Concession not available' };
+                              
+                              return (
+                                <>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">HomeGrown Territory Grant</span>
+                                    <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={homeGrownResult.reason}>
+                                      Not Eligible
+                                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                                        {homeGrownResult.reason}
+                                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                      </div>
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">FreshStart Grant</span>
+                                    <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={freshStartResult.reason}>
+                                      Not Eligible
+                                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                                        {freshStartResult.reason}
+                                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                      </div>
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">House and Land Concession</span>
+                                    <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={houseAndLandResult.reason}>
+                                      Not Eligible
+                                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                                        {houseAndLandResult.reason}
+                                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                      </div>
+                                    </span>
+                                  </div>
+                                </>
+                              );
+                            }
+                            
+                            return null;
+                          })()}
+                          
                           {/* Show ineligible Stamp Duty Concession for NSW */}
                           {formData.selectedState === 'NSW' && upfrontCosts.concessions.length === 0 && (() => {
                             // Get the reason for ineligibility
@@ -696,8 +844,28 @@ export default function UpfrontCosts() {
                             );
                           })()}
                           
+                          {/* Show ineligible concessions for ACT */}
+                          {formData.selectedState === 'ACT' && upfrontCosts.ineligibleConcessions && upfrontCosts.ineligibleConcessions.length > 0 && (
+                            <>
+                              {upfrontCosts.ineligibleConcessions.map((concession, index) => (
+                                <div key={`ineligible-${index}`} className="flex justify-between items-center">
+                                  <span className="text-gray-800 text-md md:text-sm lg:text-base xl:text-xl">
+                                    {concession.type === 'Home Buyer Concession' ? 'Home Buyer Concession' : concession.type}
+                                  </span>
+                                  <span className="text-gray-600 text-md md:text-sm lg:text-base xl:text-xl text-red-600 relative group cursor-help" title={concession.reason}>
+                                    Not Eligible
+                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-20">
+                                      {concession.reason}
+                                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                    </div>
+                                  </span>
+                                </div>
+                              ))}
+                            </>
+                          )}
+                          
                           {/* Show ineligible First Home Owners Grant */}
-                          {upfrontCosts.grants.length === 0 && formData.selectedState !== 'SA' && formData.selectedState !== 'WA' && formData.selectedState !== 'TAS' && (() => {
+                          {upfrontCosts.grants.length === 0 && formData.selectedState !== 'SA' && formData.selectedState !== 'WA' && formData.selectedState !== 'TAS' && formData.selectedState !== 'NT' && formData.selectedState !== 'ACT' && (() => {
                             // Get the reason for ineligibility
                             const buyerData = {
                               buyerType: formData.buyerType,

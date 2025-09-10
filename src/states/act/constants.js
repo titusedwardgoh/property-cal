@@ -9,96 +9,25 @@ export const ACT_STAMP_DUTY_RATES = [
   { min: 1455000, max: Infinity, rate: 0.0454, fixedFee: 0 } // Flat rate of $4.54 per $100 for total transaction value
 ];
 
-// ACT first home buyer concession brackets
-export const ACT_FIRST_HOME_CONCESSION_BRACKETS = [
-  { min: 0, max: 500000, concession: 100000 }, // Full concession up to $500,000
-  { min: 500000, max: 600000, concession: 75000 }, // $75,000 concession
-  { min: 600000, max: 700000, concession: 50000 }, // $50,000 concession
-  { min: 700000, max: 800000, concession: 25000 }, // $25,000 concession
-  { min: 800000, max: Infinity, concession: 0 } // No concession for $800,000 or more
+// ACT HBCS duty calculation brackets (effective 1 July 2025)
+export const ACT_HBCS_DUTY_BRACKETS = [
+  { min: 0, max: 1020000, duty: 0 }, // $0 duty for properties ≤ $1,020,000
+  { min: 1020000, max: 1455000, rate: 0.064, threshold: 1020000 }, // $6.40 per $100 over $1,020,000
+  { min: 1455000, max: Infinity, rate: 0.0454, flatRate: true } // $4.54 per $100 of total value
 ];
 
 export const ACT_FOREIGN_BUYER_RATE = 0.08; // 8% additional duty for foreign buyers
 export const ACT_STATE_AVERAGE = 800000;
-export const ACT_FIRST_HOME_OWNERS_GRANT = 7000; // $7,000 for eligible first home buyers
-export const ACT_FHOG_PROPERTY_CAP = 750000; // Cap for all property types
-export const ACT_FHOG_LAND_CAP = 400000; // Cap for vacant land
-export const ACT_FHOG_NEW_BUILD_CAP = 750000; // Cap for new builds
 
-// ACT-specific concessions and requirements
-export const ACT_FIRST_HOME_BUYER_CONCESSION = {
-  REQUIREMENTS: {
-    MUST_BE_PPR: true,
-    MUST_BE_FIRST_HOME_BUYER: true,
-    PROPERTY_TYPE: 'all', // Available for all property types
-    MAX_PRICE: 800000
-  },
-  DESCRIPTION: "First home buyer concessions available for PPR properties up to $800,000"
-};
+// HBCS (Home Buyer Concession Scheme) constants
+export const ACT_HBCS_MAX_CONCESSION = 35238; // Maximum concession amount
 
-// ACT land transfer fees (tiered by property value)
-export const ACT_LAND_TRANSFER_FEES = {
-  50000: 200,
-  100000: 300,
-  200000: 400,
-  300000: 500,
-  500000: 600,
-  750000: 800,
-  1000000: 1000,
-  1500000: 1500,
-  INFINITY: 2000 // For properties over $1.5M
-};
-
-// ACT PPR requirements
-export const ACT_PPR_REQUIREMENT = 'Must live for 12 months within 12 months of settlement';
-
-// ACT vacant land concession
-export const ACT_VACANT_LAND_CONCESSION = {
-  AVAILABLE: false,
-  DESCRIPTION: "No specific vacant land concession in ACT - standard rates apply",
-  REQUIREMENTS: "Standard stamp duty rates apply to all property types"
-};
-
-// ACT off-the-plan concession
-export const ACT_OFF_THE_PLAN_CONCESSION = {
-  AVAILABLE: false,
-  DESCRIPTION: "No specific off-the-plan concession in ACT - standard rates apply",
-  REQUIREMENTS: "Standard stamp duty rates apply to all property types"
-};
-
-// ACT regional concessions
-export const ACT_REGIONAL_CONCESSIONS = {
-  AVAILABLE: false,
-  DESCRIPTION: "No specific regional concessions in ACT - standard rates apply",
-  REQUIREMENTS: "Standard stamp duty rates apply to all properties"
-};
-
-// ACT home concession rates (PPR vs investment)
-export const ACT_HOME_CONCESSION_RATES = {
-  PPR: {
-    AVAILABLE: true,
-    DESCRIPTION: "Standard rates apply to PPR properties",
-    REQUIREMENTS: "Must be principal place of residence"
-  },
-  INVESTMENT: {
-    AVAILABLE: false,
-    DESCRIPTION: "No specific investment property concessions in ACT",
-    REQUIREMENTS: "Standard rates apply to investment properties"
-  }
-};
-
-// ACT pensioner concessions
-export const ACT_PENSIONER_CONCESSIONS = {
-  AVAILABLE: false,
-  DESCRIPTION: "No specific pensioner concessions in ACT",
-  REQUIREMENTS: "Standard rates apply to all properties",
-  CONCESSION_AMOUNT: 0
-};
-
-// ACT senior concessions
-export const ACT_SENIOR_CONCESSIONS = {
-  AVAILABLE: false,
-  DESCRIPTION: "No specific senior concessions in ACT",
-  REQUIREMENTS: "Standard rates apply to all properties",
-  CONCESSION_AMOUNT: 0
+// HBCS income thresholds based on number of dependents (effective 1 July 2024)
+export const ACT_HBCS_INCOME_THRESHOLDS = {
+  0: 250000,   // 0 dependents
+  1: 254600,   // 1 dependent
+  2: 259200,   // 2 dependents
+  3: 263800,   // 3 dependents
+  4: 268400,   // 4 dependents
+  5: 273000    // 5+ dependents
 };

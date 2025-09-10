@@ -22,8 +22,8 @@ export default function SellerQuestions() {
         // WA: PropertyDetails (6) + BuyerDetails starts at (7) + 7 steps + LoanDetails (7) = 20
         return 21;
       } else if (isACT) {
-        // ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 8 steps + LoanDetails (7) = 20
-        return 21;
+        // ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 10 steps + LoanDetails (7) = 23
+        return 23;
       } else {
         // Non-WA/ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 7 steps + LoanDetails (7) = 19
         return 20;
@@ -34,8 +34,8 @@ export default function SellerQuestions() {
         // WA: PropertyDetails (6) + BuyerDetails starts at (7) + 7 steps = 13
         return 13;
       } else if (isACT) {
-        // ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 8 steps = 13
-        return 13;
+        // ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 10 steps = 16
+        return 16;
       } else {
         // Non-WA/ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 7 steps = 12
         return 12;
@@ -66,37 +66,47 @@ export default function SellerQuestions() {
   const getCurrentStepNumber = () => {
     const shouldShowConstructionQuestions = formData.propertyType === 'off-the-plan' || formData.propertyType === 'house-and-land';
     const isOffThePlanNonVIC = formData.propertyType === 'off-the-plan' && formData.selectedState !== 'VIC';
+    const isACTNoLoan = formData.selectedState === 'ACT' && formData.needsLoan !== 'yes';
+    
+    let stepNumber;
     
     if (shouldShowConstructionQuestions) {
       if (isOffThePlanNonVIC) {
         // Off-the-plan (non-VIC): Skip dutiable value question (case 4)
         if (currentStep <= 3) {
           // Cases 1-3: Normal numbering
-          return currentStep + getStartingStepNumber() - 1;
+          stepNumber = currentStep + getStartingStepNumber() - 1;
         } else if (currentStep >= 5) {
           // Cases 5+: Adjust for skipped dutiable value question (subtract 1)
-          return (currentStep - 1) + getStartingStepNumber() - 1;
+          stepNumber = (currentStep - 1) + getStartingStepNumber() - 1;
         } else {
           // Case 4: Shouldn't happen for off-the-plan (non-VIC), but fallback
-          return currentStep + getStartingStepNumber() - 1;
+          stepNumber = currentStep + getStartingStepNumber() - 1;
         }
       } else {
         // VIC off-the-plan or house-and-land: All questions shown
-        return currentStep + getStartingStepNumber() - 1;
+        stepNumber = currentStep + getStartingStepNumber() - 1;
       }
     } else {
       // Construction questions are skipped, adjust numbering
       if (currentStep <= 2) {
         // Cases 1-2: Normal numbering
-        return currentStep + getStartingStepNumber() - 1;
+        stepNumber = currentStep + getStartingStepNumber() - 1;
       } else if (currentStep >= 5) {
         // Cases 5+: Adjust for skipped questions (subtract 2)
-        return (currentStep - 2) + getStartingStepNumber() - 1;
+        stepNumber = (currentStep - 2) + getStartingStepNumber() - 1;
       } else {
         // Cases 3-4: Shouldn't happen, but fallback
-        return currentStep + getStartingStepNumber() - 1;
+        stepNumber = currentStep + getStartingStepNumber() - 1;
       }
     }
+    
+    // Special case: Reduce step number by 1 for ACT when no loan is needed
+    if (isACTNoLoan) {
+      stepNumber = stepNumber - 1;
+    }
+    
+    return stepNumber;
   };
 
   const nextStep = useCallback(() => {
@@ -114,10 +124,12 @@ export default function SellerQuestions() {
       isPPR: formData.isPPR,
       isAustralianResident: formData.isAustralianResident,
       isFirstHomeBuyer: formData.isFirstHomeBuyer,
+      ownedPropertyLast5Years: formData.ownedPropertyLast5Years,
       hasPensionCard: formData.hasPensionCard,
       needsLoan: formData.needsLoan,
       savingsAmount: formData.savingsAmount,
       income: formData.income,
+      dependants: formData.dependants,
       // Loan Details (if applicable)
       loanDeposit: formData.loanDeposit,
       loanType: formData.loanType,
@@ -186,10 +198,12 @@ export default function SellerQuestions() {
         isPPR: formData.isPPR,
         isAustralianResident: formData.isAustralianResident,
         isFirstHomeBuyer: formData.isFirstHomeBuyer,
+        ownedPropertyLast5Years: formData.ownedPropertyLast5Years,
         hasPensionCard: formData.hasPensionCard,
         needsLoan: formData.needsLoan,
         savingsAmount: formData.savingsAmount,
         income: formData.income,
+        dependants: formData.dependants,
               // Loan Details (if applicable)
       loanDeposit: formData.loanDeposit,
       loanType: formData.loanType,
@@ -254,8 +268,8 @@ export default function SellerQuestions() {
       // Go back to BuyerDetails (no loan path - "Do you need a loan?" question)
       updateFormData('buyerDetailsComplete', false);
       updateFormData('showLoanDetails', false);
-      // For ACT, the loan question is step 7, for others it's step 6
-      const loanQuestionStep = formData.selectedState === 'ACT' ? 7 : 6;
+      // For ACT, the loan question is step 9, for others it's step 6
+      const loanQuestionStep = formData.selectedState === 'ACT' ? 9 : 6;
       updateFormData('buyerDetailsCurrentStep', loanQuestionStep);
     }
   }, [formData.needsLoan, updateFormData, formData.selectedState]);
@@ -735,3 +749,4 @@ export default function SellerQuestions() {
     </div>
   );
 }
+

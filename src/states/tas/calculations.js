@@ -1,4 +1,4 @@
-import { TAS_STAMP_DUTY_RATES, TAS_FIRST_HOME_OWNERS_GRANT, TAS_FHOG_PROPERTY_CAP, TAS_FIRST_HOME_DUTY_RELIEF } from './constants.js';
+import { TAS_STAMP_DUTY_RATES, TAS_FIRST_HOME_OWNERS_GRANT, TAS_FHOG_PROPERTY_CAP, TAS_FIRST_HOME_DUTY_RELIEF, TAS_FOREIGN_BUYER_RATE } from './constants.js';
 
 export const calculateTASStampDuty = (propertyPrice, selectedState) => {
   // Only calculate if TAS is selected
@@ -229,6 +229,66 @@ export const calculateTASFirstHomeDutyRelief = (buyerData, propertyData, selecte
 };
 
 /**
+ * Calculate TAS Foreign Buyer Duty
+ * @param {Object} buyerData - Buyer information
+ * @param {Object} propertyData - Property information
+ * @param {string} selectedState - Selected state (must be 'TAS')
+ * @returns {Object} - Foreign buyer duty result with amount and details
+ */
+export const calculateTASForeignBuyerDuty = (buyerData, propertyData, selectedState) => {
+  // Only calculate if TAS is selected
+  if (selectedState !== 'TAS') {
+    return {
+      applicable: false,
+      amount: 0,
+      reason: 'Not TAS'
+    };
+  }
+
+  const {
+    isAustralianResident
+  } = buyerData;
+
+  const {
+    propertyPrice
+  } = propertyData;
+
+  // Convert propertyPrice to number if it's a string
+  const price = parseInt(propertyPrice) || 0;
+
+  // Check if foreign buyer duty applies
+  if (isAustralianResident !== 'no') {
+    return {
+      applicable: false,
+      amount: 0,
+      reason: 'Australian resident - no foreign buyer duty'
+    };
+  }
+
+  if (price <= 0) {
+    return {
+      applicable: false,
+      amount: 0,
+      reason: 'Invalid property price'
+    };
+  }
+
+  // Calculate foreign buyer duty: property price × 8%
+  const foreignBuyerDuty = price * TAS_FOREIGN_BUYER_RATE;
+
+  return {
+    applicable: true,
+    amount: foreignBuyerDuty,
+    reason: 'Foreign buyer duty applies (8% of property price)',
+    details: {
+      propertyPrice: price,
+      rate: TAS_FOREIGN_BUYER_RATE,
+      calculation: `${price.toLocaleString()} × ${(TAS_FOREIGN_BUYER_RATE * 100)}% = $${foreignBuyerDuty.toLocaleString()}`
+    }
+  };
+};
+
+/**
  * Calculate all upfront costs for TAS
  * @param {Object} buyerData - Buyer information
  * @param {Object} propertyData - Property information
@@ -256,11 +316,14 @@ export const calculateUpfrontCosts = (buyerData, propertyData, selectedState) =>
   // Calculate first home duty relief concession
   const concessionResult = calculateTASFirstHomeDutyRelief(buyerData, propertyData, selectedState, stampDutyAmount);
   
+  // Calculate foreign buyer duty
+  const foreignDutyResult = calculateTASForeignBuyerDuty(buyerData, propertyData, selectedState);
+  
   // Calculate first home owners grant
   const grantResult = calculateTASFirstHomeOwnersGrant(buyerData, propertyData, selectedState);
   
   // Calculate net state duty
-  const netStateDuty = stampDutyAmount - (concessionResult.eligible ? concessionResult.concessionAmount : 0);
+  const netStateDuty = stampDutyAmount - (concessionResult.eligible ? concessionResult.concessionAmount : 0) + (foreignDutyResult.applicable ? foreignDutyResult.amount : 0);
   
   // Calculate total upfront costs (including property price if no loan needed)
   const propertyPrice = (buyerData.needsLoan === 'no') ? price : 0;
@@ -276,7 +339,10 @@ export const calculateUpfrontCosts = (buyerData, propertyData, selectedState) =>
       showBothConcessions: false
     }] : [],
     grants: grantResult.eligible ? [grantResult] : [],
-    foreignDuty: { amount: 0, applicable: false },
+    foreignDuty: { 
+      amount: foreignDutyResult.applicable ? foreignDutyResult.amount : 0, 
+      applicable: foreignDutyResult.applicable 
+    },
     netStateDuty: netStateDuty,
     totalUpfrontCosts: totalUpfrontCosts
   };

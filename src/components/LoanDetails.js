@@ -18,8 +18,8 @@ export default function LoanDetails() {
       // WA: PropertyDetails (6) + BuyerDetails starts at (7) + 7 steps = 14
       return 14;
     } else if (isACT) {
-      // ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 8 steps = 14
-      return 14;
+      // ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 10 steps = 16
+      return 16;
     } else {
       // Non-WA/ACT: PropertyDetails (5) + BuyerDetails starts at (6) + 7 steps = 13
       return 13;
@@ -41,6 +41,7 @@ export default function LoanDetails() {
       isPPR: formData.isPPR,
       isAustralianResident: formData.isAustralianResident,
       isFirstHomeBuyer: formData.isFirstHomeBuyer,
+      ownedPropertyLast5Years: formData.ownedPropertyLast5Years,
       hasPensionCard: formData.hasPensionCard,
       needsLoan: formData.needsLoan,
       savingsAmount: formData.savingsAmount,
@@ -92,6 +93,7 @@ export default function LoanDetails() {
         isPPR: formData.isPPR,
         isAustralianResident: formData.isAustralianResident,
         isFirstHomeBuyer: formData.isFirstHomeBuyer,
+        ownedPropertyLast5Years: formData.ownedPropertyLast5Years,
         hasPensionCard: formData.hasPensionCard,
         needsLoan: formData.needsLoan,
         savingsAmount: formData.savingsAmount,
@@ -132,8 +134,10 @@ export default function LoanDetails() {
     // Reset the navigation flags to ensure proper flow
     updateFormData('showLoanDetails', false);
     updateFormData('showSellerQuestions', false);
-    // Set BuyerDetails to show the last question (step 7, which is question 12)
-    updateFormData('buyerDetailsCurrentStep', 7);
+    // Set BuyerDetails to show the last question
+    // For ACT: step 10 (savings question), for others: step 7 (savings question)
+    const lastStep = formData.selectedState === 'ACT' ? 10 : 7;
+    updateFormData('buyerDetailsCurrentStep', lastStep);
   };
 
   // Check if current step is valid

@@ -20,10 +20,12 @@ export const useFormStore = create((set, get) => ({
   isPPR: '',
   isAustralianResident: '',
   isFirstHomeBuyer: '',
+  ownedPropertyLast5Years: '', // New field for ACT property ownership question
   hasPensionCard: '',
   needsLoan: '',
   savingsAmount: '',
   income: '', // New field for ACT income question
+  dependants: '', // New field for ACT dependants question
   buyerDetailsComplete: false,
   buyerDetailsCurrentStep: null,
   buyerDetailsActiveStep: 1,
@@ -79,10 +81,12 @@ export const useFormStore = create((set, get) => ({
     isPPR: '',
     isAustralianResident: '',
     isFirstHomeBuyer: '',
+    ownedPropertyLast5Years: '', // New field for ACT property ownership question
     hasPensionCard: '',
     needsLoan: '',
     savingsAmount: '',
     income: '', // New field for ACT income question
+    dependants: '', // New field for ACT dependants question
     propertyDetailsComplete: false,
     propertyDetailsFormComplete: false,
     propertyDetailsCurrentStep: 1,

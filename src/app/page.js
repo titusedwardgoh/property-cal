@@ -87,7 +87,7 @@ export default function Page() {
                                         } else if (!buyerDetailsComplete || (buyerDetailsComplete && !formData.showLoanDetails && !formData.showSellerQuestions)) {
                                             // BuyerDetails progress - calculate based on current step and total steps
                                             const currentStep = buyerDetailsActiveStep || 1;
-                                            const totalSteps = isACT ? 8 : 7;
+                                            const totalSteps = isACT ? 10 : 7;
                                             
                                             // Check if form is complete (on completion page)
                                             if (formData.buyerDetailsComplete && !formData.showLoanDetails && !formData.showSellerQuestions) {

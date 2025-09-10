@@ -6,9 +6,9 @@ import { calculateVICStampDuty, calculateVICFirstHomeOwnersGrant, calculateVICFo
 import { calculateQLDStampDuty, calculateQLDFirstHomeOwnersGrant, calculateQLDHomeConcession, calculateQLDFirstHomeConcession, calculateQLDFirstHomeNewConcession, calculateQLDFirstHomeVacantLandConcession, calculateQLDForeignBuyerDuty, calculateUpfrontCosts as calculateQLDUpfrontCosts } from './qld/calculations.js';
 import { calculateSAStampDuty, calculateSAFirstHomeOwnersGrant, calculateSAFirstHomeBuyerConcession, calculateSAForeignBuyerDuty, calculateUpfrontCosts as calculateSAUpfrontCosts } from './sa/calculations.js';
 import { calculateWAStampDuty, calculateWAFirstHomeOwnersGrant, calculateWAFirstHomeOwnerConcession, calculateWAOffThePlanConcession, calculateWAForeignBuyerDuty, calculateUpfrontCosts as calculateWAUpfrontCosts } from './wa/calculations.js';
-import { calculateTASStampDuty, calculateTASFirstHomeOwnersGrant, calculateTASFirstHomeDutyRelief, calculateUpfrontCosts as calculateTASUpfrontCosts } from './tas/calculations.js';
-import { calculateACTStampDuty } from './act/calculations.js';
-import { calculateNTStampDuty } from './nt/calculations.js';
+import { calculateTASStampDuty, calculateTASFirstHomeOwnersGrant, calculateTASFirstHomeDutyRelief, calculateTASForeignBuyerDuty, calculateUpfrontCosts as calculateTASUpfrontCosts } from './tas/calculations.js';
+import { calculateACTStampDuty, calculateUpfrontCosts as calculateACTUpfrontCosts } from './act/calculations.js';
+import { calculateNTStampDuty, calculateNTHomeGrownTerritoryGrant, calculateNTFreshStartGrant, calculateNTHouseAndLandConcession, calculateUpfrontCosts as calculateNTUpfrontCosts } from './nt/calculations.js';
 
 // Import shared functions only (these exist)
 import { 
@@ -76,6 +76,10 @@ export const useStateSelector = (selectedState) => {
     calculateSAForeignBuyerDuty: selectedState === 'SA' ? calculateSAForeignBuyerDuty : null,
     calculateTASFirstHomeOwnersGrant: selectedState === 'TAS' ? calculateTASFirstHomeOwnersGrant : null,
     calculateTASFirstHomeDutyRelief: selectedState === 'TAS' ? calculateTASFirstHomeDutyRelief : null,
+    calculateTASForeignBuyerDuty: selectedState === 'TAS' ? calculateTASForeignBuyerDuty : null,
+    calculateNTHomeGrownTerritoryGrant: selectedState === 'NT' ? calculateNTHomeGrownTerritoryGrant : null,
+    calculateNTFreshStartGrant: selectedState === 'NT' ? calculateNTFreshStartGrant : null,
+    calculateNTHouseAndLandConcession: selectedState === 'NT' ? calculateNTHouseAndLandConcession : null,
     calculateWAFirstHomeOwnersGrant: selectedState === 'WA' ? calculateWAFirstHomeOwnersGrant : null,
     calculateWAFirstHomeOwnerConcession: selectedState === 'WA' ? calculateWAFirstHomeOwnerConcession : null,
     calculateWAOffThePlanConcession: selectedState === 'WA' ? calculateWAOffThePlanConcession : null,
@@ -98,7 +102,9 @@ export const useStateSelector = (selectedState) => {
                           selectedState === 'QLD' ? calculateQLDUpfrontCosts :
                           selectedState === 'SA' ? calculateSAUpfrontCosts :
                           selectedState === 'WA' ? calculateWAUpfrontCosts :
-                          selectedState === 'TAS' ? calculateTASUpfrontCosts : null,
+                          selectedState === 'TAS' ? calculateTASUpfrontCosts :
+                          selectedState === 'ACT' ? calculateACTUpfrontCosts :
+                          selectedState === 'NT' ? calculateNTUpfrontCosts : null,
     // Shared functions that exist
     calculateMonthlyRepayment,
     calculateTotalRepayments,
